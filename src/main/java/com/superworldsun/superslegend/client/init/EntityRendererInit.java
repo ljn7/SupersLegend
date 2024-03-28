@@ -2,16 +2,16 @@ package com.superworldsun.superslegend.client.init;
 
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.client.render.arrows.*;
+import com.superworldsun.superslegend.client.render.boomerang.BoomerangRenderer;
 import com.superworldsun.superslegend.client.render.entites.*;
-
 import com.superworldsun.superslegend.client.render.magic.FireBallRenderer;
 import com.superworldsun.superslegend.client.render.magic.IceBallRenderer;
 import com.superworldsun.superslegend.client.render.seeds.*;
 import com.superworldsun.superslegend.registries.EntityTypeInit;
+import com.superworldsun.superslegend.registries.ItemInit;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -47,9 +47,7 @@ public class EntityRendererInit {
         event.registerEntityRenderer(EntityTypeInit.WATER_BOMB.get(), AncientArrowRender::new);
         event.registerEntityRenderer(EntityTypeInit.FIREBALL.get(), FireBallRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.ICEBALL.get(), IceBallRenderer::new);
-
-        //TODO FINISH BOOMERANG
-        //event.registerEntityRenderer(EntityTypeInit.REGULAR_BOOMERANG.get(), BoomerangRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.BOOMERANG.get(), ctx -> new BoomerangRenderer(ctx, ItemInit.BOOMERANG.get()));
         event.registerEntityRenderer(EntityTypeInit.DEKU_SEED.get(), DekuSeedRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.WHEAT_SEED.get(), WheatSeedRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.BEETROOT_SEED.get(), BeetrootSeedRenderer::new);

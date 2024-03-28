@@ -23,14 +23,14 @@ public class PlayerHealthEvents {
 	public static final UUID HEARTS_MODIFIER = UUID.fromString("3dc4214d-14eb-455c-9700-a2ab1433dfcc");
 
 	/**
-	 * Adjusts player base health to the value of {@link Config#basePlayerHealth}
+	 * Adjusts player base health to the value of {@link Config#base_player_heath}
 	 */
 	@SubscribeEvent
 	public static void adjustBaseHealth(EntityJoinLevelEvent event) {
 		// Only change health of players
 		if (!(event.getEntity() instanceof Player player)) return;
 		AttributeInstance maxHealth = player.getAttribute(Attributes.MAX_HEALTH);
-		AttributeModifier baseModifier = new AttributeModifier(BASE_HEALTH_MODIFIER, "Base", Config.basePlayerHealth - 20, Operation.ADDITION);
+		AttributeModifier baseModifier = new AttributeModifier(BASE_HEALTH_MODIFIER, "Base", Config.base_player_heath - 20, Operation.ADDITION);
 		// Add base modifier only if not added yet
 		if (!maxHealth.hasModifier(baseModifier)) {
 			maxHealth.addPermanentModifier(baseModifier);
@@ -63,7 +63,7 @@ public class PlayerHealthEvents {
 
 	/**
 	 * @return Player's maximum health affected by modifiers from:<br>
-	 *         {@link HeartContainer}, {@link VoidContainer} and {@link Config#basePlayerHealth}
+	 *         {@link HeartContainer}, {@link VoidContainer} and {@link Config#base_player_heath}
 	 */
     public static double getBaseHealth(Player player) {
         AttributeInstance maxHealth = player.getAttribute(Attributes.MAX_HEALTH);
