@@ -6,7 +6,6 @@ import com.superworldsun.superslegend.entities.LargeMagicJarEntity;
 import com.superworldsun.superslegend.entities.MagicJarEntity;
 import com.superworldsun.superslegend.entities.projectiles.arrows.*;
 import com.superworldsun.superslegend.entities.projectiles.bombs.BombEntity;
-import com.superworldsun.superslegend.entities.projectiles.boomerang.BoomerangEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.FireballEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.IceballEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.MasterSwordBeamEntity;
@@ -101,8 +100,7 @@ public class EntityTypeInit
                     .sized(0.5F, 0.5F).build("iceball"));
 
     public static final RegistryObject<EntityType<DekuSeedEntity>> DEKU_SEED = ENTITY_TYPES.register("deku_seed",
-            () -> EntityType.Builder.<DekuSeedEntity>of(DekuSeedEntity::new, MobCategory.MISC)
-                    .sized(1F, 1F).build("deku_seed"));
+            DekuSeedEntity::createEntityType);
     public static final RegistryObject<EntityType<AncientArrowEntity>> WHEAT_SEED = ENTITY_TYPES.register("wheat_seed",
             () -> EntityType.Builder.<AncientArrowEntity>of(AncientArrowEntity::new, MobCategory.MISC)
                     .sized(1F, 1F).build("wheat_seed"));

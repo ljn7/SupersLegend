@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 public class DekuSeedEntity extends SeedEntity {
     private static final float HITBOX_HEIGHT = 0.5F;
@@ -24,7 +25,7 @@ public class DekuSeedEntity extends SeedEntity {
     }
 
     @Override
-    protected SoundEvent getDefaultHitGroundSoundEvent() {
+    protected @NotNull SoundEvent getDefaultHitGroundSoundEvent() {
         return SoundInit.DEKU_SEED_HIT.get();
     }
 
@@ -35,7 +36,7 @@ public class DekuSeedEntity extends SeedEntity {
 
     @Override
     protected float getMass() {
-        return 0.00F;
+        return 0.0F;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class DekuSeedEntity extends SeedEntity {
     }
 
     @Override
-    protected ItemStack getPickupItem() {
+    protected @NotNull ItemStack getPickupItem() {
         return new ItemStack(ItemInit.DEKU_SEEDS.get());
     }
 

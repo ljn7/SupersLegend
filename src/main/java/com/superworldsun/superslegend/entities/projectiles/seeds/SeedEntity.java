@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
 public class SeedEntity extends AbstractArrow {
@@ -29,7 +30,7 @@ public class SeedEntity extends AbstractArrow {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
@@ -53,29 +54,27 @@ public class SeedEntity extends AbstractArrow {
     }
 
     @Override
-    protected SoundEvent getDefaultHitGroundSoundEvent() {
+    protected @NotNull SoundEvent getDefaultHitGroundSoundEvent() {
         return SoundEvents.BAMBOO_BREAK;
     }
 
     @Override
-    protected ItemStack getPickupItem() {
-        return null;
+    protected @NotNull ItemStack getPickupItem() {
+        return ItemStack.EMPTY;
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult result) {
+    protected void onHitEntity(@NotNull EntityHitResult result) {
         super.onHitEntity(result);
 
-        if (result.getEntity() instanceof LivingEntity) {
-            LivingEntity target = (LivingEntity) result.getEntity();
-
+        if (result.getEntity() instanceof LivingEntity target) {
             if (!level().isClientSide && getPierceLevel() <= 0) {
                 target.setArrowCount(target.getArrowCount() - 1);
             }
         }
     }
 
-    public void shoot(Vector3d direction, float speed, float spread) {
+    public void shoot(Vec3 direction, float speed, float spread) {
         super.shoot(direction.x, direction.y, direction.z, speed * getFlightSpeed(), spread);
     }
 

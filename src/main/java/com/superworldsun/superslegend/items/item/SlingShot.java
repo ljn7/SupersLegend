@@ -9,6 +9,7 @@ import com.superworldsun.superslegend.registries.TagInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,53 +33,48 @@ import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber(modid = SupersLegendMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class SlingShot extends BowItem {
-    public SlingShot(Properties pProperties) {
-        super(pProperties);
-    }
-
-
-    @Override
-    public Predicate<ItemStack> getAllSupportedProjectiles() {
-
-        //TODO, error
-        //return stack -> stack.getItem().is(TagInit.PELLETS);
-        return null;
+    public SlingShot(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
-        if (entityLiving instanceof Player) {
-            Player player = (Player) entityLiving;
-            boolean infiniteAmmo = player.getAbilities().instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
+    public @NotNull Predicate<ItemStack> getAllSupportedProjectiles() {
+        return stack -> stack.is(TagInit.PELLETS);
+    }
+
+    @Override
+    public void releaseUsing(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entityLiving, int timeLeft) {
+        if (entityLiving instanceof Player player) {
+            boolean infiniteAmmo = hasInfiniteAmmo(player);
             ItemStack ammoStack = player.getProjectile(stack);
-            int i = getUseDuration(stack) - timeLeft;
-            i = ForgeEventFactory.onArrowLoose(stack, level, player, i, !ammoStack.isEmpty() || infiniteAmmo);
+            int charge = getUseDuration(stack) - timeLeft;
+            boolean canShoot = !ammoStack.isEmpty() || infiniteAmmo;
+            charge = ForgeEventFactory.onArrowLoose(stack, level, player, charge, canShoot);
 
             if (ammoStack.getItem() == Items.ARROW) {
                 ammoStack = new ItemStack(ItemInit.DEKU_SEEDS.get());
             }
 
-            if (i < 0) {
+            if (charge < 0) {
                 return;
             }
 
-            if (!ammoStack.isEmpty() || infiniteAmmo) {
-                float shotPower = getPowerForTime(i) * 0.5f;
+            if (canShoot) {
+                float shotPower = getPowerForTime(charge) * 0.5f;
 
                 if (shotPower >= 0.1D) {
                     if (!level.isClientSide) {
                         SeedEntity projectile = createAmmoEntity(level, ammoStack);
                         projectile.setOwner(player);
                         projectile.setPos(player.getEyePosition(1F).add(0, -0.1, 0));
-                        //TODO player.getLookAngle()
-                        //projectile.shoot(player.getLookAngle(), shotPower * 3F, 0F);
+                        projectile.shoot(player.getLookAngle(), shotPower * 3F, 0F);
                         level.addFreshEntity(projectile);
                     }
 
-                    level.playSound(null, player, SoundInit.SLINGSHOT_SHOOT.get(), SoundSource.PLAYERS, 1.0F,
-                            1.0F / (player.getRandom().nextFloat() * 0.4F + 1.2F) + shotPower * 0.5F);
+                    float soundPitch = 1f / (player.getRandom().nextFloat() * 0.4f + 1.2f) + shotPower * 0.5f;
+                    playSound(player, SoundInit.SLINGSHOT_SHOOT.get(), 1f, soundPitch);
 
-                    if (!infiniteAmmo && !player.getAbilities().instabuild) {
+                    if (!infiniteAmmo) {
                         ammoStack.shrink(1);
 
                         if (ammoStack.isEmpty()) {
@@ -90,6 +86,11 @@ public class SlingShot extends BowItem {
                 }
             }
         }
+    }
+
+    private static boolean hasInfiniteAmmo(Player player) {
+        if (player.getAbilities().instabuild) return true;
+        return EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY_ARROWS, player) > 0;
     }
 
     @Nonnull
@@ -113,12 +114,10 @@ public class SlingShot extends BowItem {
     }
 
     public static float getPowerForTime(int timeInUse) {
-        float power = (float) timeInUse / 10.0F;
-        power = (power * power + power * 2.0F) / 3.0F;
+        float power = timeInUse / 10f;
+        power = (power * power + power * 2f) / 3f;
 
-        if (power > 1.0F) {
-            power = 1.0F;
-        }
+        if (power > 1f) power = 1f;
 
         return power;
     }
@@ -132,7 +131,7 @@ public class SlingShot extends BowItem {
         if (event.getItem().getItem() instanceof SlingShot) {
             if (event.getEntity().isUsingItem()) {
                 if (event.getDuration() == 72000) {
-                    event.getEntity().level().playSound(null, event.getEntity(), SoundInit.SLINGSHOT_PULL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+                    playSound(event.getEntity(), SoundInit.SLINGSHOT_PULL.get());
                 }
 
                 if (event.getDuration() > 71980) {
@@ -145,12 +144,20 @@ public class SlingShot extends BowItem {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        if(!Screen.hasShiftDown()) {
+        if (!Screen.hasShiftDown()) {
             tooltip.add(Component.literal("[Hold Shift for Info]").withStyle(ChatFormatting.DARK_GRAY));
-        }
-        else if(Screen.hasShiftDown()) {
-            tooltip.add(Component.literal("The slingshot uses seeds as ammo, depending on the seed being used the projectile will be different with unique properties").withStyle(ChatFormatting.WHITE));
+        } else if (Screen.hasShiftDown()) {
+            tooltip.add(Component.literal("The slingshot uses seeds as ammo, depending on the seed being used the projectile will be different with unique properties")
+                    .withStyle(ChatFormatting.WHITE));
         }
         super.appendHoverText(stack, level, tooltip, flag);
+    }
+
+    private static void playSound(LivingEntity entity, @NotNull SoundEvent sound) {
+        entity.level().playSound(null, entity, sound, SoundSource.PLAYERS, 1f, 1f);
+    }
+
+    private static void playSound(LivingEntity entity, @NotNull SoundEvent sound, float volume, float pitch) {
+        entity.level().playSound(null, entity, sound, SoundSource.PLAYERS, volume, pitch);
     }
 }
