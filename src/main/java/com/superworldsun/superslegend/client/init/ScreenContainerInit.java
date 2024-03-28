@@ -19,7 +19,7 @@ public class ScreenContainerInit {
 //            MenuScreens.register(MenuTypeInit.RING_BOX.get(), createScreenFactory("ring_box"));
 //            MenuScreens.register(MenuTypeInit.RING_BOX_BIG.get(), createScreenFactory("big_ring_box"));
 //            MenuScreens.register(MenuTypeInit.RING_BOX_BIGGEST.get(), createScreenFactory("biggest_ring_box"));
-            MenuScreens.register(MenuTypeInit.LETTER.get(), createScreenFactory("letter"));
+//            MenuScreens.register(MenuTypeInit.LETTER.get(), createScreenFactory("letter"));
 //            MenuScreens.register(MenuTypeInit.POSTBOX.get(), createScreenFactory("postbox"));
 //            MenuScreens.register(MenuTypeInit.SELECT_CONTAINER.get(), SelectScreen::new);
 //            MenuScreens.register(MenuTypeInit.COOKING_POT.get(), CookingPotScreen::new);

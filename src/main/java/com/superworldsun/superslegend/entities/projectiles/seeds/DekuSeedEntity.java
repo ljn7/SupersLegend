@@ -12,9 +12,9 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class DekuSeedEntity extends SeedEntity {
-    private static final float HITBOX_HEIGHT = 0.5F;
-    private static final float HITBOX_WIDTH = 0.5F;
-    private static final float WATER_INERTIA = 0.0F;
+    private static final float HITBOX_HEIGHT = 0.5f;
+    private static final float HITBOX_WIDTH = 0.5f;
+    private static final float WATER_INERTIA = 0f;
 
     public DekuSeedEntity(EntityType<? extends DekuSeedEntity> type, Level level) {
         super(type, level);
@@ -36,7 +36,7 @@ public class DekuSeedEntity extends SeedEntity {
 
     @Override
     protected float getMass() {
-        return 0.0F;
+        return 0f;
     }
 
     @Override

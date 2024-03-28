@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -16,8 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
 public class SeedEntity extends AbstractArrow {
-    private static final double BASE_DAMAGE = 2.0D;
-
     public SeedEntity(EntityType<? extends SeedEntity> type, Level level)
     {
         super(type, level);
@@ -26,7 +25,7 @@ public class SeedEntity extends AbstractArrow {
     @Override
     public void onAddedToWorld() {
         super.onAddedToWorld();
-        setBaseDamage(BASE_DAMAGE);
+        setBaseDamage(getDamage());
     }
 
     @Override
@@ -83,10 +82,14 @@ public class SeedEntity extends AbstractArrow {
     }
 
     protected float getMass() {
-        return 0.05F;
+        return 0.05f;
     }
 
     protected float getFlightSpeed() {
-        return 1F;
+        return 1f;
+    }
+
+    protected float getDamage() {
+        return 2f;
     }
 }

@@ -9,7 +9,7 @@ import com.superworldsun.superslegend.entities.projectiles.bombs.BombEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.FireballEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.IceballEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.MasterSwordBeamEntity;
-import com.superworldsun.superslegend.entities.projectiles.seeds.DekuSeedEntity;
+import com.superworldsun.superslegend.entities.projectiles.seeds.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -101,21 +101,16 @@ public class EntityTypeInit
 
     public static final RegistryObject<EntityType<DekuSeedEntity>> DEKU_SEED = ENTITY_TYPES.register("deku_seed",
             DekuSeedEntity::createEntityType);
-    public static final RegistryObject<EntityType<AncientArrowEntity>> WHEAT_SEED = ENTITY_TYPES.register("wheat_seed",
-            () -> EntityType.Builder.<AncientArrowEntity>of(AncientArrowEntity::new, MobCategory.MISC)
-                    .sized(1F, 1F).build("wheat_seed"));
-    public static final RegistryObject<EntityType<AncientArrowEntity>> BEETROOT_SEED = ENTITY_TYPES.register("beetroot_seed",
-            () -> EntityType.Builder.<AncientArrowEntity>of(AncientArrowEntity::new, MobCategory.MISC)
-                    .sized(1F, 1F).build("beetroot_seed"));
-    public static final RegistryObject<EntityType<AncientArrowEntity>> MELON_SEED = ENTITY_TYPES.register("melon_seed",
-            () -> EntityType.Builder.<AncientArrowEntity>of(AncientArrowEntity::new, MobCategory.MISC)
-                    .sized(1F, 1F).build("melon_seed"));
-    public static final RegistryObject<EntityType<AncientArrowEntity>> PUMPKIN_SEED = ENTITY_TYPES.register("pumpkin_seed",
-            () -> EntityType.Builder.<AncientArrowEntity>of(AncientArrowEntity::new, MobCategory.MISC)
-                    .sized(1F, 1F).build("pumpkin_seed"));
-    public static final RegistryObject<EntityType<AncientArrowEntity>> COCOA_BEAN = ENTITY_TYPES.register("cocoa_bean",
-            () -> EntityType.Builder.<AncientArrowEntity>of(AncientArrowEntity::new, MobCategory.MISC)
-                    .sized(1F, 1F).build("cocoa_bean"));
+    public static final RegistryObject<EntityType<WheatSeedEntity>> WHEAT_SEED = ENTITY_TYPES.register("wheat_seed",
+            WheatSeedEntity::createEntityType);
+    public static final RegistryObject<EntityType<BeetrootSeedEntity>> BEETROOT_SEED = ENTITY_TYPES.register("beetroot_seed",
+            BeetrootSeedEntity::createEntityType);
+    public static final RegistryObject<EntityType<MelonSeedEntity>> MELON_SEED = ENTITY_TYPES.register("melon_seed",
+            MelonSeedEntity::createEntityType);
+    public static final RegistryObject<EntityType<PumpkinSeedEntity>> PUMPKIN_SEED = ENTITY_TYPES.register("pumpkin_seed",
+            PumpkinSeedEntity::createEntityType);
+    public static final RegistryObject<EntityType<CocoaBeanEntity>> COCOA_BEAN = ENTITY_TYPES.register("cocoa_bean",
+            CocoaBeanEntity::createEntityType);
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

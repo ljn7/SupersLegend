@@ -6,10 +6,12 @@ import com.superworldsun.superslegend.client.render.entites.*;
 
 import com.superworldsun.superslegend.client.render.magic.FireBallRenderer;
 import com.superworldsun.superslegend.client.render.magic.IceBallRenderer;
+import com.superworldsun.superslegend.client.render.seeds.*;
 import com.superworldsun.superslegend.registries.EntityTypeInit;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -48,13 +50,12 @@ public class EntityRendererInit {
 
         //TODO FINISH BOOMERANG
         //event.registerEntityRenderer(EntityTypeInit.REGULAR_BOOMERANG.get(), BoomerangRenderer::new);
-        //TODO, SeedRender not working
-        //event.registerEntityRenderer(EntityTypeInit.DEKU_SEED.get(), DekuSeedRender::new);
-        event.registerEntityRenderer(EntityTypeInit.WHEAT_SEED.get(), AncientArrowRender::new);
-        event.registerEntityRenderer(EntityTypeInit.BEETROOT_SEED.get(), AncientArrowRender::new);
-        event.registerEntityRenderer(EntityTypeInit.MELON_SEED.get(), AncientArrowRender::new);
-        event.registerEntityRenderer(EntityTypeInit.PUMPKIN_SEED.get(), AncientArrowRender::new);
-        event.registerEntityRenderer(EntityTypeInit.COCOA_BEAN.get(), AncientArrowRender::new);
+        event.registerEntityRenderer(EntityTypeInit.DEKU_SEED.get(), DekuSeedRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.WHEAT_SEED.get(), WheatSeedRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.BEETROOT_SEED.get(), BeetrootSeedRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.MELON_SEED.get(), MelonSeedRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.PUMPKIN_SEED.get(), PumpkinSeedRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.COCOA_BEAN.get(), CocoaBeanRenderer::new);
     }
 
     private static <T extends LivingEntity, M extends EntityModel<T>> void attachRenderLayers(LivingEntityRenderer<T, M> renderer) {

@@ -1,8 +1,7 @@
 package com.superworldsun.superslegend.items.item;
 
 import com.superworldsun.superslegend.SupersLegendMain;
-import com.superworldsun.superslegend.entities.projectiles.seeds.DekuSeedEntity;
-import com.superworldsun.superslegend.entities.projectiles.seeds.SeedEntity;
+import com.superworldsun.superslegend.entities.projectiles.seeds.*;
 import com.superworldsun.superslegend.registries.ItemInit;
 import com.superworldsun.superslegend.registries.SoundInit;
 import com.superworldsun.superslegend.registries.TagInit;
@@ -97,8 +96,7 @@ public class SlingShot extends BowItem {
     private SeedEntity createAmmoEntity(Level world, ItemStack ammoStack) {
         Item ammoItem = ammoStack.getItem();
 
-        //TODO, port all seeds, disabled untill all added
-        /*if (ammoItem == Items.BEETROOT_SEEDS) {
+        if (ammoItem == Items.BEETROOT_SEEDS) {
             return new BeetrootSeedEntity(world);
         } else if (ammoItem == Items.WHEAT_SEEDS) {
             return new WheatSeedEntity(world);
@@ -108,7 +106,7 @@ public class SlingShot extends BowItem {
             return new PumpkinSeedEntity(world);
         } else if (ammoItem == Items.COCOA_BEANS) {
             return new CocoaBeanEntity(world);
-        }*/
+        }
 
         return new DekuSeedEntity(world);
     }
