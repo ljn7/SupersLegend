@@ -188,6 +188,7 @@ public class AbstractBombEntity extends ThrowableItemProjectile {
         this.discard();
     }
 
+    //TODO, add this back instead when config is fixed
     /*private void explode() {
         if(SupersLegendConfig.getInstance().explosivegriefing()){
             this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.BLOCK);
