@@ -44,10 +44,12 @@ public class EntityRendererInit {
         event.registerEntityRenderer(EntityTypeInit.LARGE_MAGIC_JAR.get(), LargeMagicJarRender::new);
         event.registerEntityRenderer(EntityTypeInit.BOMB.get(), BombRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.MASTERSWORD_SWORD_BEAM.get(), MasterSwordBeamRenderer::new);
-        event.registerEntityRenderer(EntityTypeInit.WATER_BOMB.get(), AncientArrowRender::new);
+        event.registerEntityRenderer(EntityTypeInit.WATER_BOMB.get(), WaterBombRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.FIREBALL.get(), FireBallRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.ICEBALL.get(), IceBallRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.BOOMERANG.get(), ctx -> new BoomerangRenderer(ctx, ItemInit.BOOMERANG.get()));
+        event.registerEntityRenderer(EntityTypeInit.MAGIC_BOOMERANG.get(), ctx -> new BoomerangRenderer(ctx, ItemInit.MAGIC_BOOMERANG.get()));
+        event.registerEntityRenderer(EntityTypeInit.SEA_BREEZE_BOOMERANG.get(), ctx -> new BoomerangRenderer(ctx, ItemInit.SEA_BREEZE_BOOMERANG.get()));
         event.registerEntityRenderer(EntityTypeInit.DEKU_SEED.get(), DekuSeedRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.WHEAT_SEED.get(), WheatSeedRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.BEETROOT_SEED.get(), BeetrootSeedRenderer::new);

@@ -6,7 +6,9 @@ import com.superworldsun.superslegend.entities.LargeMagicJarEntity;
 import com.superworldsun.superslegend.entities.MagicJarEntity;
 import com.superworldsun.superslegend.entities.projectiles.arrows.*;
 import com.superworldsun.superslegend.entities.projectiles.bombs.BombEntity;
+import com.superworldsun.superslegend.entities.projectiles.bombs.WaterBombEntity;
 import com.superworldsun.superslegend.entities.projectiles.boomerang.BoomerangEntity;
+import com.superworldsun.superslegend.entities.projectiles.boomerang.MagicBoomerangEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.FireballEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.IceballEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.MasterSwordBeamEntity;
@@ -84,12 +86,16 @@ public class EntityTypeInit
             () -> EntityType.Builder.<BombEntity>of(BombEntity::new, MobCategory.MISC)
                     .sized(1F, 1F).build("bomb"));
 
-    public static final RegistryObject<EntityType<AncientArrowEntity>> WATER_BOMB = ENTITY_TYPES.register("water_bomb",
-            () -> EntityType.Builder.<AncientArrowEntity>of(AncientArrowEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<WaterBombEntity>> WATER_BOMB = ENTITY_TYPES.register("water_bomb",
+            () -> EntityType.Builder.<WaterBombEntity>of(WaterBombEntity::new, MobCategory.MISC)
                     .sized(1F, 1F).build("water_bomb"));
 
     public static final RegistryObject<EntityType<BoomerangEntity>> BOOMERANG = ENTITY_TYPES.register("boomerang",
             BoomerangEntity::createEntityType);
+    public static final RegistryObject<EntityType<MagicBoomerangEntity>> MAGIC_BOOMERANG = ENTITY_TYPES.register("magic_boomerang",
+            MagicBoomerangEntity::createEntityType);
+    public static final RegistryObject<EntityType<MagicBoomerangEntity>> SEA_BREEZE_BOOMERANG = ENTITY_TYPES.register("sea_breeze_boomerang",
+            MagicBoomerangEntity::createEntityType);
 
     public static final RegistryObject<EntityType<FireballEntity>> FIREBALL = ENTITY_TYPES.register("fireball",
             () -> EntityType.Builder.<FireballEntity>of(FireballEntity::new, MobCategory.MISC)
