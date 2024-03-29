@@ -2,11 +2,13 @@ package com.superworldsun.superslegend.client.init;
 
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.client.render.arrows.*;
+import com.superworldsun.superslegend.client.render.boomerang.BoomerangRenderer;
 import com.superworldsun.superslegend.client.render.entites.*;
-
 import com.superworldsun.superslegend.client.render.magic.FireBallRenderer;
 import com.superworldsun.superslegend.client.render.magic.IceBallRenderer;
+import com.superworldsun.superslegend.client.render.seeds.*;
 import com.superworldsun.superslegend.registries.EntityTypeInit;
+import com.superworldsun.superslegend.registries.ItemInit;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -45,16 +47,13 @@ public class EntityRendererInit {
         event.registerEntityRenderer(EntityTypeInit.WATER_BOMB.get(), AncientArrowRender::new);
         event.registerEntityRenderer(EntityTypeInit.FIREBALL.get(), FireBallRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.ICEBALL.get(), IceBallRenderer::new);
-
-        //TODO FINISH BOOMERANG
-        //event.registerEntityRenderer(EntityTypeInit.REGULAR_BOOMERANG.get(), BoomerangRenderer::new);
-        //TODO, SeedRender not working
-        //event.registerEntityRenderer(EntityTypeInit.DEKU_SEED.get(), DekuSeedRender::new);
-        event.registerEntityRenderer(EntityTypeInit.WHEAT_SEED.get(), AncientArrowRender::new);
-        event.registerEntityRenderer(EntityTypeInit.BEETROOT_SEED.get(), AncientArrowRender::new);
-        event.registerEntityRenderer(EntityTypeInit.MELON_SEED.get(), AncientArrowRender::new);
-        event.registerEntityRenderer(EntityTypeInit.PUMPKIN_SEED.get(), AncientArrowRender::new);
-        event.registerEntityRenderer(EntityTypeInit.COCOA_BEAN.get(), AncientArrowRender::new);
+        event.registerEntityRenderer(EntityTypeInit.BOOMERANG.get(), ctx -> new BoomerangRenderer(ctx, ItemInit.BOOMERANG.get()));
+        event.registerEntityRenderer(EntityTypeInit.DEKU_SEED.get(), DekuSeedRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.WHEAT_SEED.get(), WheatSeedRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.BEETROOT_SEED.get(), BeetrootSeedRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.MELON_SEED.get(), MelonSeedRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.PUMPKIN_SEED.get(), PumpkinSeedRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.COCOA_BEAN.get(), CocoaBeanRenderer::new);
     }
 
     private static <T extends LivingEntity, M extends EntityModel<T>> void attachRenderLayers(LivingEntityRenderer<T, M> renderer) {

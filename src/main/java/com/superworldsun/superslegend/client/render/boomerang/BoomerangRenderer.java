@@ -1,50 +1,52 @@
 package com.superworldsun.superslegend.client.render.boomerang;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.superworldsun.superslegend.SupersLegendMain;
-import com.superworldsun.superslegend.entities.projectiles.boomerang.BoomerangEntity;
-import com.superworldsun.superslegend.registries.ItemInit;
+import com.mojang.math.Axis;
+import com.superworldsun.superslegend.entities.projectiles.boomerang.AbstractBoomerangEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Vector3f;
-import software.bernie.shadowed.eliotlash.mclib.utils.MathHelper;
+import org.jetbrains.annotations.NotNull;
 
-public class BoomerangRenderer extends EntityRenderer<BoomerangEntity> {
-
-    public static final ResourceLocation TEXTURE = new ResourceLocation(SupersLegendMain.MOD_ID, "textures/item/boomerang.png");
-
+public class BoomerangRenderer extends EntityRenderer<AbstractBoomerangEntity> {
     private final ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+    private final Item iconItem;
 
-    public BoomerangRenderer(EntityRendererProvider.Context renderManager) {
+    public BoomerangRenderer(EntityRendererProvider.Context renderManager, Item iconItem) {
         super(renderManager);
-    }
-
-    /*@Override
-    public void render(BoomerangEntity entityIn, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int packedLightIn) {
-        poseStack.pushPose();
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(-entityYaw + 90.0f));
-        poseStack.mulPose(Vector3f.ZP.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.xRotO, entityIn.xRotO) + 90.0F));
-        poseStack.mulPose(Vector3f.YN.rotationDegrees(90.0f));
-        poseStack.mulPose(Vector3f.ZN.rotationDegrees(entityIn.getBoomerangRotation()));
-        this.itemRenderer.render(getItemStackForRender(entityIn), ItemCameraTransforms.TransformType.GROUND,true,poseStack,bufferIn,packedLightIn, OverlayTexture.NO_OVERLAY,Minecraft.getInstance().getItemRenderer().getModel(getItemStackForRender(entityIn),entityIn.level,null));
-        poseStack.popPose();
-
-        super.render(entityIn, entityYaw, partialTicks, poseStack, bufferIn, packedLightIn);
-    }*/
-
-    private ItemStack getItemStackForRender(BoomerangEntity entityIn) {
-        return new ItemStack(ItemInit.BOOMERANG.get());
+        this.iconItem = iconItem;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(BoomerangEntity entity) {
-        return TEXTURE;
+    public void render(AbstractBoomerangEntity entity, float yaw, float partialTicks, PoseStack poseStack, @NotNull MultiBufferSource buffer, int light) {
+        poseStack.pushPose();
+        poseStack.translate(0f, entity.getBbHeight() / 2f, 0f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-yaw + 90f));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entity.xRotO, entity.xRotO) + 90f));
+        poseStack.mulPose(Axis.YN.rotationDegrees(90f));
+        poseStack.mulPose(Axis.ZN.rotationDegrees(entity.getRotation()));
+        ItemStack stack = getItemStackForRender();
+        BakedModel model = itemRenderer.getModel(stack, entity.level(), null, 0);
+        itemRenderer.render(stack, ItemDisplayContext.GROUND, true, poseStack, buffer, light, OverlayTexture.NO_OVERLAY, model);
+        poseStack.popPose();
     }
 
+    private ItemStack getItemStackForRender() {
+        return new ItemStack(iconItem);
+    }
+
+    @Override
+    public @NotNull ResourceLocation getTextureLocation(@NotNull AbstractBoomerangEntity entity) {
+        return InventoryMenu.BLOCK_ATLAS;
+    }
 }
