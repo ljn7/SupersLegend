@@ -13,6 +13,8 @@ import com.superworldsun.superslegend.items.customclass.ItemCustomSword;
 import com.superworldsun.superslegend.items.item.*;
 import com.superworldsun.superslegend.items.item.ammo.*;
 import com.superworldsun.superslegend.items.weapons.boomerang.BoomerangItem;
+import com.superworldsun.superslegend.items.weapons.boomerang.MagicBoomerangItem;
+import com.superworldsun.superslegend.items.weapons.boomerang.SeaBreezeBoomerangItem;
 import com.superworldsun.superslegend.items.weapons.bow.BitBow;
 import com.superworldsun.superslegend.items.weapons.bow.LynelBowX3;
 import com.superworldsun.superslegend.items.weapons.bow.LynelBowX5;
@@ -310,10 +312,8 @@ public class ItemInit {
     /*public static final RegistryObject<Item> MAGIC_POWDER = ITEMS.register("magic_powder",
             () -> new Item(new Item.Properties().stacksTo(1).tab(SupersLegendMain.RESOURCES)));*/
     public static final RegistryObject<Item> BOOMERANG = ITEMS.register("boomerang", BoomerangItem::new);
-    public static final RegistryObject<Item> MAGIC_BOOMERANG = ITEMS.register("magic_boomerang",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> SEA_BREEZE_BOOMERANG = ITEMS.register("sea_breeze_boomerang",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MAGIC_BOOMERANG = ITEMS.register("magic_boomerang", MagicBoomerangItem::new);
+    public static final RegistryObject<Item> SEA_BREEZE_BOOMERANG = ITEMS.register("sea_breeze_boomerang", SeaBreezeBoomerangItem::new);
 
     //public static final RegistryObject<Item> GALE_BOOMERANG = ITEMS.register("gale_boomerang",
     //		() -> new GaleBoomerangItem(new Item.Properties().stacksTo(1).tab(SupersLegendMain.RESOURCES)));
