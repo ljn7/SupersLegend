@@ -14,7 +14,6 @@ public class Config {
     private static final ForgeConfigSpec.BooleanValue ENABLE_TEMPERATURE = BUILDER.define("Activate the temperature system", true);
     private static final ForgeConfigSpec.BooleanValue BOOMERANGS_TURN_BACK_ON_HIT = BUILDER.define("Boomerangs turn back on hit", true);
     private static final ForgeConfigSpec.BooleanValue BOOMERANGS_BREAK_SOFT_BLOCKS = BUILDER.define("Boomerangs break soft blocks", true);
-    private static final ForgeConfigSpec.BooleanValue BOOMERANGS_BREAK_GRASS = BUILDER.define("Boomerangs break soft grass", true);
     private static final ForgeConfigSpec.BooleanValue BOOMERANGS_ACTIVATE_LEVERS = BUILDER.define("Boomerangs activate levers", true);
     private static final ForgeConfigSpec.BooleanValue BOOMERANGS_ACTIVATE_BUTTONS = BUILDER.define("Boomerangs activate buttons", true);
     private static final ForgeConfigSpec.BooleanValue BOOMERANGS_ACTIVATE_PRESSURE_PLATES = BUILDER.define("Boomerangs activate pressure plates", true);
@@ -26,7 +25,6 @@ public class Config {
     public static boolean enable_temperature;
     public static boolean boomerangs_turn_back_on_hit;
     public static boolean boomerangs_break_soft_blocks;
-    public static boolean boomerangs_break_grass;
     public static boolean boomerangs_activate_levers;
     public static boolean boomerangs_activate_buttons;
     public static boolean boomerangs_activate_pressure_plates;
@@ -38,7 +36,6 @@ public class Config {
         enable_temperature = ENABLE_TEMPERATURE.get();
         boomerangs_turn_back_on_hit = BOOMERANGS_TURN_BACK_ON_HIT.get();
         boomerangs_break_soft_blocks = BOOMERANGS_BREAK_SOFT_BLOCKS.get();
-        boomerangs_break_grass = BOOMERANGS_BREAK_GRASS.get();
         boomerangs_activate_levers = BOOMERANGS_ACTIVATE_LEVERS.get();
         boomerangs_activate_buttons = BOOMERANGS_ACTIVATE_BUTTONS.get();
         boomerangs_activate_pressure_plates = BOOMERANGS_ACTIVATE_PRESSURE_PLATES.get();

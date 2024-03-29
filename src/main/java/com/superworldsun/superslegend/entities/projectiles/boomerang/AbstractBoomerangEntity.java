@@ -48,6 +48,7 @@ public abstract class AbstractBoomerangEntity extends Entity {
     protected double bounceFactor;
     protected float prevRotation;
     protected int turnBackTimer;
+    protected float getDefaultSpeed;
 
     public AbstractBoomerangEntity(EntityType<? extends AbstractBoomerangEntity> type, Level level) {
         super(type, level);
@@ -55,13 +56,14 @@ public abstract class AbstractBoomerangEntity extends Entity {
         turningBack = false;
         bouncing = false;
         turnBackTimer = 30;
+        getDefaultSpeed = 0.5f;
     }
 
     public AbstractBoomerangEntity(EntityType<? extends AbstractBoomerangEntity> type, Player owner, ItemStack stack) {
         this(type, owner.level());
         this.selfStack = stack;
         setRot(owner.yRotO, owner.xRotO);
-        setDeltaMovement(owner.getLookAngle().multiply(0.5f, 0.5f, 0.5f));
+        setDeltaMovement(owner.getLookAngle().x * getDefaultSpeed, owner.getLookAngle().y * getDefaultSpeed, owner.getLookAngle().z * getDefaultSpeed);
         setPos(owner.getX(), owner.getEyeY() - 0.1, owner.getZ());
         xo = getX();
         yo = getY();
@@ -173,7 +175,7 @@ public abstract class AbstractBoomerangEntity extends Entity {
 
     protected boolean canBreakBlock(Block block) {
         if (block.defaultDestroyTime() == 0f && Config.boomerangs_break_soft_blocks) return true;
-        return block instanceof GrassBlock && Config.boomerangs_break_grass;
+        return false;
     }
 
     protected boolean canActivateBlock(Block block, BlockPos pos) {
