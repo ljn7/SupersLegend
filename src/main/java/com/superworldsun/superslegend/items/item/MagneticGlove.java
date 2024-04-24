@@ -30,7 +30,7 @@ public class MagneticGlove extends Item
         super(properties);
     }
 
-    //TODO When the user is wearing metal armor, the user pulls themselves. Make it so the user does not.
+    //TODO Test to Make sure this still pulls other players in multiplayer but not the user
 
     //TODO Add some sound for when item is in use
 
@@ -68,7 +68,7 @@ public class MagneticGlove extends Item
         }
 
         for (LivingEntity entity : livingEntityList) {
-            if (entity.isAlive()) {
+            if (entity.isAlive() && !entity.equals(player)) {  // Check if the entity is not the player
                 int pullStrength = 0;
                 for (ItemStack armor : entity.getArmorSlots()) {
                     if (armor.getItem() == Items.IRON_HELMET) {
