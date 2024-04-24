@@ -4,10 +4,7 @@ import com.superworldsun.superslegend.registries.SoundInit;
 import com.superworldsun.superslegend.registries.TagInit;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
@@ -17,6 +14,7 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.object.PlayState;
 
 public class MasterSwordBeamEntity extends ThrowableProjectile implements GeoEntity
@@ -28,7 +26,8 @@ public class MasterSwordBeamEntity extends ThrowableProjectile implements GeoEnt
     private int ticksSinceLastSound = 0;
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
-    //TODO, currently the size of the projectile cant be higher than the default (1f, 1f), find a way to make it wider and shorter
+    //TODO, currently the size of the projectile cant be higher than the default (1f, 1f), find a way to make it wider and shorter.
+    // Will probably have to change the type of Entity type it is, low prio
     public MasterSwordBeamEntity(EntityType<? extends Projectile> type, Level worldIn, LivingEntity player) {
         super((EntityType<? extends ThrowableProjectile>) type, worldIn);
         playSpawnSound();
@@ -36,6 +35,10 @@ public class MasterSwordBeamEntity extends ThrowableProjectile implements GeoEnt
         this.setOwner(player); // Set the entity's owner for ownership tracking
         this.setPos(player.getX(), player.getEyeY(), player.getZ()); // Set the initial position
         this.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, 1.5F, 1F); // Set the initial motion
+
+        /*// Apply scale
+        ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
+        scaleData.setScale(10.0f); // Set the scale as needed*/
     }
 
     public MasterSwordBeamEntity(EntityType<? extends Projectile> pEntityType, Level pLevel) {
@@ -62,25 +65,22 @@ public class MasterSwordBeamEntity extends ThrowableProjectile implements GeoEnt
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide) {
-            HitResult.Type type = result.getType();
-            Mob entity = (Mob) result.getEntity();
-
-            var isType = entity.getType().is(TagInit.WEAK_TO_LIGHT);
-            System.out.println(isType);
-            if (entity.getType().is(TagInit.WEAK_TO_LIGHT) || entity.getMobType() == MobType.UNDEAD)
-            {
-                System.out.println("weak to light");
-                LivingEntity target = (LivingEntity) result.getEntity();
-                target.hurt(level().damageSources().generic(), DAMAGE_AMOUNT * 2);
-                this.discard();
+            Entity entity = result.getEntity();
+            if (entity instanceof Mob) {
+                Mob mob = (Mob) entity;
+                boolean isWeakToLight = mob.getType().is(TagInit.WEAK_TO_LIGHT);
+                if (isWeakToLight || mob.getMobType() == MobType.UNDEAD) {
+                    mob.hurt(level().damageSources().generic(), DAMAGE_AMOUNT * 2);
+                    System.out.println("weak to light");
+                } else {
+                    mob.hurt(level().damageSources().generic(), DAMAGE_AMOUNT);
+                    System.out.println("normal damage");
+                }
+            } else {
+                // Apply normal damage to non-Mob entities like Carts, Boats, etc.
+                entity.hurt(level().damageSources().generic(), DAMAGE_AMOUNT);
             }
-            else if (!entity.getType().is(TagInit.WEAK_TO_LIGHT) || entity.getMobType() != MobType.UNDEAD)
-            {
-                System.out.println("normal damage");
-                LivingEntity target = (LivingEntity) result.getEntity();
-                target.hurt(level().damageSources().generic(), DAMAGE_AMOUNT);
-                this.discard();
-            }
+            this.discard();
         }
     }
 
