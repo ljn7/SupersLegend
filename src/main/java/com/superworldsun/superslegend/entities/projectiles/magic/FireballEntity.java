@@ -8,6 +8,8 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
@@ -126,8 +128,11 @@ public class FireballEntity extends AbstractHurtingProjectile
     @Override
     public void tick()
     {
-        if (age > maxAge)
+        if (age > maxAge || isInWater())
         {
+            if (isInWater()) {
+                level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.NEUTRAL, 1.0F, 1.0F);
+            }
             this.discard();
             return;
         }
