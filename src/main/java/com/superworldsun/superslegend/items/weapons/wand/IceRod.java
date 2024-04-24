@@ -10,8 +10,10 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,156 +28,161 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-public class IceRod extends NonEnchantItem
-{
-    public IceRod(Properties properties)
-    {
+public class IceRod extends NonEnchantItem {
+    public static final float PARTICLES_SPEED = 1F;
+    public static final float PARTICLES_SPREAD = 0.3F;
+    public static final int PARTICLES_DENSITY = 2;
+    public static final float EFFECT_RANGE = 6F;
+    public static final float DAMAGE = 1F;
+    public static final int IGNITE_DURATION = 3;
+    public static final float ICEBALL_MANACOST = 2F;
+    public static final float ICEBALL_SPEED = 0.5F;
+    public static final int ICEBALL_COOLDOWN = 16;
+    public static final float ICETHROWER_MANACOST = 0.025F;
+
+    public IceRod(Properties properties) {
         super(properties);
     }
 
-    //TODO Ice should extinguish fire easily with held right click
+    //TODO Fire should melt thin snow layers super easily with held right click
+    //TODO Change the fire ball explosion sound
 
-    //TODO Change the Ice ball explosion sound
-
-    //TODO, need to finish port
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand Usehand)
-    {
-        if (player.isCrouching())
-        {
-            if (!level.isClientSide)
-            {
-                // per use
-                float manacost = 2F;
-
-                if (MagicProvider.hasMagic(player, manacost))
-                {
-                    float iceballSpeed = 0.5F;
-                    Vec3 playerLookVec = player.getLookAngle();
-                    Vec3 iceballPosition = player.getEyePosition(1F).add(playerLookVec);
-                    Vec3 iceballMotion = playerLookVec.multiply(iceballSpeed, iceballSpeed, iceballSpeed);
-                    IceballEntity iceballEntity = new IceballEntity(iceballPosition, iceballMotion, level, player);
-                    level.addFreshEntity(iceballEntity);
-                    MagicProvider.spendMagic(player, manacost);
-                    player.getCooldowns().addCooldown(this, 16);
-                    level.playSound(null, player, SoundEvents.SNOW_BREAK, SoundSource.PLAYERS, 1f, 1f);
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
+        if (player.isCrouching()) {
+            if (!level.isClientSide) {
+                if (MagicProvider.hasMagic(player, ICEBALL_MANACOST)) {
+                    MagicProvider.spendMagic(player, ICEBALL_MANACOST);
+                    castFireball(level, player);
                 }
             }
+        } else {
+            player.startUsingItem(hand);
         }
-        else
-        {
-            player.startUsingItem(Usehand);
-        }
+        return InteractionResultHolder.consume(player.getItemInHand(hand));
+    }
 
-        return InteractionResultHolder.consume(player.getItemInHand(Usehand));
+    private void castFireball(@NotNull Level level, Player player) {
+        Vec3 playerLook = player.getLookAngle();
+        Vec3 position = player.getEyePosition(1F).add(playerLook);
+        Vec3 motion = playerLook.multiply(ICEBALL_SPEED, ICEBALL_SPEED, ICEBALL_SPEED);
+        IceballEntity fireball = new IceballEntity(position, motion, level, player);
+        level.addFreshEntity(fireball);
+        player.getCooldowns().addCooldown(this, ICEBALL_COOLDOWN);
+        level.playSound(null, player, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1f, 1f);
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack itemStack)
-    {
+    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack itemStack) {
         return UseAnim.BOW;
     }
 
     @Override
-    public int getUseDuration(ItemStack itemStack)
-    {
+    public int getUseDuration(@NotNull ItemStack itemStack) {
         return 72000;
     }
 
     @Override
-    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int timeInUse) {
-        if (livingEntity instanceof Player) {
-            // per tick
-            float manacost = 0.025F;
-            Player player = (Player) livingEntity;
+    public void onUseTick(@NotNull Level level, @NotNull LivingEntity entity, @NotNull ItemStack stack, int timeInUse) {
+        if (!(entity instanceof Player player)) return;
+        if (MagicProvider.hasMagic(player, ICETHROWER_MANACOST)) {
+            MagicProvider.spendMagic(player, ICETHROWER_MANACOST);
+            castSnowthrower(level, player, timeInUse);
+        }
+    }
 
-            if (!MagicProvider.hasMagic(player, manacost)) {
-                // no effect in not enough mana and not in creative mod
-                return;
-            }
+    private static void castSnowthrower(@NotNull Level level, Player player, int timeInUse) {
+        Vec3 playerLook = player.getLookAngle();
+        Vec3 effectStart = player.getEyePosition(1F).add(playerLook);
+        Vec3 effectEnd = effectStart.add(playerLook.multiply(EFFECT_RANGE, EFFECT_RANGE, EFFECT_RANGE));
 
-            int particlesDensity = 2;
-            float particlesSpread = 0.3F;
-            float particlesSpeed = 1F;
-            float effectRange = 6F;
-            float damage = 1F;
+        addFirethrowerParticles(level, player.getRandom(), effectStart, playerLook);
 
-            Vec3 playerLookVec = player.getLookAngle();
-            Vec3 effectStart = player.getEyePosition(1F).add(playerLookVec);
-            Vec3 effectEnd = effectStart.add(playerLookVec.multiply(effectRange, effectRange, effectRange));
-            Vec3 particlesMotionVec = playerLookVec.multiply(particlesSpeed, particlesSpeed, particlesSpeed);
+        BlockHitResult blockHit = getBlockHit(level, effectStart, effectEnd);
 
-            for (int i = 0; i < particlesDensity; i++) {
-                double particleX = effectStart.x + (player.getRandom().nextFloat() * 2 - 1) * particlesSpread;
-                double particleY = effectStart.y + (player.getRandom().nextFloat() * 2 - 1) * particlesSpread;
-                double particleZ = effectStart.z + (player.getRandom().nextFloat() * 2 - 1) * particlesSpread;
-                double particleMotionX = particlesMotionVec.x + (player.getRandom().nextFloat() * 2 - 1) * particlesSpread / 5F;
-                double particleMotionY = particlesMotionVec.y + (player.getRandom().nextFloat() * 2 - 1) * particlesSpread / 5F;
-                double particleMotionZ = particlesMotionVec.z + (player.getRandom().nextFloat() * 2 - 1) * particlesSpread / 5F;
-                level.addParticle(ParticleTypes.SPIT, particleX, particleY, particleZ, particleMotionX, particleMotionY, particleMotionZ);
-            }
+        if (blockHit.getType() != EntityHitResult.Type.MISS && !level.isClientSide()) {
+            // if we hit block, area of effect ends at the hit location
+            effectEnd = blockHit.getLocation();
+            onBlockHit(level, player, blockHit, timeInUse);
+        }
 
-            BlockHitResult blockRayTraceResult = level.clip(new ClipContext(effectStart, effectEnd, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
+        EntityHitResult entityHit = getEntityHit(level, player, effectStart, effectEnd);
 
-            if (blockRayTraceResult.getType() != EntityHitResult.Type.MISS && !level.isClientSide())
-            {
-                // if we hit block, area of effect ends at the hit location
-                effectEnd = blockRayTraceResult.getLocation();
-                // blocks effect
-                // once between 5 - 15 Ticks at random
-                if (timeInUse % (5 + player.getRandom().nextInt(10)) == 0)
-                {
-                    BlockPos hitPos = blockRayTraceResult.getBlockPos();
+        // if we hit entity
+        if (entityHit != null) {
+            onEntityHit(player, entityHit);
+        }
 
-                    if (level.getFluidState(hitPos).is(FluidTags.WATER))
-                    {
-                        level.setBlock(hitPos, Blocks.ICE.defaultBlockState(), 3);
-                    }
-                    else if (level.getFluidState(hitPos).is(FluidTags.LAVA))
-                    {
-                        level.setBlock(hitPos, Blocks.OBSIDIAN.defaultBlockState(), 3);
-                        level.playSound(null, hitPos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
-                    }
-                    //This dosent seem to extinguish the Torch tower
-                    else if (level.getBlockState(hitPos).getBlock() instanceof TorchTowerTopLit)
-                    {
-                        level.setBlock(hitPos, BlockInit.TORCH_TOWER_TOP_UNLIT.get().defaultBlockState(), 3);
-                        level.playSound(null, hitPos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
-                    }
-                    else {
-                        BlockPos snowPos = hitPos.relative(blockRayTraceResult.getDirection());
-                        BlockState snowBlockState = Blocks.SNOW.defaultBlockState();
-                        //TODO fix .getmaterial, finish port
-                        /*if (snowBlockState.canSurvive(level, snowPos) && level.getBlockState(snowPos).getMaterial().isReplaceable()) {
-                            level.setBlock(snowPos, snowBlockState, 11);
-                        }*/
-                    }
-                }
-            }
+        // plays sound 4 times per second
+        if (timeInUse % 5 == 0) {
+            level.playSound(null, player.position().x, player.position().y, player.position().z, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1F, 1F);
+        }
+    }
+    //TODO, dosent work on water or lava
+    private static void onBlockHit(@NotNull Level level, Player player, BlockHitResult blockHit, int timeInUse) {
+        // once between 5 - 15 Ticks at random
+        if (timeInUse % (5 + player.getRandom().nextInt(11)) != 0) return;
+        BlockPos hitPos = blockHit.getBlockPos();
 
-            // we want to only attack living entities
-            Predicate<Entity> canHit = e -> e instanceof LivingEntity;
-            EntityHitResult entityRayTraceResult = ProjectileUtil.getEntityHitResult(level, player, effectStart, effectEnd, new AABB(effectStart, effectEnd).inflate(1.0D), canHit);
+        if (level.getFluidState(hitPos).is(FluidTags.WATER)) {
+            // replaces meltable blocks with air
+            System.out.print("water");
+            level.setBlock(hitPos, Blocks.ICE.defaultBlockState(), 3);
+        }
+        if (level.getFluidState(hitPos).is(FluidTags.LAVA)) {
+            // replaces meltable blocks with air
+            System.out.print("lava");
+            level.setBlock(hitPos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+            level.playSound(null, hitPos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
+        }
+        if (level.getBlockState(hitPos).getBlock() instanceof TorchTowerTopLit) {
+            level.setBlock(hitPos, BlockInit.TORCH_TOWER_TOP_UNLIT.get().defaultBlockState(), 3);
+            level.playSound(null, hitPos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
+        }
+        BlockPos snowPos = hitPos.relative(blockHit.getDirection());
 
-            // if we hit entity
-            if (entityRayTraceResult != null)
-            {
-                //TODO Causes crashes / cant port
-                /*DamageSource damageSource = DamageSource.playerAttack(player).setIsFire();
-                entityRayTraceResult.getEntity().hurt(damageSource, damage);
-                entityRayTraceResult.getEntity().setSecondsOnFire(secondsOnFire);*/
-            }
+        BlockState snowBlockState = Blocks.SNOW.defaultBlockState();
+        if (snowBlockState.canSurvive(level, snowPos) && !(level.getBlockState(hitPos).getBlock() instanceof TorchTowerTopLit)) {
+            level.setBlock(snowPos, snowBlockState, 11);
+            System.out.print("block");
+        }
+    }
 
-            MagicProvider.spendMagic(player, manacost);
+    private static void onEntityHit(Player player, EntityHitResult entityHit) {
+        DamageSource damageSource = player.damageSources().playerAttack(player);
+        entityHit.getEntity().hurt(damageSource, DAMAGE);
+        entityHit.getEntity().setSecondsOnFire(IGNITE_DURATION);
+    }
 
-            // plays sound 4 times per second
-            if (timeInUse % 5 == 0)
-            {
-                level.playSound(null, player.position().x, player.position().y, player.position().z, SoundEvents.SNOW_BREAK, SoundSource.PLAYERS, 1F, 1F);
-            }
+    @NotNull
+    private static BlockHitResult getBlockHit(@NotNull Level level, Vec3 start, Vec3 end) {
+        return level.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, null));
+    }
+
+    @Nullable
+    private static EntityHitResult getEntityHit(@NotNull Level level, Player player, Vec3 effectStart, Vec3 effectEnd) {
+        // we want to only attack living entities
+        Predicate<Entity> canHit = LivingEntity.class::isInstance;
+        AABB aoe = new AABB(effectStart, effectEnd).inflate(1f);
+        return ProjectileUtil.getEntityHitResult(level, player, effectStart, effectEnd, aoe, canHit);
+    }
+
+    private static void addFirethrowerParticles(@NotNull Level level, RandomSource random, Vec3 position, Vec3 movement) {
+        Vec3 particlesMotionVec = movement.multiply(PARTICLES_SPEED, PARTICLES_SPEED, PARTICLES_SPEED);
+
+        for (int i = 0; i < PARTICLES_DENSITY; i++) {
+            double x = position.x + (random.nextFloat() * 2 - 1) * PARTICLES_SPREAD;
+            double y = position.y + (random.nextFloat() * 2 - 1) * PARTICLES_SPREAD;
+            double z = position.z + (random.nextFloat() * 2 - 1) * PARTICLES_SPREAD;
+            double motionX = particlesMotionVec.x + (random.nextFloat() * 2 - 1) * PARTICLES_SPREAD / 5f;
+            double motionY = particlesMotionVec.y + (random.nextFloat() * 2 - 1) * PARTICLES_SPREAD / 5f;
+            double motionZ = particlesMotionVec.z + (random.nextFloat() * 2 - 1) * PARTICLES_SPREAD / 5f;
+            level.addParticle(ParticleTypes.SPIT, x, y, z, motionX, motionY, motionZ);
         }
     }
 }
