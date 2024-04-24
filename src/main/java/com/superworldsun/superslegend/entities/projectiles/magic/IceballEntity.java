@@ -41,7 +41,6 @@ public class IceballEntity extends AbstractHurtingProjectile
         setOwner(owner);
     }
 
-
     public IceballEntity(EntityType<IceballEntity> iceballEntityEntityType, Level level) {
         super(iceballEntityEntityType, level);
     }
@@ -100,16 +99,24 @@ public class IceballEntity extends AbstractHurtingProjectile
                         //TODO, This only changes blocks after it explodes, entity should explode when in contact with these fluids.
                         if (blockPosition().distSqr(pos) <= effectRadius * effectRadius)
                         {
-                            if (level().getFluidState(pos).is(FluidTags.WATER))
-                            {
-                                level().setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
+                            BlockPos[] directions = {
+                                    pos.north(), pos.south(), pos.east(), pos.west(), pos.above(), pos.below()
+                            };
+
+                            for (BlockPos adjacentPos : directions) {
+                                if (level().getBlockState(adjacentPos).isAir()) {
+                                    if (level().getFluidState(pos).is(FluidTags.WATER)) {
+                                        level().setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
+                                        break; // Stop after the first match to prevent multiple conversions
+                                    }
+                                    else if (level().getFluidState(pos).is(FluidTags.LAVA)) {
+                                        level().setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+                                        level().playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
+                                        break; // Stop after the first match to prevent multiple conversions
+                                    }
+                                }
                             }
-                            else if (level().getFluidState(pos).is(FluidTags.LAVA))
-                            {
-                                level().setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
-                                level().playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
-                            }
-                            else if (Blocks.SNOW.defaultBlockState().canSurvive(level(), pos.above()) && level().getBlockState(pos.above()).is(Blocks.AIR) && random.nextFloat() < snowChance)
+                            if (Blocks.SNOW.defaultBlockState().canSurvive(level(), pos.above()) && level().getBlockState(pos.above()).is(Blocks.AIR) && random.nextFloat() < snowChance)
                             {
                                 BlockState snowBlockState = Blocks.SNOW.defaultBlockState();
                                 level().setBlock(pos.above(), snowBlockState, 3);
@@ -119,7 +126,6 @@ public class IceballEntity extends AbstractHurtingProjectile
                 }
             }
         }
-
         // removes fireball from the world to prevent multiple explosions
         this.discard();
     }
@@ -133,8 +139,88 @@ public class IceballEntity extends AbstractHurtingProjectile
     @Override
     public void tick()
     {
-        if (age > maxAge)
+        if (age > maxAge || isInWater())
         {
+            if (isInFluidType()) {
+                if (!level().isClientSide)
+                {
+                    int particlesDensity = 40;
+                    // in ticks
+                    int slowDuration = 200;
+                    // 0 radius means no damage, only visual effects
+                    float explosionRadius = 0F;
+                    float particlesSpeed = 0.4F;
+                    float particlesSpread = 0.2F;
+                    float effectRadius = 3F;
+                    // 20% of blocks will be covered in snow
+                    float snowChance = 0.2F;
+                    float damage = 5F;
+                    level().explode(this, getX(), getY(), getZ(), explosionRadius, Level.ExplosionInteraction.NONE);
+
+                    for (int i = 0; i < particlesDensity; i++)
+                    {
+                        double particleX = getX() + (random.nextFloat() * 2 - 1) * particlesSpread;
+                        double particleY = getY() + (random.nextFloat() * 2 - 1) * particlesSpread;
+                        double particleZ = getZ() + (random.nextFloat() * 2 - 1) * particlesSpread;
+                        double particleMotionX = (random.nextFloat() * 2 - 1) * particlesSpeed;
+                        double particleMotionY = (random.nextFloat() * 2 - 1) * particlesSpeed;
+                        double particleMotionZ = (random.nextFloat() * 2 - 1) * particlesSpeed;
+                        ParticleOptions particle = ParticleTypes.SPIT;
+                        level().addParticle(particle, particleX, particleY, particleZ, particleMotionX, particleMotionY, particleMotionZ);
+                    }
+
+                    // we want to only attack living entities
+                    Predicate<Entity> canHit = e -> e instanceof LivingEntity;
+                    Predicate<Entity> isInRadius = e -> distanceTo(e) <= effectRadius;
+                    List<Entity> entitiesInRadius = level().getEntities(this, getBoundingBox().inflate(effectRadius), canHit.and(isInRadius));
+                    entitiesInRadius.forEach(entity ->
+                    {
+                        //TODO, fix this / port it
+                        //entity.hurt(DamageSource.playerAttack(getOwner()), damage);
+                        //((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, slowDuration));
+                    });
+
+                    // here we are searching for blocks in radius
+                    for (int x = (int) -effectRadius; x <= effectRadius; x++)
+                    {
+                        for (int y = (int) -effectRadius; y <= effectRadius; y++)
+                        {
+                            for (int z = (int) -effectRadius; z <= effectRadius; z++)
+                            {
+                                BlockPos pos = blockPosition().north(x).above(y).east(z);
+
+                                // if the block is in radius
+                                //TODO, This only changes blocks after it explodes, entity should explode when in contact with these fluids.
+                                if (blockPosition().distSqr(pos) <= effectRadius * effectRadius)
+                                {
+                                    BlockPos[] directions = {
+                                            pos.north(), pos.south(), pos.east(), pos.west(), pos.above(), pos.below()
+                                    };
+
+                                    for (BlockPos adjacentPos : directions) {
+                                        if (level().getBlockState(adjacentPos).isAir()) {
+                                            if (level().getFluidState(pos).is(FluidTags.WATER)) {
+                                                level().setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
+                                                break; // Stop after the first match to prevent multiple conversions
+                                            }
+                                            else if (level().getFluidState(pos).is(FluidTags.LAVA)) {
+                                                level().setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+                                                level().playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
+                                                break; // Stop after the first match to prevent multiple conversions
+                                            }
+                                        }
+                                    }
+                                    if (Blocks.SNOW.defaultBlockState().canSurvive(level(), pos.above()) && level().getBlockState(pos.above()).is(Blocks.AIR) && random.nextFloat() < snowChance)
+                                    {
+                                        BlockState snowBlockState = Blocks.SNOW.defaultBlockState();
+                                        level().setBlock(pos.above(), snowBlockState, 3);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             this.discard();
             return;
         }
