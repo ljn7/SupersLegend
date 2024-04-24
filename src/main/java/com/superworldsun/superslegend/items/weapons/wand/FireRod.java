@@ -26,10 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +48,6 @@ public class FireRod extends NonEnchantItem {
         super(properties);
     }
 
-    //TODO Fire should melt thin snow layers super easily with held right click
     //TODO Change the fire ball explosion sound
 
     @Override
@@ -65,8 +61,25 @@ public class FireRod extends NonEnchantItem {
             }
         } else {
             player.startUsingItem(hand);
+            // Check if the player is targeting a snow layer block
+            BlockHitResult hitResult = getPlayerBlockHitResult(level, player);
+            if (hitResult.getType() != HitResult.Type.MISS) {
+                BlockPos blockPos = hitResult.getBlockPos();
+                BlockState blockState = level.getBlockState(blockPos);
+                if (blockState.is(Blocks.SNOW)) {
+                    level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
+                    return InteractionResultHolder.success(player.getItemInHand(hand));
+                }
+            }
         }
         return InteractionResultHolder.consume(player.getItemInHand(hand));
+    }
+
+    private static BlockHitResult getPlayerBlockHitResult(Level level, Player player) {
+        Vec3 eyePosition = player.getEyePosition(1.0F);
+        Vec3 lookVector = player.getLookAngle();
+        Vec3 targetPosition = eyePosition.add(lookVector.scale(5.0)); // Adjust scale as needed for reach
+        return level.clip(new ClipContext(eyePosition, targetPosition, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
     }
 
     private void castFireball(@NotNull Level level, Player player) {
