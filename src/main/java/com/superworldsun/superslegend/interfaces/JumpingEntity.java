@@ -1,6 +1,6 @@
 package com.superworldsun.superslegend.interfaces;
 
-public interface IJumpingEntity
+public interface JumpingEntity
 {
     boolean isJumping();
 

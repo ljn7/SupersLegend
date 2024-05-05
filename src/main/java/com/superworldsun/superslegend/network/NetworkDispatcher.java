@@ -3,6 +3,7 @@ package com.superworldsun.superslegend.network;
 import java.util.Optional;
 
 import com.superworldsun.superslegend.SupersLegendMain;
+import com.superworldsun.superslegend.network.message.DoubleJumpMessage;
 import com.superworldsun.superslegend.network.message.MaskAbilityMessage;
 import com.superworldsun.superslegend.network.message.SyncMagicMessage;
 
@@ -28,6 +29,7 @@ public class NetworkDispatcher {
 		network_channel = NetworkRegistry.newSimpleChannel(CHANNEL_ID, () -> "1.0", s -> true, s -> true);
 		network_channel.registerMessage(1, SyncMagicMessage.class, SyncMagicMessage::encode, SyncMagicMessage::decode, SyncMagicMessage::receive, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		network_channel.registerMessage(2, MaskAbilityMessage.class, MaskAbilityMessage::encode, MaskAbilityMessage::decode, MaskAbilityMessage::receive, Optional.of(PLAY_TO_SERVER));
+		network_channel.registerMessage(8, DoubleJumpMessage.class, DoubleJumpMessage::encode, DoubleJumpMessage::decode, DoubleJumpMessage::receive, Optional.of(PLAY_TO_SERVER));
 		network_channel.registerMessage(17, ToggleCrawlingMessage.class, ToggleCrawlingMessage::encode, ToggleCrawlingMessage::decode, ToggleCrawlingMessage::receive, Optional.of(PLAY_TO_SERVER));
 	}
 }
