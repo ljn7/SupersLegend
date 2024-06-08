@@ -1,6 +1,9 @@
 {
   "values": [
     "superslegend:rusted_peg_block",
+    "superslegend:dark_ore_block",
+    "superslegend:deepslate_dark_ore_block",
+    "superslegend:block_of_dark_ore",
     "superslegend:master_ore_block",
     "superslegend:deepslate_master_ore_block"
   ]
