@@ -118,6 +118,10 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> MASTER_ORE_CHUNK = ITEMS.register("master_ore_chunk",
             () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> DARK_ORE = ITEMS.register("dark_ore",
+            () -> new Item(new Item.Properties()));
+//    public static final RegistryObject<Item> DARK_ORE_CHUNK = ITEMS.register("dark_ore_chunk",
+//            () -> new Item(new Item.Properties()));
 
     public static final RegistryObject<Item> HEART_PIECE = ITEMS.register("heart_piece",
             () -> new HeartPiece(new Item.Properties()));
@@ -181,6 +185,17 @@ public class ItemInit {
             () -> new BrokenGiantsKnife(ItemToolTiers.BROKEN_GIANTS_KNIFE, 2, -2.5f, new Item.Properties()));
     public static final RegistryObject<SwordItem> BIGGORONS_SWORD = ITEMS.register("biggorons_sword",
             () -> new BiggoronsSword(ItemToolTiers.BIGGORONS_SWORD, 2, -2.5f, new Item.Properties()));
+
+    public static final RegistryObject<SwordItem> DARK_SWORD = ITEMS.register("dark_sword",
+            () -> new DarkSword(ItemToolTiers.DARK_SWORD, 2, -2.4f, new Item.Properties()));
+    public static final RegistryObject<PickaxeItem> DARK_PICKAXE = ITEMS.register("dark_pickaxe",
+            () -> new DarkPickaxe(ItemToolTiers.DARK_PICKAXE, 2, -2.8f, new Item.Properties()));
+    public static final RegistryObject<AxeItem> DARK_AXE = ITEMS.register("dark_axe",
+            () -> new DarkAxe(ItemToolTiers.DARK_AXE, 2, -3.0f, new Item.Properties()));
+    public static final RegistryObject<ShovelItem> DARK_SHOVEL = ITEMS.register("dark_shovel",
+            () -> new DarkShovel(ItemToolTiers.DARK_SHOVEL, 2, -3.0f, new Item.Properties()));
+    public static final RegistryObject<HoeItem> DARK_HOE = ITEMS.register("dark_hoe",
+            () -> new DarkHoe(ItemToolTiers.DARK_HOE, 0, 0f, new Item.Properties()));
 
     public static final RegistryObject<SwordItem> GODDESS_SWORD = ITEMS.register("goddess_sword",
             () -> new ItemCustomSword(ItemToolTiers.GODDESS_SWORD, 2, -2.5f, new Item.Properties()));
@@ -298,10 +313,9 @@ public class ItemInit {
             () -> new Item(new Item.Properties().stacksTo(1)));
     //TODO, re implement rocs feather, currently dosent do anything
     public static final RegistryObject<Item> ROCS_FEATHER = ITEMS.register("rocs_feather",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new RocsFeather(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FISHING_ROD = ITEMS.register("fishing_rod",
             () -> new FishingRodItem(new Item.Properties().stacksTo(1)));
-    //TODO, BugNet doesn't work
     public static final RegistryObject<Item> BUG_NET = ITEMS.register("bug_net",
             () -> new BugNet(new Item.Properties().stacksTo(1)));
 
@@ -374,7 +388,6 @@ public class ItemInit {
             () -> new GreenPotionMix(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> BLUE_POTION_MIX = ITEMS.register("blue_potion_mix",
             () -> new BluePotionMix(new Item.Properties().stacksTo(1)));
-    //TODO, fix Red Potion
     public static final RegistryObject<Item> RED_POTION = ITEMS.register("red_potion",
             () -> new RedPotion(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> GREEN_POTION = ITEMS.register("green_potion",
@@ -517,6 +530,15 @@ public class ItemInit {
     public static final RegistryObject<Item> PEGASUS_BOOTS = ITEMS.register("pegasus_boots",
             () -> new PegasusBootsArmor(ArmorInit.PEGASUS_BOOTS, ArmorItem.Type.BOOTS, new Item.Properties()));
 
+    public static final RegistryObject<Item> DARK_HELMET = ITEMS.register("dark_helmet",
+            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> DARK_CHESTPLATE = ITEMS.register("dark_chestplate",
+            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> DARK_LEGGINGS = ITEMS.register("dark_leggings",
+            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> DARK_GREAVES = ITEMS.register("dark_greaves",
+            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.BOOTS, new Item.Properties()));
+
     public static final RegistryObject<Item> HEROS_NEW_CAP = ITEMS.register("heros_new_cap",
             () -> new ArmorItem(ArmorInit.HEROS_NEW, ArmorItem.Type.HELMET, new Item.Properties()));
     public static final RegistryObject<Item> HEROS_NEW_TUNIC = ITEMS.register("heros_new_tunic",
@@ -548,7 +570,7 @@ public class ItemInit {
             () -> new DarkArmor(ArmorInit.DARK, ArmorItem.Type.HELMET, new Item.Properties()));
     public static final RegistryObject<Item> DARK_TUNIC = ITEMS.register("dark_tunic",
             () -> new DarkArmor(ArmorInit.DARK, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
-    public static final RegistryObject<Item> DARK_LEGGINGS = ITEMS.register("dark_leggings",
+    public static final RegistryObject<Item> DARK_TROUSERS = ITEMS.register("dark_trousers",
             () -> new DarkArmor(ArmorInit.DARK, ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final RegistryObject<Item> DARK_BOOTS = ITEMS.register("dark_boots",
             () -> new DarkArmor(ArmorInit.DARK, ArmorItem.Type.BOOTS, new Item.Properties()));

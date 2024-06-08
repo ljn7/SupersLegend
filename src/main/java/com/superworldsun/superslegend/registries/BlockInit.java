@@ -99,6 +99,12 @@ public class BlockInit {
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(80).explosionResistance(400).sound(SoundType.STONE)));
     public static final RegistryObject<Block> DEEPSLATE_MASTER_ORE_BLOCK = registerBlock("deepslate_master_ore_block",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(100).explosionResistance(400).sound(SoundType.DEEPSLATE)));
+    public static final RegistryObject<Block> DARK_ORE_BLOCK = registerBlock("dark_ore_block",
+            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> DEEPSLATE_DARK_ORE_BLOCK = registerBlock("deepslate_dark_ore_block",
+            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> BLOCK_OF_DARK_ORE = registerBlock("block_of_dark_ore",
+            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.GLASS)));
 
     public static final RegistryObject<Block> CRACKED_BOMB_WALL = registerBlock("cracked_bomb_wall",
             () -> new Block(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(Integer.MAX_VALUE).explosionResistance(0).sound(SoundType.STONE)));
