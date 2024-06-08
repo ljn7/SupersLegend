@@ -1,5 +1,6 @@
 package com.superworldsun.superslegend.util;
 
+import com.superworldsun.superslegend.registries.ItemInit;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -13,6 +14,8 @@ public enum ItemToolTiers implements Tier {
     RAZOR_SWORD      (0, 100, -2F, 3F, 0, () -> { return Ingredient.EMPTY; }),
     GILDED_SWORD     (0, 0, -2F, 4F, 0, () -> { return Ingredient.EMPTY; }),
     GREAT_FAIRYS_SWORD(0, 0, -2F, 4F, 0, () -> { return Ingredient.EMPTY; }),
+
+    DARK_SWORD     (3, 1813, -2F, 4.5F, 25, () -> { return Ingredient.of(ItemInit.DARK_ORE.get()); }),
 
     GIANTS_KNIFE     (0, 8, -2F, 14F, 0, () -> { return Ingredient.EMPTY; }),
     BROKEN_GIANTS_KNIFE(0, 0, -2F, 3F, 0, () -> { return Ingredient.EMPTY; }),
@@ -31,7 +34,14 @@ public enum ItemToolTiers implements Tier {
 
     MASTER_SWORD     (0, 0, -2F, 5F, 0, () -> { return Ingredient.EMPTY; }),
     MASTER_SWORD_V2  (0, 0, -2F, 8F, 0, () -> { return Ingredient.EMPTY; }),
-    TRUE_MASTER_SWORD(0, 0, -2F, 11F, 0, () -> { return Ingredient.EMPTY; });
+    TRUE_MASTER_SWORD(0, 0, -2F, 11F, 0, () -> { return Ingredient.EMPTY; }),
+
+    //Tools
+
+    DARK_PICKAXE   (3, 1813, 1F, 2.5F, 25, () -> { return Ingredient.of(ItemInit.DARK_ORE.get()); }),
+    DARK_AXE     (3, 1813, 1F, 6.5F, 25, () -> { return Ingredient.of(ItemInit.DARK_ORE.get()); }),
+    DARK_SHOVEL     (3, 1813, 1F, 3F, 25, () -> { return Ingredient.of(ItemInit.DARK_ORE.get()); }),
+    DARK_HOE     (3, 1813, 1F, 0F, 25, () -> { return Ingredient.of(ItemInit.DARK_ORE.get()); });
 
     //Private values to store
     private final int harvestLevel;
