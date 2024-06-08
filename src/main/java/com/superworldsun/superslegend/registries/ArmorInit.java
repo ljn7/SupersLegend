@@ -10,6 +10,7 @@ public class ArmorInit {
 	public static final ArmorSet PURPLE = new PurpleArmorSet();
 	public static final ArmorSet MAGIC = new MagicArmorSet();
 	public static final ArmorSet HEROS_NEW = new HerosNewArmorSet();
+	public static final ArmorSet DARK_ORE = new DarkOreArmorSet();
 	public static final ArmorSet DARK = new DarkArmorSet();
 	public static final ArmorSet ZORAARMOR = new ZoraArmorArmorSet();
 	public static final ArmorSet FLAMEBREAKER = new FlameBreakerArmorSet();
