@@ -17,6 +17,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         blockWithItem(BlockInit.DEEPSLATE_MASTER_ORE_BLOCK);
+        blockWithItem(BlockInit.DARK_ORE_BLOCK);
+        blockWithItem(BlockInit.DEEPSLATE_DARK_ORE_BLOCK);
+        blockWithItem(BlockInit.BLOCK_OF_DARK_ORE);
 
         doorBlockWithRenderType(((DoorBlock) BlockInit.DUNGEON_DOOR.get()), modLoc("block/dungeon_door_bottom"), modLoc("block/dungeon_door_top"),"cutout");
         doorBlockWithRenderType(((DoorBlock) BlockInit.LOCKED_DUNGEON_DOOR.get()), modLoc("block/locked_dungeon_door_bottom"), modLoc("block/locked_dungeon_door_top"),"cutout");

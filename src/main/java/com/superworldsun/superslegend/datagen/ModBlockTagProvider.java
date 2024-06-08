@@ -99,8 +99,12 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
         this.tag(BlockTags.NEEDS_DIAMOND_TOOL)
                 .add(BlockInit.RUSTED_PEG_BLOCK.get())
+                .add(BlockInit.DARK_ORE_BLOCK.get())
+                .add(BlockInit.DEEPSLATE_DARK_ORE_BLOCK.get())
+                .add(BlockInit.BLOCK_OF_DARK_ORE.get())
                 .add(BlockInit.MASTER_ORE_BLOCK.get())
                 .add(BlockInit.DEEPSLATE_MASTER_ORE_BLOCK.get());
+
 
         this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(BlockInit.RUPEE_BLOCK.get())
@@ -120,6 +124,9 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .add(BlockInit.BLACK_PUSH_STONE.get())
                 .add(BlockInit.MASTER_ORE_BLOCK.get())
                 .add(BlockInit.DEEPSLATE_MASTER_ORE_BLOCK.get())
+                .add(BlockInit.DARK_ORE_BLOCK.get())
+                .add(BlockInit.DEEPSLATE_DARK_ORE_BLOCK.get())
+                .add(BlockInit.BLOCK_OF_DARK_ORE.get())
                 .add(BlockInit.BLUE_FLOOR_SWITCH.get())
                 .add(BlockInit.YELLOW_FLOOR_SWITCH.get())
                 .add(BlockInit.RED_FLOOR_SWITCH.get())
