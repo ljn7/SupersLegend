@@ -13,6 +13,7 @@ public class CreativeModTabsInit {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, SupersLegendMain.MOD_ID);
 
+    //TODO, make a new tab for weapons & tools
     public static final RegistryObject<CreativeModeTab> ITEMS_TAB = CREATIVE_MODE_TABS.register("items_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("creativetab.items_tab"))
@@ -53,6 +54,7 @@ public class CreativeModTabsInit {
                         pOutput.accept(ItemInit.ANCIENT_SPRING.get());
                         pOutput.accept(ItemInit.MASTER_ORE.get());
                         pOutput.accept(ItemInit.MASTER_ORE_CHUNK.get());
+                        pOutput.accept(ItemInit.DARK_ORE.get());
                         pOutput.accept(ItemInit.HEART_PIECE.get());
                         pOutput.accept(ItemInit.HEART_CONTAINER.get());
                         pOutput.accept(ItemInit.VOID_CONTAINER.get());
@@ -91,6 +93,13 @@ public class CreativeModTabsInit {
                         pOutput.accept(ItemInit.GIANTS_KNIFE.get());
                         pOutput.accept(ItemInit.BROKEN_GIANTS_KNIFE.get());
                         pOutput.accept(ItemInit.BIGGORONS_SWORD.get());
+
+                        pOutput.accept(ItemInit.DARK_SHOVEL.get());
+                        pOutput.accept(ItemInit.DARK_PICKAXE.get());
+                        pOutput.accept(ItemInit.DARK_AXE.get());
+                        pOutput.accept(ItemInit.DARK_HOE.get());
+                        pOutput.accept(ItemInit.DARK_SWORD.get());
+
                         pOutput.accept(ItemInit.GODDESS_SWORD.get());
                         pOutput.accept(ItemInit.GODDESS_LONGSWORD.get());
                         pOutput.accept(ItemInit.GODDESS_WHITE_SWORD.get());
@@ -255,6 +264,10 @@ public class CreativeModTabsInit {
                         pOutput.accept(ItemInit.PURPLE_TUNIC.get());
                         pOutput.accept(ItemInit.PURPLE_LEGGINGS.get());
                         pOutput.accept(ItemInit.PEGASUS_BOOTS.get());
+                        pOutput.accept(ItemInit.DARK_HELMET.get());
+                        pOutput.accept(ItemInit.DARK_CHESTPLATE.get());
+                        pOutput.accept(ItemInit.DARK_LEGGINGS.get());
+                        pOutput.accept(ItemInit.DARK_GREAVES.get());
                         pOutput.accept(ItemInit.HEROS_NEW_CAP.get());
                         pOutput.accept(ItemInit.HEROS_NEW_TUNIC.get());
                         pOutput.accept(ItemInit.HEROS_NEW_LEGGINGS.get());
@@ -265,7 +278,7 @@ public class CreativeModTabsInit {
                         pOutput.accept(ItemInit.MAGIC_ARMOR_BOOTS.get());
                         pOutput.accept(ItemInit.DARK_CAP.get());
                         pOutput.accept(ItemInit.DARK_TUNIC.get());
-                        pOutput.accept(ItemInit.DARK_LEGGINGS.get());
+                        pOutput.accept(ItemInit.DARK_TROUSERS.get());
                         pOutput.accept(ItemInit.DARK_BOOTS.get());
                         pOutput.accept(ItemInit.ZORA_ARMOR_CAP.get());
                         pOutput.accept(ItemInit.ZORA_ARMOR_TUNIC.get());
@@ -345,6 +358,7 @@ public class CreativeModTabsInit {
                         pOutput.accept(BlockInit.RED_RUPEE_BLOCK.get());
                         pOutput.accept(BlockInit.SILVER_RUPEE_BLOCK.get());
                         pOutput.accept(BlockInit.GOLD_RUPEE_BLOCK.get());
+                        pOutput.accept(BlockInit.GOLD_RUPEE_BLOCK.get());
                         pOutput.accept(BlockInit.SPIKES_BLOCK.get());
                         pOutput.accept(BlockInit.GOSSIP_STONE_BLOCK.get());
                         pOutput.accept(BlockInit.DUNGEON_DOOR.get());
@@ -372,6 +386,9 @@ public class CreativeModTabsInit {
                         pOutput.accept(BlockInit.TORCH_TOWER.get());
                         pOutput.accept(BlockInit.MASTER_ORE_BLOCK.get());
                         pOutput.accept(BlockInit.DEEPSLATE_MASTER_ORE_BLOCK.get());
+                        pOutput.accept(BlockInit.DARK_ORE_BLOCK.get());
+                        pOutput.accept(BlockInit.DEEPSLATE_DARK_ORE_BLOCK.get());
+                        pOutput.accept(BlockInit.BLOCK_OF_DARK_ORE.get());
                         pOutput.accept(BlockInit.BLUE_FLOOR_SWITCH.get());
                         pOutput.accept(BlockInit.YELLOW_FLOOR_SWITCH.get());
                         pOutput.accept(BlockInit.RED_FLOOR_SWITCH.get());
