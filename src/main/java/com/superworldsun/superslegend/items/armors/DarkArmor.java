@@ -42,7 +42,7 @@ public class DarkArmor extends NonEnchantArmor implements GeoItem {
         if (!level.isClientSide){
             boolean isHelmetOn = player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.DARK_CAP.get();
             boolean isChestplateOn = player.getItemBySlot(EquipmentSlot.CHEST).getItem() == ItemInit.DARK_TUNIC.get();
-            boolean isLeggingsOn = player.getItemBySlot(EquipmentSlot.LEGS).getItem() == ItemInit.DARK_LEGGINGS.get();
+            boolean isLeggingsOn = player.getItemBySlot(EquipmentSlot.LEGS).getItem() == ItemInit.DARK_TROUSERS.get();
             boolean isBootsOn = player.getItemBySlot(EquipmentSlot.FEET).getItem() == ItemInit.DARK_BOOTS.get();
             if(isHelmetOn&isChestplateOn&isLeggingsOn&isBootsOn && !level.isDay())
             {
