@@ -2,6 +2,7 @@ package com.superworldsun.superslegend.items.armors;
 
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.client.render.armor.GeoArmorRendererExtension;
+import com.superworldsun.superslegend.interfaces.JumpingEntity;
 import com.superworldsun.superslegend.items.customclass.NonEnchantArmor;
 import com.superworldsun.superslegend.registries.ItemInit;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -65,27 +66,30 @@ public class IronBootsArmor extends NonEnchantArmor implements GeoItem {
 
 		// Only if we have boots
 		if (event.player.getItemBySlot(EquipmentSlot.FEET).getItem() == ItemInit.IRON_BOOTS.get()) {
-			if (event.player.isInWater()) {
-				//IJumpingEntity jumpingPlayer = (IJumpingEntity) event.player;
-				//if (!jumpingPlayer.isJumping())
-				//TODO ,(event.player.isInWater()) is temporary fix untill IJumpingEntity is fixed, currently causing crash
-				if (event.player.isInWater()) {
+			if (event.player.isInWater())
+			{
+				JumpingEntity jumpingPlayer = (JumpingEntity) event.player;
+
+				if (!jumpingPlayer.isJumping())
+				{
 					Vec3 motion = event.player.getDeltaMovement();
 					event.player.setDeltaMovement(motion.x, -0.3, motion.z);
 				}
-
 				if (event.player.onGround()) {
 					// +100%
 					addOrReplaceModifier(event.player, ForgeMod.SWIM_SPEED.get(), IRON_BOOTS_MODIFIER_ID, 1.0F, AttributeModifier.Operation.MULTIPLY_TOTAL);
-				} else {
+				}
+				else {
 					removeModifier(event.player, ForgeMod.SWIM_SPEED.get(), IRON_BOOTS_MODIFIER_ID);
 				}
-			} else {
+			}
+			else {
 				// -30%
 				addOrReplaceModifier(event.player, Attributes.MOVEMENT_SPEED, IRON_BOOTS_MODIFIER_ID, -0.3F, AttributeModifier.Operation.MULTIPLY_TOTAL);
 				removeModifier(event.player, ForgeMod.SWIM_SPEED.get(), IRON_BOOTS_MODIFIER_ID);
 			}
-		} else {
+		}
+		else {
 			removeModifier(event.player, Attributes.MOVEMENT_SPEED, IRON_BOOTS_MODIFIER_ID);
 			removeModifier(event.player, ForgeMod.SWIM_SPEED.get(), IRON_BOOTS_MODIFIER_ID);
 		}
