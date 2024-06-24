@@ -1,8 +1,22 @@
 package com.superworldsun.superslegend.items.armors;
 
 import com.superworldsun.superslegend.SupersLegendMain;
+import com.superworldsun.superslegend.interfaces.IHoveringEntity;
 import com.superworldsun.superslegend.items.customclass.NonEnchantArmor;
+import com.superworldsun.superslegend.registries.ItemInit;
+import com.superworldsun.superslegend.registries.SoundInit;
+import com.superworldsun.superslegend.util.PlayerUtil;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = SupersLegendMain.MOD_ID)
@@ -27,7 +41,7 @@ public class HoverBootsArmor extends NonEnchantArmor
         return (M) MODELS_CACHE.get(armorSlot);
     }*/
 
-    /*@OnlyIn(Dist.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot armorSlot, String type)
     {
@@ -98,9 +112,10 @@ public class HoverBootsArmor extends NonEnchantArmor
                     }
 
                     // Prevent falling
-                    if (event.player.getY() < hoveringPlayer.getHoverHeight())
-                    {
-                        event.player.setBoundingBox(event.player.getBoundingBox().move(0, hoveringPlayer.getHoverHeight() - event.player.getY(), 0));
+                    double hoverHeight = hoveringPlayer.getHoverHeight();
+                    if (event.player.getY() < hoverHeight) {
+                        event.player.setBoundingBox(event.player.getBoundingBox().move(0, hoverHeight - event.player.getY(), 0));
+                        event.player.setPos(event.player.getX(), hoverHeight, event.player.getZ()); // Set player position to hoverHeight
                     }
                 }
             }
@@ -119,5 +134,5 @@ public class HoverBootsArmor extends NonEnchantArmor
             hoveringPlayer.setHoverHeight((int) Math.round(event.player.getY()));
             hoveringPlayer.setJumpedFromBlock(false);
         }
-    }*/
+    }
 }
