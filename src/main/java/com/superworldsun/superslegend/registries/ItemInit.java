@@ -5,6 +5,9 @@ import com.superworldsun.superslegend.items.armors.*;
 import com.superworldsun.superslegend.items.containers.LetterItem;
 import com.superworldsun.superslegend.items.curios.charms.GoldenScale;
 import com.superworldsun.superslegend.items.curios.charms.SilverScale;
+import com.superworldsun.superslegend.items.curios.hands.GoldenGauntlets;
+import com.superworldsun.superslegend.items.curios.hands.GoronBracelet;
+import com.superworldsun.superslegend.items.curios.hands.SilverGauntlets;
 import com.superworldsun.superslegend.items.curios.head.masks.*;
 import com.superworldsun.superslegend.items.curios.rings.*;
 import com.superworldsun.superslegend.items.customclass.BottledEntityItem;
@@ -457,7 +460,6 @@ public class ItemInit {
             () -> new ZoraMask(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MASK_KAMAROSMASK = ITEMS.register("mask_kamarosmask",
             () -> new KamarosMask(new Item.Properties().stacksTo(1)));
-    //TODO, Gibdo isnt finished
     public static final RegistryObject<Item> MASK_GIBDOMASK = ITEMS.register("mask_gibdomask",
             () -> new GibdoMask(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MASK_GAROSMASK = ITEMS.register("mask_garosmask",
@@ -664,12 +666,9 @@ public class ItemInit {
     //Hands (gloves, gauntlets, bracelets)
     //public static final RegistryObject<Item> POWER_BRACELETS = ITEMS.register("power_bracelets",
     //		() -> new Item(new Item.Properties().stacksTo(1).tab(SupersLegendMain.APPAREL)));
-    public static final RegistryObject<Item> GORONS_BRACELET = ITEMS.register("gorons_bracelet",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> SILVER_GAUNTLETS = ITEMS.register("silver_gauntlets",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> GOLDEN_GAUNTLETS = ITEMS.register("golden_gauntlets",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> GORONS_BRACELET = ITEMS.register("gorons_bracelet", GoronBracelet::new);
+    public static final RegistryObject<Item> SILVER_GAUNTLETS = ITEMS.register("silver_gauntlets", SilverGauntlets::new);
+    public static final RegistryObject<Item> GOLDEN_GAUNTLETS = ITEMS.register("golden_gauntlets", GoldenGauntlets::new);
 
     //CHARMS
     public static final RegistryObject<Item> SILVER_SCALE = ITEMS.register("silver_scale",
