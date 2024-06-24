@@ -1,6 +1,9 @@
 package com.superworldsun.superslegend.mixin;
 
+import com.google.common.util.concurrent.AtomicDouble;
+import com.superworldsun.superslegend.registries.ItemInit;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
@@ -148,32 +151,32 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IHoverin
         });
     }
 
-    /*@Override
+    @Override
     protected float getJumpPower() {
         float jumpPower = super.getJumpPower();
         AtomicDouble jumpPowerMultiplier = new AtomicDouble(1F);
 
-        getArmorSlots().forEach(stack -> {
-            if (stack.getItem() instanceof IEntityResizer) {
-                float itemJumpPowerMultiplier = ((IEntityResizer) stack.getItem()).getJumpPowerMultiplier();
-                jumpPowerMultiplier.set(itemJumpPowerMultiplier);
-            }
-        });
+//        getArmorSlots().forEach(stack -> {
+//            if (stack.getItem() instanceof IEntityResizer) {
+//                float itemJumpPowerMultiplier = ((IEntityResizer) stack.getItem()).getJumpPowerMultiplier();
+//                jumpPowerMultiplier.set(itemJumpPowerMultiplier);
+//            }
+//        });
 
-        CuriosApi.getCuriosHelper().getEquippedCurios((Player) getEntity()).ifPresent(curios -> {
-            for (int i = 0; i < curios.getSlots(); i++) {
-                ItemStack curioStack = curios.getStackInSlot(i);
-
-                if (!curioStack.isEmpty() && curioStack.getItem() instanceof IEntityResizer) {
-                    float itemJumpPowerMultiplier = ((IEntityResizer) curioStack.getItem()).getJumpPowerMultiplier();
-                    jumpPowerMultiplier.set(itemJumpPowerMultiplier);
-                }
-            }
-        });
+//        CuriosApi.getCuriosHelper().getEquippedCurios((Player) getEntity()).ifPresent(curios -> {
+//            for (int i = 0; i < curios.getSlots(); i++) {
+//                ItemStack curioStack = curios.getStackInSlot(i);
+//
+//                if (!curioStack.isEmpty() && curioStack.getItem() instanceof IEntityResizer) {
+//                    float itemJumpPowerMultiplier = ((IEntityResizer) curioStack.getItem()).getJumpPowerMultiplier();
+//                    jumpPowerMultiplier.set(itemJumpPowerMultiplier);
+//                }
+//            }
+//        });
 
         jumpPower *= jumpPowerMultiplier.get();
         return jumpPower;
-    }*/
+    }
 
     @Override
     public void doubleJump() {
@@ -210,7 +213,7 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IHoverin
     }
 
 //    @Override
-//    public AxisAlignedBB getBoundingBoxForCulling() {
+//    public AABB getBoundingBoxForCulling() {
 //        return getBoundingBoxForPose(getPose());
 //    }
 
@@ -266,10 +269,10 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IHoverin
         jumpedFromGround = state;
     }
 
-//    @Override
-//    public boolean isSwimming() {
-//        return canSwim() && !abilities.flying && !this.isSpectator() && super.isSwimming();
-//    }
+    @Override
+    public boolean isSwimming() {
+        return canSwim() && !abilities.flying && !this.isSpectator() && super.isSwimming();
+    }
 
     @Override
     public boolean isJumping() {
@@ -319,15 +322,15 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IHoverin
 //        refreshDimensions();
 //    }
 //
-//    private boolean canSwim() {
-//        boolean hasIronBoots = getItemBySlot(EquipmentSlotType.FEET).getItem() == ItemInit.IRON_BOOTS.get();
-//        boolean hasGoronMask = CuriosApi.getCuriosHelper().findEquippedCurio(ItemInit.MASK_GORONMASK.get(), (Player) (Object) this).isPresent();
-//
-//        if (hasIronBoots || hasGoronMask)
-//            return false;
-//
-//        return true;
-//    }
+    private boolean canSwim() {
+        boolean hasIronBoots = getItemBySlot(EquipmentSlot.FEET).getItem() == ItemInit.IRON_BOOTS.get();
+        boolean hasGoronMask = CuriosApi.getCuriosHelper().findEquippedCurio(ItemInit.MASK_GORONMASK.get(), (Player) (Object) this).isPresent();
+
+        if (hasIronBoots || hasGoronMask)
+            return false;
+
+        return true;
+    }
 //
 //    private void updateEyeHeight() {
 //        eyeHeight = getDimensions(getPose()).height * 0.85F;
