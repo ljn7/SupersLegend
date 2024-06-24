@@ -1,6 +1,7 @@
 package com.superworldsun.superslegend.datagen;
 
 import com.superworldsun.superslegend.SupersLegendMain;
+import com.superworldsun.superslegend.registries.BlockInit;
 import com.superworldsun.superslegend.registries.ItemInit;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +25,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         AxeItem(ItemInit.DARK_AXE);
         ShovelItem(ItemInit.DARK_SHOVEL);
         HoeItem(ItemInit.DARK_HOE);
-        //simpleBlockItem(BlockInit.DUNGEON_DOOR);
+        simpleBlockItem(BlockInit.DUNGEON_DOOR);
     }
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {
