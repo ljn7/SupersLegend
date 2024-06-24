@@ -6,6 +6,6 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = SupersLegendMain.MOD_ID)
 public class GoronBracelet extends StrengthHandItem {
 	public GoronBracelet() {
-		super(new Properties(), 1);
+		super(new Properties().stacksTo(1), 1);
 	}
 }

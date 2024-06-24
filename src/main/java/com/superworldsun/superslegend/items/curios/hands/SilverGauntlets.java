@@ -6,6 +6,6 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = SupersLegendMain.MOD_ID)
 public class SilverGauntlets extends StrengthHandItem {
 	public SilverGauntlets() {
-		super(new Properties(), 2);
+		super(new Properties().stacksTo(1), 2);
 	}
 }
