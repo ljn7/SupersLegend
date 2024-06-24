@@ -1,9 +1,15 @@
 package com.superworldsun.superslegend.blocks;
 
+import com.superworldsun.superslegend.entities.projectiles.magic.MasterSwordBeamEntity;
+import com.superworldsun.superslegend.registries.BlockInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,15 +56,14 @@ public class FaroresSacredPedestal extends Block {
         builder.add(FACING);
     }
 
-    //TODO, ADD BACK IN WHEN MASTER SWORD BEAM IS RE ADDED
-    /*@Override
+    @Override
     public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
-        if(entity instanceof MasterSwordSwordEntity && world.isEmptyBlock(pos.above()))
+        if(entity instanceof MasterSwordBeamEntity && world.isEmptyBlock(pos.above()))
         {
             world.setBlockAndUpdate(pos.above(), BlockInit.FARORES_FLAME.get().defaultBlockState());
             BlockPos currentPos = entity.blockPosition();
             world.playSound(null, currentPos.getX(), currentPos.getY(), currentPos.getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1f, 1f);
         }
-    }*/
+    }
 
 }
