@@ -533,13 +533,13 @@ public class ItemInit {
             () -> new PegasusBootsArmor(ArmorInit.PEGASUS_BOOTS, ArmorItem.Type.BOOTS, new Item.Properties()));
 
     public static final RegistryObject<Item> DARK_HELMET = ITEMS.register("dark_helmet",
-            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.HELMET, new Item.Properties()));
+            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.HELMET, new Item.Properties().durability(385)));
     public static final RegistryObject<Item> DARK_CHESTPLATE = ITEMS.register("dark_chestplate",
-            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(385)));
     public static final RegistryObject<Item> DARK_LEGGINGS = ITEMS.register("dark_leggings",
-            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.LEGGINGS, new Item.Properties().durability(385)));
     public static final RegistryObject<Item> DARK_GREAVES = ITEMS.register("dark_greaves",
-            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.BOOTS, new Item.Properties()));
+            () -> new DarkOreArmor(ArmorInit.DARK_ORE, ArmorItem.Type.BOOTS, new Item.Properties().durability(385)));
 
     public static final RegistryObject<Item> HEROS_NEW_CAP = ITEMS.register("heros_new_cap",
             () -> new ArmorItem(ArmorInit.HEROS_NEW, ArmorItem.Type.HELMET, new Item.Properties()));

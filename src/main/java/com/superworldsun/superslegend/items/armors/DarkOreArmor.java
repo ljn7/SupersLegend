@@ -1,10 +1,8 @@
 package com.superworldsun.superslegend.items.armors;
 
 import com.superworldsun.superslegend.items.customclass.NonEnchantArmor;
-import com.superworldsun.superslegend.registries.ItemInit;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
+
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
@@ -37,16 +35,27 @@ public class DarkOreArmor extends NonEnchantArmor implements GeoItem {
     }
 
     @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
+        Player player = (Player) entity;
+        if (player.tickCount % 20 == 0) { // Check if 20 ticks have passed
+            if (level.isDay()) {
+                if (entity instanceof Player && player.getMainHandItem().equals(stack) || player.getOffhandItem().equals(stack)) {
+                    if (level.canSeeSky(player.blockPosition())) {
+                        stack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(player.getUsedItemHand()));
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void onArmorTick(ItemStack stack, Level level, Player player) {
-        super.onArmorTick(stack, level, player);
-        if (!level.isClientSide){
-            boolean isHelmetOn = player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.DARK_HELMET.get();
-            boolean isChestplateOn = player.getItemBySlot(EquipmentSlot.CHEST).getItem() == ItemInit.DARK_CHESTPLATE.get();
-            boolean isLeggingsOn = player.getItemBySlot(EquipmentSlot.LEGS).getItem() == ItemInit.DARK_LEGGINGS.get();
-            boolean isBootsOn = player.getItemBySlot(EquipmentSlot.FEET).getItem() == ItemInit.DARK_GREAVES.get();
-            if(isHelmetOn&isChestplateOn&isLeggingsOn&isBootsOn && !level.isDay())
-            {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 4, 1, false, false, false));
+        if (player.tickCount % 20 == 0) { // Check if 20 ticks have passed
+            if (level.isDay()) {
+                    if (level.canSeeSky(player.blockPosition())) {
+                        stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(getEquipmentSlot()));
+                    }
             }
         }
     }
