@@ -62,7 +62,10 @@ public class StrengthHandItem extends HandsItem {
 				BlockPos currentPos = player.blockPosition();
 				player.level().playSound(null, currentPos.getX(), currentPos.getY(), currentPos.getZ(), SoundInit.PICKUP.get(), SoundSource.PLAYERS, 1f, 1f);
 			}
-		} else if (!player.getPassengers().isEmpty() && !player.isCrouching()) {
+		}
+		//TODO Right now it only checks if the player right clicks the rider directly to drop them,
+		// under edge cases sometimes the mob cant be right clicks, usually due to size of mob. Change so player just has to right click
+		else if (!player.getPassengers().isEmpty() && !player.isCrouching()) {
 			LivingEntity rider = (LivingEntity) target;
 			rider.stopRiding();
 		}
