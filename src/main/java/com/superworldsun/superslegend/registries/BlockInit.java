@@ -117,9 +117,8 @@ public class BlockInit {
     public static final RegistryObject<Block> RED_FLOOR_SWITCH = registerBlock("red_floor_switch",
             () -> new RedFloorSwitch(RedFloorSwitch.SensitivityMod.PLAYER, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresCorrectToolForDrops().strength(3.5F).pushReaction(PushReaction.DESTROY), BlockSetType.IRON));
-    //TODO, have way to remove the RedFloorSwitch.SensitivityMod.PLAYER part for Rusted Floor switch, shouldnt be needed
     public static final RegistryObject<Block> RUSTED_FLOOR_SWITCH = registerBlock("rusted_floor_switch",
-            () -> new RustedFloorSwitch(RedFloorSwitch.SensitivityMod.PLAYER, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM)
+            () -> new RustedFloorSwitch(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresCorrectToolForDrops().strength(3.5F).pushReaction(PushReaction.DESTROY).sound(SoundType.COPPER), BlockSetType.IRON));
 
     public static final RegistryObject<Block> OAK_PEG_BLOCK = registerBlock("oak_peg_block",
