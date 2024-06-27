@@ -1,5 +1,6 @@
 package com.superworldsun.superslegend.client.init;
 
+import com.superworldsun.superslegend.capability.magic.MagicProvider;
 import com.superworldsun.superslegend.registries.ItemInit;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
@@ -14,6 +15,7 @@ public class ItemModelPropertiesInit {
         makeBow(ItemInit.LYNEL_BOW_X3.get());
         makeBow(ItemInit.LYNEL_BOW_X5.get());
 
+        NoMagic(ItemInit.DEKU_LEAF.get());
         makeUse(ItemInit.LENS_OF_TRUTH.get());
 
         makeShield(ItemInit.DEKU_SHIELD.get());
@@ -47,6 +49,17 @@ public class ItemModelPropertiesInit {
     private static void makeShield(Item item) {
         ItemProperties.register(item, new ResourceLocation("blocking"), (p_174575_, p_174576_, p_174577_, p_174578_) -> {
             return p_174577_ != null && p_174577_.isUsingItem() && p_174577_.getUseItem() == p_174575_ ? 1.0F : 0.0F;
+        });
+    }
+
+    private static void NoMagic(Item item) {
+        ItemProperties.register(item, new ResourceLocation("no_magic"), (itemStack, clientWorld, livingEntity, seed) -> {
+            if (!(livingEntity instanceof Player)) {
+                return 0.0F;
+            }
+
+            Player player = (Player) livingEntity;
+            return !MagicProvider.hasMagic(player, 0.1F) ? 1.0F : 0.0F;
         });
     }
 

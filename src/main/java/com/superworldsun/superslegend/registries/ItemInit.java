@@ -372,7 +372,7 @@ public class ItemInit {
     public static final RegistryObject<Item> NAYRUS_LOVE = ITEMS.register("nayrus_love",
             () -> new NayrusLove(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DEKU_LEAF = ITEMS.register("deku_leaf",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new DekuLeaf(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LENS_OF_TRUTH = ITEMS.register("lens_of_truth",
             () -> new LensOfTruth(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FAIRY_OCARINA = ITEMS.register("fairy_ocarina",
