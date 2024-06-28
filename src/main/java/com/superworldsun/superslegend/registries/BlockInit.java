@@ -184,7 +184,7 @@ public class BlockInit {
             () -> new NayrusSacredPedestal(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().lightLevel((state) -> 11).destroyTime(30).explosionResistance(30).sound(SoundType.METAL)));
 
     public static final RegistryObject<Block> PEDESTAL = registerBlock("pedestal",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2.2F).explosionResistance(2.2F).sound(SoundType.STONE)));
+            () -> new PedestalBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2.2F).explosionResistance(2.2F).sound(SoundType.STONE)));
     public static final RegistryObject<Block> FAN = registerBlock("fan",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(7).explosionResistance(10).sound(SoundType.STONE)));
     public static final RegistryObject<Block> SWITCHABLE_FAN = registerBlock("switchable_fan",
