@@ -41,6 +41,7 @@ public class SupersLegendMain
         EffectInit.register(modEventBus);
         SoundInit.register(modEventBus);
         EntityTypeInit.register(modEventBus);
+        BlockEntityInit.register(modEventBus);
         BiomeModifiers.register(modEventBus);
         MenuTypeInit.register(modEventBus);
 
@@ -58,9 +59,9 @@ public class SupersLegendMain
 
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(ItemInit.RUPEE);
-        }
+//        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+//            event.accept(ItemInit.RUPEE);
+//        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
