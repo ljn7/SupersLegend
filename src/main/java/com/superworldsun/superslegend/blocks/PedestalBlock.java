@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class PedestalBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    protected static final VoxelShape SHAPE = Block.box(2, 0, 5, 14, 4, 11);
+    protected static final VoxelShape SHAPE_NORTH = Block.box(2, 0, 5, 14, 4, 11);
+    protected static final VoxelShape SHAPE_EAST = Block.box(5, 0, 2, 11, 4, 14);
+    protected static final VoxelShape SHAPE_SOUTH = Block.box(2, 0, 5, 14, 4, 11);
+    protected static final VoxelShape SHAPE_WEST = Block.box(5, 0, 2, 11, 4, 14);
 
     public PedestalBlock(Properties properties) {
         super(properties);
@@ -36,22 +38,12 @@ public class PedestalBlock extends Block implements EntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
-        return rotateShape(state.getValue(FACING), SHAPE);
-    }
-
-    //TODO North facing direction is sideways for collision box
-    private VoxelShape rotateShape(Direction direction, VoxelShape shape) {
-        VoxelShape[] buffer = new VoxelShape[]{shape, Shapes.empty()};
-
-        int times = (direction.get2DDataValue() - Direction.NORTH.get2DDataValue() + 4) % 4;
-        for (int i = 0; i < times; i++) {
-            shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
-                buffer[1] = Shapes.or(buffer[1], Shapes.box(1 - maxZ, minY, minX, 1 - minZ, maxY, maxX));
-            });
-            buffer[0] = buffer[1];
-            buffer[1] = Shapes.empty();
-        }
-        return buffer[0];
+        return switch (state.getValue(FACING)) {
+            case EAST -> SHAPE_EAST;
+            case SOUTH -> SHAPE_SOUTH;
+            case WEST -> SHAPE_WEST;
+            default -> SHAPE_NORTH;
+        };
     }
 
     @Override
