@@ -13,21 +13,22 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-public class PostblockMenu extends AbstractContainerMenu {
+public class PostboxMenu extends AbstractContainerMenu {
         private final PostboxBlockEntity blockEntity;
         private final ContainerLevelAccess levelAccess;
 
         // Client Constructor
-        public PostblockMenu(int containerId, Inventory playerInv, FriendlyByteBuf additionalData) {
+        public PostboxMenu(int containerId, Inventory playerInv, FriendlyByteBuf additionalData) {
             this(containerId, playerInv, playerInv.player.level().getBlockEntity(additionalData.readBlockPos()));
         }
 
         // Server Constructor
-        public PostblockMenu(int containerId, Inventory playerInv, BlockEntity blockEntity) {
-            super(MenuTypeInit.POSTBOX_BLOCK.get(), containerId);
+        public PostboxMenu(int containerId, Inventory playerInv, BlockEntity blockEntity) {
+            super(MenuTypeInit.POSTBOX_MENU.get(), containerId);
             if(blockEntity instanceof PostboxBlockEntity be) {
                 this.blockEntity = be;
             } else {
@@ -39,21 +40,21 @@ public class PostblockMenu extends AbstractContainerMenu {
 
             createPlayerHotbar(playerInv);
             createPlayerInventory(playerInv);
-//            createBlockEntityInventory(be);
+            createBlockEntityInventory(be);
         }
 
-//        private void createBlockEntityInventory(PostboxBlockEntity be) {
-//            be.getOptional().ifPresent(inventory -> {
-//                for (int row = 0; row < 3; row++) {
-//                    for (int column = 0; column < 9; column++) {
-//                        addSlot(new SlotItemHandler(inventory,
-//                                column + (row * 9),
-//                                8 + (column * 18),
-//                                18 + (row * 18)));
-//                    }
-//                }
-//            });
-//        }
+        private void createBlockEntityInventory(PostboxBlockEntity be) {
+            be.getOptional().ifPresent(inventory -> {
+                for (int row = 0; row < 3; row++) {
+                    for (int column = 0; column < 9; column++) {
+                        addSlot(new SlotItemHandler((IItemHandler) inventory,
+                                column + (row * 9),
+                                8 + (column * 18),
+                                18 + (row * 18)));
+                    }
+                }
+            });
+        }
 
         private void createPlayerInventory(Inventory playerInv) {
             for (int row = 0; row < 3; row++) {

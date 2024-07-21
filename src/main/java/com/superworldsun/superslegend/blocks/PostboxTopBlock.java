@@ -62,9 +62,9 @@ public class PostboxTopBlock extends Block {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (!world.isClientSide) {
-			getBlockEntity(world, pos).ifPresent(postbox -> postbox.interact((ServerPlayer) player, hand));
+	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		if (!level.isClientSide) {
+			getBlockEntity(level, pos).ifPresent(postbox -> postbox.interact((ServerPlayer) player, hand, level, pos));
 		}
 		return InteractionResult.SUCCESS;
 	}

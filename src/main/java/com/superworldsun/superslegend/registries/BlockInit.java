@@ -6,6 +6,7 @@ import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -34,13 +35,14 @@ public class BlockInit {
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.GLASS)));
     public static final RegistryObject<Block> GOLD_RUPEE_BLOCK = registerBlock("gold_rupee_block",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.GLASS)));
+    public static final RegistryObject<PostboxBlock> POSTBOX_BLOCK = registerBlock("postbox_block",
+            () -> new PostboxBlock(BlockBehaviour.Properties.of().destroyTime(2).explosionResistance(2).sound(SoundType.WOOD)));
     public static final RegistryObject<Block> SPIKES_BLOCK = registerBlock("spikes_block",
             () -> new SpikesBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(13).explosionResistance(13).sound(SoundType.METAL)));
     public static final RegistryObject<Block> GOSSIP_STONE_BLOCK = registerBlock("gossip_stone_block",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(11).explosionResistance(11).sound(SoundType.STONE)));
     public static final RegistryObject<Block> GOSSIP_STONE_TOP = registerBlock("gossip_stone_top",
             () -> new Block(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(11).explosionResistance(11).sound(SoundType.STONE)));
-
     public static final RegistryObject<Block> DUNGEON_DOOR = registerBlock("dungeon_door",
             () -> new DoorBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BlockSetType.IRON));
     public static final RegistryObject<Block> LOCKED_DUNGEON_DOOR = registerBlock("locked_dungeon_door",
@@ -68,8 +70,6 @@ public class BlockInit {
             () -> new Block(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(0.1f).noOcclusion().explosionResistance(0.1f).sound(SoundType.GLASS)));
     public static final RegistryObject<Block> JAR_BLOCK = registerBlock("jar_block",
             () -> new Block(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(0.5f).explosionResistance(0.5f).sound(SoundType.GLASS)));
-    public static final RegistryObject<Block> POSTBOX_BLOCK = registerBlock("postbox_block",
-            () -> new PostboxBlock(BlockBehaviour.Properties.of().destroyTime(2).explosionResistance(2).sound(SoundType.WOOD)));
     public static final RegistryObject<Block> POSTBOX_TOP = registerBlock("postbox_top",
             () -> new PostboxTopBlock(BlockBehaviour.Properties.of().noLootTable().destroyTime(2).explosionResistance(2).sound(SoundType.WOOD)));
     public static final RegistryObject<Block> GRATE_BLOCK = registerBlock("grate_block",
