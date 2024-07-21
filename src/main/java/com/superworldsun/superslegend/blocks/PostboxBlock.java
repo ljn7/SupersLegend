@@ -131,18 +131,4 @@ public class PostboxBlock extends Block implements EntityBlock {
 	private static VoxelShape createPostboxShape() {
 		return Shapes.or(Block.box(6, 0, 6, 10, 6, 10), Block.box(1, 6, 1, 15, 22, 15), Block.box(-1, 22, -1, 17, 23, 17));
 	}
-
-//	private boolean isWearingCaptainHat(Player player) {
-//		PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), "isWearingCaptianHat");
-//
-//		player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(chatMessage), false, ChatType.bind(ChatType.CHAT, player));
-//		ItemStack helmet = player.getInventory().getArmor(3);
-//		boolean isWearing = helmet != null && helmet.getItem() == ForgeRegistries.ITEMS.getValue(new ResourceLocation("superslegend", "mask_captainshat"));
-//
-//		chatMessage = PlayerChatMessage.unsigned(player.getUUID(), String.valueOf(isWearing));
-//
-//		player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(chatMessage), false, ChatType.bind(ChatType.CHAT, player));
-//		return isWearing;
-//	}
-
 }

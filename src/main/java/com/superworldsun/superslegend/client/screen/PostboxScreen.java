@@ -18,7 +18,7 @@ public class PostboxScreen extends AbstractContainerScreen<PostboxMenu> {
         super(pMenu, pPlayerInventory, pTitle);
 
         this.imageWidth = 176;
-        this.imageHeight = 166;
+        this.imageHeight = 168;
     }
 
     @Override
