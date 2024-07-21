@@ -18,32 +18,25 @@ import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class PostboxMenu extends AbstractContainerMenu {
-        private final PostboxBlockEntity blockEntity;
+//        private final PostboxBlockEntity = NULL;
         private final ContainerLevelAccess levelAccess;
 
         // Client Constructor
-        public PostboxMenu(int containerId, Inventory playerInv, FriendlyByteBuf additionalData) {
-            this(containerId, playerInv, playerInv.player.level().getBlockEntity(additionalData.readBlockPos()));
+        public PostboxMenu(int containerId, Inventory playerInv) {
+            this(containerId, playerInv, ContainerLevelAccess.NULL);
         }
 
         // Server Constructor
-        public PostboxMenu(int containerId, Inventory playerInv, BlockEntity blockEntity) {
+        public PostboxMenu(int containerId, Inventory playerInv, ContainerLevelAccess access) {
             super(MenuTypeInit.POSTBOX_MENU.get(), containerId);
-            if(blockEntity instanceof PostboxBlockEntity be) {
-                this.blockEntity = be;
-            } else {
-                throw new IllegalStateException("Incorrect block entity class (%s) passed into ExampleMenu!"
-                        .formatted(blockEntity.getClass().getCanonicalName()));
-            }
-
-            this.levelAccess = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
+            this.levelAccess = access;
 
             createPlayerHotbar(playerInv);
             createPlayerInventory(playerInv);
-            createBlockEntityInventory(be);
+//            createBlockEntityInventory(be);
         }
 
-        private void createBlockEntityInventory(PostboxBlockEntity be) {
+    private void createBlockEntityInventory(PostboxBlockEntity be) {
             be.getOptional().ifPresent(inventory -> {
                 for (int row = 0; row < 3; row++) {
                     for (int column = 0; column < 9; column++) {
@@ -114,8 +107,8 @@ public class PostboxMenu extends AbstractContainerMenu {
             return stillValid(this.levelAccess, pPlayer, BlockInit.POSTBOX_BLOCK.get());
         }
 
-        public PostboxBlockEntity getBlockEntity() {
-            return this.blockEntity;
-        }
+//        public PostboxBlockEntity getBlockEntity() {
+//            return this.blockEntity;
+//        }
     }
 

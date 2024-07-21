@@ -116,7 +116,7 @@ public class PostboxBlock extends Block implements EntityBlock {
 		}
 
 		if (player instanceof ServerPlayer sPlayer) {
-			getBlockEntity(level, pos).ifPresent(postbox -> postbox.interact(sPlayer, hand, level, pos));
+			getBlockEntity(level, pos).ifPresent(postbox -> postbox.interact(sPlayer, hand, state, level, pos));
 		}
 
 		return InteractionResult.CONSUME;

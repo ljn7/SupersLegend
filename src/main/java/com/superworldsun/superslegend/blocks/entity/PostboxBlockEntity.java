@@ -2,6 +2,7 @@ package com.superworldsun.superslegend.blocks.entity;
 
 import com.superworldsun.superslegend.container.PostboxContainer;
 import com.superworldsun.superslegend.inventory.PostboxInventory;
+import com.superworldsun.superslegend.menus.PostboxMenu;
 import com.superworldsun.superslegend.registries.BlockEntityInit;
 import com.superworldsun.superslegend.registries.BlockInit;
 import com.superworldsun.superslegend.registries.ItemInit;
@@ -47,15 +48,17 @@ public class PostboxBlockEntity extends BlockEntity implements MenuProvider {
 		Containers.dropContents(level, getBlockPos(), inventory);
 	}
 
-	public void interact(ServerPlayer player, InteractionHand hand, Level level, BlockPos pos) {
+	public void interact(ServerPlayer player, InteractionHand hand, BlockState state, Level level, BlockPos pos) {
 		if (player.isCrouching()) {
 			if (isPlayerPostman(player)) {
 				toggleLockedState(player);
 			}
 		} else {
 			if (canBeOpenedByPlayer(player)) {
-
-				player.openMenu((MenuProvider) level.getBlockEntity(pos));
+				NetworkHooks.openScreen(player, new SimpleMenuProvider(
+						(containerId, playerInventory, pPlayer) -> new PostboxMenu(containerId, playerInventory),
+						Component.translatable("Postbox")
+				));
 				level.playSound(null, player, SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 1F, 1F);
 			} else {
 				ItemStack itemInHand = player.getItemInHand(hand);
