@@ -12,6 +12,7 @@ import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.OutgoingChatMessage;
 import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -123,11 +124,12 @@ public class PostboxBlockEntity extends BlockEntity implements MenuProvider {
 	}
 
 	private boolean canBeOpenedByPlayer(ServerPlayer player) {
-		return !isLocked || isLocked && isPlayerPostman(player);
+		return !isLocked || isPlayerPostman(player);
 	}
 
 	private boolean isPlayerPostman(ServerPlayer player) {
-		return CuriosApi.getCuriosHelper().findEquippedCurio(ItemInit.MASK_POSTMANSHAT.get(), player).isPresent();
+		ItemStack helmet = player.getInventory().getArmor(3);
+		return helmet != null && helmet.getItem() == ForgeRegistries.ITEMS.getValue(new ResourceLocation("superslegend", "mask_postmanshat"));
 	}
 
 	private void toggleLockedState(ServerPlayer player) {
@@ -136,8 +138,10 @@ public class PostboxBlockEntity extends BlockEntity implements MenuProvider {
 		} else {
 			level.playSound(null, player, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 1F, 1F);
 		}
-
 		isLocked ^= true;
+		String lockStatus = isLocked ? "locked" : "unlocked";
+		PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), "Postbox " + lockStatus);
+		player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(chatMessage), false, ChatType.bind(ChatType.CHAT, player));
 	}
 
 	@Nullable
