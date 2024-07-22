@@ -1,6 +1,7 @@
 package com.superworldsun.superslegend.client.screen;
 
 import com.superworldsun.superslegend.SupersLegendMain;
+import com.superworldsun.superslegend.menus.PostboxMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -31,3 +32,4 @@ public class SimpleContainerScreen<T extends AbstractContainerMenu> extends Abst
         renderTooltip(graphics, mouseX, mouseY);
     }
 }
+

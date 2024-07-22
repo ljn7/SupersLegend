@@ -1,13 +1,22 @@
 package com.superworldsun.superslegend.blocks;
 
 import com.superworldsun.superslegend.blocks.entity.PostboxBlockEntity;
+import com.superworldsun.superslegend.registries.BlockEntityInit;
 import com.superworldsun.superslegend.registries.BlockInit;
+import com.superworldsun.superslegend.registries.BlockInit;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.OutgoingChatMessage;
+import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -17,16 +26,19 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class PostboxBlock extends BaseEntityBlock {
+public class PostboxBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final VoxelShape SHAPE = createPostboxShape();
 
@@ -93,11 +105,21 @@ public class PostboxBlock extends BaseEntityBlock {
 //	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (!world.isClientSide) {
-			getBlockEntity(world, pos).ifPresent(postbox -> postbox.interact((ServerPlayer) player, hand));
+	public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+
+		BlockEntity be = level.getBlockEntity(pos);
+		if (!(be instanceof PostboxBlockEntity blockEntity))
+			return InteractionResult.PASS;
+
+		if (level.isClientSide) {
+			return InteractionResult.SUCCESS;
 		}
-		return InteractionResult.SUCCESS;
+
+		if (player instanceof ServerPlayer sPlayer) {
+			getBlockEntity(level, pos).ifPresent(postbox -> postbox.interact(sPlayer, hand, state, level, pos));
+		}
+
+		return InteractionResult.CONSUME;
 	}
 
 	@Nullable

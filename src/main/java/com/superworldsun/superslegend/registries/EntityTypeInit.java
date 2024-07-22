@@ -1,6 +1,7 @@
 package com.superworldsun.superslegend.registries;
 
 import com.superworldsun.superslegend.SupersLegendMain;
+import com.superworldsun.superslegend.blocks.entity.PostboxBlockEntity;
 import com.superworldsun.superslegend.entities.HeartEntity;
 import com.superworldsun.superslegend.entities.LargeMagicJarEntity;
 import com.superworldsun.superslegend.entities.MagicJarEntity;
@@ -15,6 +16,7 @@ import com.superworldsun.superslegend.entities.projectiles.magic.MasterSwordBeam
 import com.superworldsun.superslegend.entities.projectiles.seeds.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

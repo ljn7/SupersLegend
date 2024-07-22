@@ -43,7 +43,7 @@ public class SupersLegendMain
         EntityTypeInit.register(modEventBus);
         BlockEntityInit.register(modEventBus);
         BiomeModifiers.register(modEventBus);
-        MenuTypeInit.register(modEventBus);
+        MenuTypeInit.MENU_TYPES.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
