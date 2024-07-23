@@ -35,7 +35,7 @@ public class BlockInit {
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.GLASS)));
     public static final RegistryObject<Block> GOLD_RUPEE_BLOCK = registerBlock("gold_rupee_block",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.GLASS)));
-    public static final RegistryObject<PostboxBlock> POSTBOX_BLOCK = registerBlock("postbox_block",
+    public static final RegistryObject<Block> POSTBOX_BLOCK = registerBlock("postbox_block",
             () -> new PostboxBlock(BlockBehaviour.Properties.of().destroyTime(2).explosionResistance(2).sound(SoundType.WOOD)));
     public static final RegistryObject<Block> SPIKES_BLOCK = registerBlock("spikes_block",
             () -> new SpikesBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(13).explosionResistance(13).sound(SoundType.METAL)));
@@ -70,7 +70,7 @@ public class BlockInit {
             () -> new Block(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(0.1f).noOcclusion().explosionResistance(0.1f).sound(SoundType.GLASS)));
     public static final RegistryObject<Block> JAR_BLOCK = registerBlock("jar_block",
             () -> new Block(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(0.5f).explosionResistance(0.5f).sound(SoundType.GLASS)));
-    public static final RegistryObject<Block> POSTBOX_TOP = registerBlock("postbox_top",
+    public static final RegistryObject<Block> POSTBOX_TOP = BLOCKS.register("postbox_top",
             () -> new PostboxTopBlock(BlockBehaviour.Properties.of().noLootTable().destroyTime(2).explosionResistance(2).sound(SoundType.WOOD)));
     public static final RegistryObject<Block> GRATE_BLOCK = registerBlock("grate_block",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(6).explosionResistance(6).sound(SoundType.METAL)));

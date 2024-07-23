@@ -432,7 +432,7 @@ public class CreativeModTabsInit {
                     }))
                     .build());
 
-    public static void resiter(IEventBus eventBus)
+    public static void register(IEventBus eventBus)
     {
         CREATIVE_MODE_TABS.register(eventBus);
     }
