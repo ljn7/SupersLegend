@@ -21,6 +21,7 @@ public abstract class SimpleContainer extends AbstractContainerMenu {
 	protected final Inventory playerInventory;
 	protected final Container containerInventory;
 
+
 	public SimpleContainer(MenuType<? extends SimpleContainer> type, int windowId, Inventory playerInventory, Container containerInventory, int slotRows,
 						   int slotColumns) {
 		super(type, windowId);

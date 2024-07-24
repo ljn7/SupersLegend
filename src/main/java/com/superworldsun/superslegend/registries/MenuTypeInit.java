@@ -14,7 +14,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class MenuTypeInit {
     public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, SupersLegendMain.MOD_ID);
     public static final RegistryObject<MenuType<PostboxMenu>> POSTBOX_MENU = MENU_TYPES.register("postbox_menu",
-            () -> new MenuType(PostboxMenu::new, FeatureFlags.DEFAULT_FLAGS));
+            () -> IForgeMenuType.create(PostboxMenu::new));
     public static final RegistryObject<MenuType<LetterMenu>> LETTER = MENU_TYPES.register("letter",
             () -> IForgeMenuType.create(LetterMenu::new));
 

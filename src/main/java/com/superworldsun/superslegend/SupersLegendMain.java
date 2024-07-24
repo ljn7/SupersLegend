@@ -2,12 +2,8 @@ package com.superworldsun.superslegend;
 
 import com.mojang.logging.LogUtils;
 import com.superworldsun.superslegend.client.init.ItemModelPropertiesInit;
-import com.superworldsun.superslegend.client.render.entites.BombRenderer;
-import com.superworldsun.superslegend.client.render.entites.MasterSwordBeamRenderer;
 import com.superworldsun.superslegend.registries.*;
 import com.superworldsun.superslegend.world.biome.BiomeModifiers;
-import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -34,13 +30,13 @@ public class SupersLegendMain
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        CreativeModTabsInit.resiter(modEventBus);
+        CreativeModTabsInit.register(modEventBus);
 
         ItemInit.register(modEventBus);
         BlockInit.register(modEventBus);
         EffectInit.register(modEventBus);
-        SoundInit.register(modEventBus);
-        EntityTypeInit.register(modEventBus);
+        SoundInit.SOUNDS.register(modEventBus);
+        EntityTypeInit.ENTITY_TYPES.register(modEventBus);
         BlockEntityInit.register(modEventBus);
         BiomeModifiers.register(modEventBus);
         MenuTypeInit.MENU_TYPES.register(modEventBus);
