@@ -10,10 +10,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -22,10 +20,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class PostboxTopBlock extends Block {
+public class PostboxTopBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
 	public PostboxTopBlock(Properties properties) {
@@ -63,13 +62,25 @@ public class PostboxTopBlock extends Block {
 
 	@Override
 	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (!level.isClientSide) {
-			getBlockEntity(level, pos).ifPresent(postbox -> postbox.interact((ServerPlayer) player, hand, state, level, pos));
+
+		if (level.isClientSide) {
+			return InteractionResult.SUCCESS;
 		}
-		return InteractionResult.SUCCESS;
+
+		if (player instanceof ServerPlayer sPlayer) {
+			getBlockEntity(level, pos).ifPresent(postbox -> postbox.interact(sPlayer, hand, state, level, pos));
+		}
+
+		return InteractionResult.CONSUME;
 	}
 
 	private Optional<PostboxBlockEntity> getBlockEntity(Level world, BlockPos pos) {
 		return Optional.ofNullable(world.getBlockEntity(pos.below())).map(te -> (PostboxBlockEntity) te);
+	}
+
+	@Nullable
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
+		return new PostboxBlockEntity(pPos, pState);
 	}
 }
