@@ -68,28 +68,44 @@ public class PostboxMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(@NotNull Player player, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
+
+        Slot fromSlot = getSlot(index);
+        ItemStack fromStack = fromSlot.getItem();
+
+        if(fromStack.getCount() <= 0)
+            fromSlot.set(ItemStack.EMPTY);
+
+        if(!fromSlot.hasItem())
+            return ItemStack.EMPTY;
+
+        ItemStack copyFromStack = fromStack.copy();
+
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {
-            ItemStack itemstack1 = slot.getItem();
-            itemstack = itemstack1.copy();
-            if (index < 9) { // Assuming the first 9 slots are for PostboxInventory
-                if (!this.moveItemStackTo(itemstack1, 9, this.slots.size(), true)) {
+
+            if (index < 36) { // Assuming the first 9 slots are for PostboxInventory
+                if (!this.moveItemStackTo(fromStack, 36, this.slots.size(), false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (index < this.slots.size()){
+                if (!this.moveItemStackTo(fromStack, 0, 36, false)) {
                     return ItemStack.EMPTY;
                 }
             } else {
-                if (!this.moveItemStackTo(itemstack1, 0, 9, false)) {
-                    return ItemStack.EMPTY;
-                }
+                System.err.println("Invalid Index");
+                return ItemStack.EMPTY;
             }
 
-            if (itemstack1.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
+            fromSlot.setChanged();
+            fromSlot.onTake(player, fromStack);
+
+//            if (itemstack1.isEmpty()) {
+//                slot.set(ItemStack.EMPTY);
+//            } else {
+//                slot.setChanged();
+//            }
         }
-        return itemstack;
+        return copyFromStack;
     }
 
 }
