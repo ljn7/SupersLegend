@@ -4,11 +4,14 @@ import java.util.EnumSet;
 
 import com.superworldsun.superslegend.interfaces.TameableEntity;
 
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+
+import javax.annotation.Nullable;
 
 public class SkeletonOwnerHurtTargetGoal<T extends Monster & TameableEntity> extends TargetGoal
 {
@@ -16,7 +19,7 @@ public class SkeletonOwnerHurtTargetGoal<T extends Monster & TameableEntity> ext
 	private LivingEntity ownerLastHurt;
 	private int timestamp;
 
-	private final TargetingConditions targetConditions = TargetingConditions.forCombat().ignoreInvisibilityTesting();
+	private static final TargetingConditions HURT_BY_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
 
 	public SkeletonOwnerHurtTargetGoal(T skeleton)
 	{
@@ -39,7 +42,7 @@ public class SkeletonOwnerHurtTargetGoal<T extends Monster & TameableEntity> ext
 			{
 				this.ownerLastHurt = livingentity.getLastHurtMob();
 				int i = livingentity.getLastHurtMobTimestamp();
-				return i != this.timestamp && this.canAttack(this.ownerLastHurt, this.targetConditions);
+				return i != this.timestamp && this.canAttack(this.ownerLastHurt, HURT_BY_TARGETING);
 			}
 		}
 		else
@@ -57,7 +60,38 @@ public class SkeletonOwnerHurtTargetGoal<T extends Monster & TameableEntity> ext
 		{
 			this.timestamp = livingentity.getLastHurtMobTimestamp();
 		}
-
 		super.start();
+	}
+
+	@Override
+	protected boolean canAttack(@Nullable LivingEntity pPotentialTarget, TargetingConditions pTargetPredicate) {
+		if (pPotentialTarget == null) {
+			return false;
+		} else if (!this.test(this.mob, pPotentialTarget)) {
+			return false;
+		} else if (!this.mob.isWithinRestriction(pPotentialTarget.blockPosition())) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	private boolean test(@Nullable LivingEntity pAttacker, LivingEntity pTarget) {
+		if (pAttacker == pTarget) {
+			return false;
+		} else if (!pTarget.canBeSeenByAnyone()) {
+			return false;
+		} else {
+			if (pAttacker == null) {
+				if (!pTarget.canBeSeenAsEnemy() || pTarget.level().getDifficulty() == Difficulty.PEACEFUL) {
+					return false;
+				}
+			} else {
+				if (!pAttacker.canAttackType(pTarget.getType())) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 }
