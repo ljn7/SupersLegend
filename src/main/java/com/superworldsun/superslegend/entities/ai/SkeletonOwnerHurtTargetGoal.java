@@ -8,6 +8,8 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 
@@ -65,15 +67,27 @@ public class SkeletonOwnerHurtTargetGoal<T extends Monster & TameableEntity> ext
 
 	@Override
 	protected boolean canAttack(@Nullable LivingEntity pPotentialTarget, TargetingConditions pTargetPredicate) {
+		LivingEntity skeletonOwner = this.skeleton.getOwner().orElse(null);
 		if (pPotentialTarget == null) {
 			return false;
 		} else if (!this.test(this.mob, pPotentialTarget)) {
 			return false;
 		} else if (!this.mob.isWithinRestriction(pPotentialTarget.blockPosition())) {
 			return false;
-		} else {
-			return true;
+		} else if (skeletonOwner != null && pPotentialTarget instanceof Wolf wolf) {
+			LivingEntity wolfOwner = wolf.getOwner();
+			if (wolfOwner != null
+					&& wolfOwner.getUUID().equals(skeletonOwner.getUUID())) {
+				return false;
+			}
+		} else if (skeletonOwner != null && pPotentialTarget instanceof AbstractSkeleton abstractSkeleton) {
+			LivingEntity targetSkeletonOwner = ((TameableEntity) abstractSkeleton).getOwner().orElse(null);
+			if (targetSkeletonOwner != null
+				&& targetSkeletonOwner.getUUID().equals(skeletonOwner.getUUID())) {
+				return  false;
+			}
 		}
+		return true;
 	}
 
 	private boolean test(@Nullable LivingEntity pAttacker, LivingEntity pTarget) {
