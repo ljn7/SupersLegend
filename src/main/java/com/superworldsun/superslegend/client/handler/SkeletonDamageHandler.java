@@ -30,18 +30,17 @@ public class SkeletonDamageHandler {
                 }
 
                 // Prevent allied entities from damaging each other
-                if (target instanceof TameableEntity) {
-                    TameableEntity tameableTarget = (TameableEntity) target;
-
-                    if (tameableSkeleton.hasOwner() && tameableTarget.hasOwner()) {
-                        if (tameableSkeleton.getOwnerUniqueId().equals(tameableTarget.getOwnerUniqueId())) {
-                            event.setCanceled(true);
-                        }
-                    }
-                } else if (target instanceof Wolf) {
+                if (target instanceof Wolf) {
                     Wolf wolfTarget = (Wolf) target;
 
                     if (wolfTarget.isTame() &&  tameableSkeleton.getOwnerUniqueId().equals(wolfTarget.getOwnerUUID())) {
+                        event.setCanceled(true);
+                    }
+                }
+                if (target instanceof TameableEntity) {
+                    TameableEntity tameableTarget = (TameableEntity) target;
+                    if ( tameableSkeleton.hasOwner() && tameableTarget.hasOwner()
+                            && tameableSkeleton.getOwnerUniqueId().equals(tameableTarget.getOwnerUniqueId()) ) {
                         event.setCanceled(true);
                     }
                 }
@@ -49,3 +48,4 @@ public class SkeletonDamageHandler {
         }
     }
 }
+
