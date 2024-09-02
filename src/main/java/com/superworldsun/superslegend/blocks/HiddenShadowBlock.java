@@ -67,4 +67,18 @@ public class HiddenShadowBlock extends ShadowBlock {
         }
         return super.getShape(state, level, pos, context);
     }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (level.getBlockEntity(pos) instanceof HiddenShadowBlockEntity hiddenShadowBlockEntity) {
+            BlockState disguise = hiddenShadowBlockEntity.getDisguise();
+            if (disguise != null) {
+                if (shouldPreventCollision(disguise.getBlock())) {
+                    return Shapes.empty();
+                }
+                return disguise.getCollisionShape(level, pos, context);
+            }
+        }
+        return super.getCollisionShape(state, level, pos, context);
+    }
 }
