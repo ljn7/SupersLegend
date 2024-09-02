@@ -2,6 +2,7 @@ package com.superworldsun.superslegend.registries;
 
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.blocks.*;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -155,14 +156,15 @@ public class BlockInit {
     public static final RegistryObject<Block> HAMMERED_SPIKED_PEG_BLOCK = registerBlock("hammered_spiked_peg_block",
             () -> new HammeredSpikedPeg(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(3).explosionResistance(3).randomTicks().sound(SoundType.WOOD)));
 
-    public static final RegistryObject<Block> SHADOW_BLOCK = registerBlock("shadow_block",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(3).sound(SoundType.GLASS)));
-    public static final RegistryObject<Block> FALSE_SHADOW_BLOCK = registerBlock("false_shadow_block",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(3).sound(SoundType.GLASS)));
-    public static final RegistryObject<Block> HIDDEN_SHADOW_BLOCK = registerBlock("hidden_shadow_block",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(3).sound(SoundType.GLASS)));
-    public static final RegistryObject<Block> SHADOW_MODEL_BLOCK = registerBlock("shadow_model_block",
-            () -> new ShadowModelBlock(BlockBehaviour.Properties.of().noLootTable()));
+    public static final RegistryObject<Block> SHADOW_BLOCK = BLOCKS.register("shadow_block",
+            () -> new ShadowBlock(BlockBehaviour.Properties.of().mapColor(MapColor.NONE).noOcclusion().strength(4.0F, 3.0F).requiresCorrectToolForDrops().sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> FALSE_SHADOW_BLOCK = BLOCKS.register("false_shadow_block",
+            () -> new FalseShadowBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(3).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> HIDDEN_SHADOW_BLOCK = BLOCKS.register("hidden_shadow_block",
+            () -> new HiddenShadowBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(3).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> SHADOW_MODEL_BLOCK = BLOCKS.register("shadow_model_block",
+            () -> new ShadowModelBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, 6.0F).requiresCorrectToolForDrops().sound(SoundType.GLASS)));
+
     public static final RegistryObject<Block> TOMBSTONE_BLOCK = registerBlock("tombstone_block",
             () -> new TombstoneBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(3).explosionResistance(3).sound(SoundType.STONE)));
     public static final RegistryObject<Block> STONE_PATH_BLOCK = registerBlock("stone_path_block",
@@ -225,9 +227,15 @@ public class BlockInit {
     }
 
     private static <T extends Block> RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block) {
-        return ItemInit.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        return ItemInit.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().stacksTo(64)));
     }
 
+    public static RegistryObject<Item> getBlockItem(String name) {
+        return ItemInit.ITEMS.getEntries().stream()
+                .filter(item -> item.getId().getPath().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Block Item " + name + " not found!"));
+    }
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }

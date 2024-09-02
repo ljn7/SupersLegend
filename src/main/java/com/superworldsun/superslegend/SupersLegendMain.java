@@ -32,12 +32,12 @@ public class SupersLegendMain
 
         CreativeModTabsInit.register(modEventBus);
 
-        ItemInit.register(modEventBus);
-        BlockInit.register(modEventBus);
-        EffectInit.register(modEventBus);
+        ItemInit.ITEMS.register(modEventBus);
+        BlockInit.BLOCKS.register(modEventBus);
+        EffectInit.MOB_EFFECT.register(modEventBus);
         SoundInit.SOUNDS.register(modEventBus);
         EntityTypeInit.ENTITY_TYPES.register(modEventBus);
-        BlockEntityInit.register(modEventBus);
+        BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
         BiomeModifiers.register(modEventBus);
         MenuTypeInit.MENU_TYPES.register(modEventBus);
 

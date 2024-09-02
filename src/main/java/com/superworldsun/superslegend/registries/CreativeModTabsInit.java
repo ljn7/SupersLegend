@@ -343,6 +343,7 @@ public class CreativeModTabsInit {
                         //pOutput.accept(ItemInit.BLUE_HOLY_RING.get());
                         //pOutput.accept(ItemInit.RED_HOLY_RING.get());
                         pOutput.accept(ItemInit.SWIMMERS_RING.get());
+//                        pOutput.accept(ItemInit.HIDDEN_SHADOW_BLOCK.get());
                     }))
                     .build());
 
@@ -401,7 +402,7 @@ public class CreativeModTabsInit {
                         pOutput.accept(BlockInit.DARK_OAK_PEG_BLOCK.get());
                         pOutput.accept(BlockInit.RUSTED_PEG_BLOCK.get());
                         pOutput.accept(BlockInit.SPIKED_PEG_BLOCK.get());
-                        pOutput.accept(BlockInit.SHADOW_BLOCK.get());
+                        pOutput.accept(ItemInit.SHADOW_BLOCK.get());
                         pOutput.accept(BlockInit.FALSE_SHADOW_BLOCK.get());
                         pOutput.accept(BlockInit.HIDDEN_SHADOW_BLOCK.get());
                         pOutput.accept(BlockInit.TOMBSTONE_BLOCK.get());
@@ -416,8 +417,12 @@ public class CreativeModTabsInit {
                         pOutput.accept(BlockInit.PEDESTAL.get());
                         pOutput.accept(BlockInit.FAN.get());
                         pOutput.accept(BlockInit.SWITCHABLE_FAN.get());
+
+//
                         //pOutput.accept(BlockInit.LIGHT_EMITTER.get());
                         //pOutput.accept(BlockInit.LIGHT_PRISM.get());
+//
+
                         pOutput.accept(BlockInit.ROYAL_TILE.get());
                         pOutput.accept(BlockInit.BLOCK_OF_TIME.get());
                         pOutput.accept(BlockInit.OWL_STATUE.get());

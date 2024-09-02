@@ -1,5 +1,5 @@
 {
     "variants": {
-        "": { "model": "superslegend:block/shadow_block" }
+        "": { "model": "superslegend:block/shadow_model_block" }
     }
 }
