@@ -1,3 +1,6 @@
 {
-	"parent": "superslegend:block/shadow_block"
+	"parent": "minecraft:block/cube_all",
+	"textures": {
+		"all": "superslegend:block/shadow_model_block"
+	}
 }

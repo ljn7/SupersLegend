@@ -1,8 +1,7 @@
 package com.superworldsun.superslegend.registries;
 
 import com.superworldsun.superslegend.SupersLegendMain;
-import com.superworldsun.superslegend.blocks.entity.PedestalBlockEntity;
-import com.superworldsun.superslegend.blocks.entity.PostboxBlockEntity;
+import com.superworldsun.superslegend.blocks.entity.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,6 +17,9 @@ public class BlockEntityInit
 	public static final RegistryObject<BlockEntityType<PostboxBlockEntity>> POSTBOX_ENTITY = BLOCK_ENTITIES.register("postbox", () ->
 			BlockEntityType.Builder.of(PostboxBlockEntity::new,BlockInit.POSTBOX_BLOCK.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<ShadowBlockEntity>> SHADOW_ENTITY = BLOCK_ENTITIES.register("shadow", ShadowBlockEntity::createShadowType);
+	public static final RegistryObject<BlockEntityType<FalseShadowBlockEntity>> FALSE_SHADOW = BLOCK_ENTITIES.register("false_shadow", FalseShadowBlockEntity::createFalseShadowType);
+	public static final RegistryObject<BlockEntityType<HiddenShadowBlockEntity>> HIDDEN_SHADOW = BLOCK_ENTITIES.register("hidden_shadow", HiddenShadowBlockEntity::createHiddenShadowType);
 	public static void register(IEventBus eventBus) {
 		BLOCK_ENTITIES.register(eventBus);
 	}
