@@ -73,9 +73,6 @@ public class HiddenShadowBlock extends ShadowBlock {
         if (level.getBlockEntity(pos) instanceof HiddenShadowBlockEntity hiddenShadowBlockEntity) {
             BlockState disguise = hiddenShadowBlockEntity.getDisguise();
             if (disguise != null) {
-                if (shouldPreventCollision(disguise.getBlock())) {
-                    return Shapes.empty();
-                }
                 return disguise.getCollisionShape(level, pos, context);
             }
         }

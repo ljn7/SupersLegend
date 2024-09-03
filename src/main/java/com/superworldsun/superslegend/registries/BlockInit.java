@@ -157,11 +157,11 @@ public class BlockInit {
             () -> new HammeredSpikedPeg(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(3).explosionResistance(3).randomTicks().sound(SoundType.WOOD)));
 
     public static final RegistryObject<Block> SHADOW_BLOCK = BLOCKS.register("shadow_block",
-            () -> new ShadowBlock(BlockBehaviour.Properties.of().mapColor(MapColor.NONE).noCollission().noOcclusion().strength(4.0F, 3.0F).requiresCorrectToolForDrops().sound(SoundType.GLASS)));
+            () -> new ShadowBlock(BlockBehaviour.Properties.of().mapColor(MapColor.NONE).noOcclusion().strength(4.0F, 3.0F).requiresCorrectToolForDrops().sound(SoundType.GLASS)));
     public static final RegistryObject<Block> FALSE_SHADOW_BLOCK = BLOCKS.register("false_shadow_block",
             () -> new FalseShadowBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(3).sound(SoundType.GLASS)));
     public static final RegistryObject<Block> HIDDEN_SHADOW_BLOCK = BLOCKS.register("hidden_shadow_block",
-            () -> new HiddenShadowBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(3).sound(SoundType.GLASS)));
+            () -> new HiddenShadowBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(3).sound(SoundType.GLASS)));
     public static final RegistryObject<Block> SHADOW_MODEL_BLOCK = BLOCKS.register("shadow_model_block",
             () -> new ShadowModelBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, 6.0F).requiresCorrectToolForDrops().sound(SoundType.GLASS)));
 

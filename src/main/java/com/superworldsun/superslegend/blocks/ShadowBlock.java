@@ -121,25 +121,10 @@ public class ShadowBlock extends Block implements EntityBlock {
         if (level.getBlockEntity(pos) instanceof ShadowBlockEntity shadowEntity) {
             BlockState disguise = shadowEntity.getDisguise();
             if (disguise != null) {
-                if (shouldPreventCollision(disguise.getBlock())) {
-                    return Shapes.empty();
-                }
                 return disguise.getCollisionShape(level, pos, context);
             }
         }
         return super.getCollisionShape(state, level, pos, context);
-    }
-
-    protected boolean shouldPreventCollision(Block block) {
-        return block instanceof ButtonBlock ||
-                block instanceof TorchBlock ||
-                block instanceof WallTorchBlock ||
-                block instanceof LadderBlock ||
-                block instanceof VineBlock ||
-                block instanceof LeverBlock ||
-                block instanceof FlowerBlock ||
-                block instanceof PressurePlateBlock ||
-                block instanceof TripWireBlock;
     }
 
     @Override
