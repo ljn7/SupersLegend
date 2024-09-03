@@ -18,9 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -29,6 +27,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.client.Minecraft;
@@ -54,7 +53,7 @@ public class ShadowBlock extends Block implements EntityBlock {
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new ShadowBlockEntity(BlockEntityInit.SHADOW_ENTITY.get(), pos, state);
+        return new ShadowBlockEntity(pos, state);
     }
 
     @Override
@@ -115,5 +114,58 @@ public class ShadowBlock extends Block implements EntityBlock {
     private Optional<ShadowBlockEntity> getBlockEntity(Level level, BlockPos pos) {
     return Optional.ofNullable(level.getBlockEntity(pos))
             .map(t -> (ShadowBlockEntity) t);
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (level.getBlockEntity(pos) instanceof ShadowBlockEntity shadowEntity) {
+            BlockState disguise = shadowEntity.getDisguise();
+            if (disguise != null) {
+                if (shouldPreventCollision(disguise.getBlock())) {
+                    return Shapes.empty();
+                }
+                return disguise.getCollisionShape(level, pos, context);
+            }
+        }
+        return super.getCollisionShape(state, level, pos, context);
+    }
+
+    protected boolean shouldPreventCollision(Block block) {
+        return block instanceof ButtonBlock ||
+                block instanceof TorchBlock ||
+                block instanceof WallTorchBlock ||
+                block instanceof LadderBlock ||
+                block instanceof VineBlock ||
+                block instanceof LeverBlock ||
+                block instanceof FlowerBlock ||
+                block instanceof PressurePlateBlock ||
+                block instanceof TripWireBlock;
+    }
+
+    @Override
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof ShadowBlockEntity shadowEntity) {
+            BlockState disguise = shadowEntity.getDisguise();
+            if (disguise != null && !(disguise.getBlock() instanceof ShadowBlock)) {
+                return disguise.propagatesSkylightDown(level, pos);
+            }
+        }
+        return super.propagatesSkylightDown(state, level, pos);
+    }
+
+    @Override
+    public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof ShadowBlockEntity shadowEntity) {
+            BlockState disguise = shadowEntity.getDisguise();
+            if (disguise != null && !(disguise.getBlock() instanceof ShadowBlock)) {
+                return disguise.getShadeBrightness(level, pos);
+            }
+        }
+        return super.getShadeBrightness(state, level, pos);
+    }
+
+    @Override
+    public boolean useShapeForLightOcclusion(BlockState state) {
+        return true;
     }
 }
