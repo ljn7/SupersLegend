@@ -6,7 +6,7 @@ import com.superworldsun.superslegend.blocks.ShadowBlock;
 import com.superworldsun.superslegend.client.render.bewlr.ShadowBlockItemRenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -34,6 +34,9 @@ public class ShadowBlockBaseItem extends BlockItem {
         if (context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
             Level level = context.getLevel();
             BlockState clickedBlockState = level.getBlockState(context.getClickedPos());
+            if (shouldPreventCollision(clickedBlockState.getBlock()))
+                return super.useOn(context);
+
             if (!(clickedBlockState.getBlock() instanceof ShadowBlock)) {
                 saveDisguiseInStack(context.getItemInHand(), clickedBlockState);
                 level.playSound(null, context.getPlayer().getX(), context.getPlayer().getY(), context.getPlayer().getZ(),
@@ -43,6 +46,17 @@ public class ShadowBlockBaseItem extends BlockItem {
             }
         }
         return super.useOn(context);
+    }
+
+    private boolean shouldPreventCollision(Block block) {
+        return block instanceof ButtonBlock ||
+                block instanceof TorchBlock ||
+                block instanceof WallTorchBlock ||
+                block instanceof LadderBlock ||
+                block instanceof VineBlock ||
+                block instanceof LeverBlock ||
+                block instanceof FlowerBlock ||
+                block instanceof TripWireBlock;
     }
 
     public static void saveDisguiseInStack(ItemStack itemStack, @Nullable BlockState disguise) {
