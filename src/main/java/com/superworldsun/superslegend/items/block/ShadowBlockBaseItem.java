@@ -2,7 +2,8 @@ package com.superworldsun.superslegend.items.block;
 
 import javax.annotation.Nullable;
 
-import com.superworldsun.superslegend.blocks.ShadowBlock;
+import com.superworldsun.superslegend.blocks.*;
+import com.superworldsun.superslegend.blocks.BushBlock;
 import com.superworldsun.superslegend.client.render.bewlr.ShadowBlockItemRenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.InteractionHand;
@@ -33,31 +34,36 @@ public class ShadowBlockBaseItem extends BlockItem {
     public @NotNull InteractionResult useOn(UseOnContext context) {
         if (context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
             Level level = context.getLevel();
-            BlockState clickedBlockState = level.getBlockState(context.getClickedPos());
-            if (shouldPreventCollision(clickedBlockState.getBlock()))
-                return super.useOn(context);
 
-            if (!(clickedBlockState.getBlock() instanceof ShadowBlock)) {
-                saveDisguiseInStack(context.getItemInHand(), clickedBlockState);
-                level.playSound(null, context.getPlayer().getX(), context.getPlayer().getY(), context.getPlayer().getZ(),
-                        SoundEvents.LODESTONE_PLACE, SoundSource.PLAYERS, 0.2F,
-                        ((level.random.nextFloat() - level.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-                return InteractionResult.SUCCESS;
+            BlockState clickedBlockState = level.getBlockState(context.getClickedPos());
+            boolean clickedShadowBlock = clickedBlockState.getBlock() instanceof ShadowBlock;
+            boolean clickedFullBlock = Block.isShapeFullBlock(clickedBlockState.getShape(context.getLevel(), context.getClickedPos()));
+
+            if ( clickedShadowBlock || avoidingBlocks(clickedBlockState.getBlock()) ||
+                    ( !clickedFullBlock && !allowedBlocks(clickedBlockState.getBlock() ) )) {
+                return InteractionResult.FAIL;
             }
+
+            saveDisguiseInStack(context.getItemInHand(), clickedBlockState);
+            level.playSound(context.getPlayer(), context.getPlayer().getX(), context.getPlayer().getY(), context.getPlayer().getZ(),
+                    SoundEvents.LODESTONE_PLACE, SoundSource.PLAYERS, 1F, 1F);
+            return InteractionResult.SUCCESS;
         }
         return super.useOn(context);
     }
 
-    private boolean shouldPreventCollision(Block block) {
-        return block instanceof ButtonBlock ||
-                block instanceof TorchBlock ||
-                block instanceof WallTorchBlock ||
-                block instanceof LadderBlock ||
-                block instanceof VineBlock ||
-                block instanceof LeverBlock ||
-                block instanceof FlowerBlock ||
-                block instanceof TripWireBlock;
+    private boolean allowedBlocks(Block block) {
+        return block instanceof StairBlock || block instanceof SlabBlock;
     }
+
+    private boolean avoidingBlocks(Block block) {
+      return block instanceof DoublePlantBlock
+              || block instanceof TallGrassBlock
+              || block instanceof FlowerBlock
+              || block instanceof TallFlowerBlock
+              || block instanceof TallSeagrassBlock
+              || block instanceof KelpPlantBlock;
+    };
 
     public static void saveDisguiseInStack(ItemStack itemStack, @Nullable BlockState disguise) {
         CompoundTag tag = itemStack.getOrCreateTag();
@@ -65,12 +71,12 @@ public class ShadowBlockBaseItem extends BlockItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand usedHand) {
         ItemStack itemStack = player.getItemInHand(usedHand);
         if (player.isShiftKeyDown() && itemStack.hasTag()) {
             itemStack.setTag(null);
-            level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.LODESTONE_BREAK, SoundSource.PLAYERS, 0.8F, 0.8F + level.random.nextFloat() * 0.4F);
+            level.playSound(player, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.LODESTONE_BREAK, SoundSource.PLAYERS, 1F, 1F);
             return InteractionResultHolder.success(itemStack);
         }
         return super.use(level, player, usedHand);
