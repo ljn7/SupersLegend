@@ -3,11 +3,8 @@ package com.superworldsun.superslegend.network;
 import java.util.Optional;
 
 import com.superworldsun.superslegend.SupersLegendMain;
-import com.superworldsun.superslegend.network.message.DoubleJumpMessage;
-import com.superworldsun.superslegend.network.message.MaskAbilityMessage;
-import com.superworldsun.superslegend.network.message.SyncMagicMessage;
+import com.superworldsun.superslegend.network.message.*;
 
-import com.superworldsun.superslegend.network.message.ToggleCrawlingMessage;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -30,6 +27,9 @@ public class NetworkDispatcher {
 		network_channel.registerMessage(1, SyncMagicMessage.class, SyncMagicMessage::encode, SyncMagicMessage::decode, SyncMagicMessage::receive, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		network_channel.registerMessage(2, MaskAbilityMessage.class, MaskAbilityMessage::encode, MaskAbilityMessage::decode, MaskAbilityMessage::receive, Optional.of(PLAY_TO_SERVER));
 		network_channel.registerMessage(8, DoubleJumpMessage.class, DoubleJumpMessage::encode, DoubleJumpMessage::decode, DoubleJumpMessage::receive, Optional.of(PLAY_TO_SERVER));
+		network_channel.registerMessage(6, SyncLearnedSongsMessage.class, SyncLearnedSongsMessage::encode, SyncLearnedSongsMessage::decode, SyncLearnedSongsMessage::receive, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		network_channel.registerMessage(17, ToggleCrawlingMessage.class, ToggleCrawlingMessage::encode, ToggleCrawlingMessage::decode, ToggleCrawlingMessage::receive, Optional.of(PLAY_TO_SERVER));
+		network_channel.registerMessage(7, PlaySongMessage.class, PlaySongMessage::encode, PlaySongMessage::decode, PlaySongMessage::handle, Optional.of(PLAY_TO_SERVER));
+
 	}
 }

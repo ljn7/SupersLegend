@@ -19,6 +19,7 @@ import com.superworldsun.superslegend.items.customclass.ItemCustomBow;
 import com.superworldsun.superslegend.items.customclass.ItemCustomSword;
 import com.superworldsun.superslegend.items.item.*;
 import com.superworldsun.superslegend.items.item.ammo.*;
+import com.superworldsun.superslegend.items.item.songs.*;
 import com.superworldsun.superslegend.items.weapons.boomerang.BoomerangItem;
 import com.superworldsun.superslegend.items.weapons.boomerang.MagicBoomerangItem;
 import com.superworldsun.superslegend.items.weapons.boomerang.SeaBreezeBoomerangItem;
@@ -37,10 +38,8 @@ import com.superworldsun.superslegend.items.weapons.swords.*;
 import com.superworldsun.superslegend.items.weapons.wand.FireRod;
 import com.superworldsun.superslegend.items.weapons.wand.IceRod;
 import com.superworldsun.superslegend.util.ItemToolTiers;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.*;
-import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -62,18 +61,25 @@ public class ItemInit {
     public static final RegistryObject<Item> GOLD_RUPEE = ITEMS.register("gold_rupee",
             () -> new GoldRupee(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> MEDALLION_LIGHT = ITEMS.register("medallion_light",
-            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> MEDALLION_FOREST = ITEMS.register("medallion_forest",
-            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> MEDALLION_FIRE = ITEMS.register("medallion_fire",
-            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> MEDALLION_WATER = ITEMS.register("medallion_water",
-            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> MEDALLION_SPIRIT = ITEMS.register("medallion_spirit",
-            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> MEDALLION_SHADOW = ITEMS.register("medallion_shadow",
-            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
+//    public static final RegistryObject<Item> MEDALLION_LIGHT = ITEMS.register("medallion_light",
+//            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
+//    public static final RegistryObject<Item> MEDALLION_FOREST = ITEMS.register("medallion_forest",
+//            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
+//    public static final RegistryObject<Item> MEDALLION_FIRE = ITEMS.register("medallion_fire",
+//            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
+//    public static final RegistryObject<Item> MEDALLION_WATER = ITEMS.register("medallion_water",
+//            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
+//    public static final RegistryObject<Item> MEDALLION_SPIRIT = ITEMS.register("medallion_spirit",
+//            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
+//    public static final RegistryObject<Item> MEDALLION_SHADOW = ITEMS.register("medallion_shadow",
+//            () -> new ElementMedallion(new Item.Properties().stacksTo(1)));
+
+    public static final RegistryObject<Item> MEDALLION_LIGHT = ITEMS.register("medallion_light", () -> new MedallionItem(BlockInit.WARP_PAD_LIGHT));
+    public static final RegistryObject<Item> MEDALLION_FOREST = ITEMS.register("medallion_forest", () -> new MedallionItem(BlockInit.WARP_PAD_FOREST));
+    public static final RegistryObject<Item> MEDALLION_FIRE = ITEMS.register("medallion_fire", () -> new MedallionItem(BlockInit.WARP_PAD_FIRE));
+    public static final RegistryObject<Item> MEDALLION_WATER = ITEMS.register("medallion_water", () -> new MedallionItem(BlockInit.WARP_PAD_WATER));
+    public static final RegistryObject<Item> MEDALLION_SPIRIT = ITEMS.register("medallion_spirit", () -> new MedallionItem(BlockInit.WARP_PAD_SPIRIT));
+    public static final RegistryObject<Item> MEDALLION_SHADOW = ITEMS.register("medallion_shadow", () -> new MedallionItem(BlockInit.WARP_PAD_SHADOW));
 
     public static final RegistryObject<Item> SMALL_KEY = ITEMS.register("small_key",
             () -> new SmallKey(new Item.Properties().stacksTo(1)));
@@ -144,7 +150,7 @@ public class ItemInit {
             () -> new AppraisedRingBox(new Item.Properties().stacksTo(1)));
 
     //Songs
-    /*public static final RegistryObject<Item> ZELDAS_LULLABY_SHEET = ITEMS.register("zeldas_lullaby_sheet", ZeldasLullabySheet::new);
+    public static final RegistryObject<Item> ZELDAS_LULLABY_SHEET = ITEMS.register("zeldas_lullaby_sheet", ZeldasLullabySheet::new);
     public static final RegistryObject<Item> EPONAS_SONG_SHEET = ITEMS.register("eponas_song_sheet", EponasSongSheet::new);
     public static final RegistryObject<Item> SARIAS_SONG_SHEET = ITEMS.register("sarias_song_sheet", SariasSongSheet::new);
     public static final RegistryObject<Item> SONG_OF_TIME_SHEET = ITEMS.register("song_of_time_sheet", SongOfTimeSheet::new);
@@ -166,7 +172,7 @@ public class ItemInit {
     public static final RegistryObject<Item> ELEGY_OF_EMPTYNESS_SHEET = ITEMS.register("elegy_of_emptyness_sheet", ElegyOfEmptinessSheet::new);
     public static final RegistryObject<Item> SONG_OF_HEALING_SHEET = ITEMS.register("song_of_healing_sheet", SongOfHealingSheet::new);
     public static final RegistryObject<Item> ALL_SONGS_SHEET = ITEMS.register("all_songs_sheet", AllSongsSheet::new);
-    public static final RegistryObject<Item> AMNEISA_SHEET = ITEMS.register("amneisa_sheet", AmnesiaSheet::new);*/
+    public static final RegistryObject<Item> AMNEISA_SHEET = ITEMS.register("amneisa_sheet", AmnesiaSheet::new);
 
     // FOOD
 
@@ -769,157 +775,157 @@ public class ItemInit {
 
     //public static final RegistryObject<Item> CRACKED_FLOOR = ITEMS.register("cracked_floor", () -> new BlockItem(BlockInit.CRACKED_FLOOR));
     //public static final RegistryObject<Item> QUICK_SAND = ITEMS.register("quick_sand", () -> new BlockItem(BlockInit.QUICK_SAND));
-    /*public static final RegistryObject<Item> RUPEE_BLOCK = ITEMS.register("rupee_block",
-            () -> new BlockItem(BlockInit.RUPEE_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> BLUE_RUPEE_BLOCK = ITEMS.register("blue_rupee_block",
-            () -> new BlockItem(BlockInit.BLUE_RUPEE_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> RED_RUPEE_BLOCK = ITEMS.register("red_rupee_block",
-            () -> new BlockItem(BlockInit.RED_RUPEE_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> SILVER_RUPEE_BLOCK = ITEMS.register("silver_rupee_block",
-            () -> new BlockItem(BlockInit.SILVER_RUPEE_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> GOLD_RUPEE_BLOCK = ITEMS.register("gold_rupee_block",
-            () -> new BlockItem(BlockInit.GOLD_RUPEE_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> RUPEE_BLOCK = ITEMS.register("rupee_block",
+//            () -> new BlockItem(BlockInit.RUPEE_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> BLUE_RUPEE_BLOCK = ITEMS.register("blue_rupee_block",
+//            () -> new BlockItem(BlockInit.BLUE_RUPEE_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> RED_RUPEE_BLOCK = ITEMS.register("red_rupee_block",
+//            () -> new BlockItem(BlockInit.RED_RUPEE_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> SILVER_RUPEE_BLOCK = ITEMS.register("silver_rupee_block",
+//            () -> new BlockItem(BlockInit.SILVER_RUPEE_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> GOLD_RUPEE_BLOCK = ITEMS.register("gold_rupee_block",
+//            () -> new BlockItem(BlockInit.GOLD_RUPEE_BLOCK.get(), new Item.Properties()));
+//
+//    public static final RegistryObject<Item> MASTER_ORE_BLOCK = ITEMS.register("master_ore_block",
+//            () -> new BlockItem(BlockInit.MASTER_ORE_BLOCK.get(), new Item.Properties()));
+//
+//    public static final RegistryObject<Item> DEEPSLATE_MASTER_ORE_BLOCK = ITEMS.register("deepslate_master_ore_block",
+//            () -> new BlockItem(BlockInit.DEEPSLATE_MASTER_ORE_BLOCK.get(), new Item.Properties()));
 
-    public static final RegistryObject<Item> MASTER_ORE_BLOCK = ITEMS.register("master_ore_block",
-            () -> new BlockItem(BlockInit.MASTER_ORE_BLOCK.get(), new Item.Properties()));
-
-    public static final RegistryObject<Item> DEEPSLATE_MASTER_ORE_BLOCK = ITEMS.register("deepslate_master_ore_block",
-            () -> new BlockItem(BlockInit.DEEPSLATE_MASTER_ORE_BLOCK.get(), new Item.Properties()));*/
-
-    /*public static final RegistryObject<Item> CRACKED_BOMB_WALL = ITEMS.register("cracked_bomb_wall",
-            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
-    public static final RegistryObject<Item> BLOCK_OF_TIME = ITEMS.register("block_of_time",
-            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
-    public static final RegistryObject<Item> SHADOW_BLOCK = ITEMS.register("shadow_block",
-            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
-    public static final RegistryObject<Item> HIDDEN_SHADOW_BLOCK = ITEMS.register("hidden_shadow_block",
-            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
-    public static final RegistryObject<Item> FALSE_SHADOW_BLOCK = ITEMS.register("false_shadow_block",
-            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
-    public static final RegistryObject<Item> SHADOW_MODEL_BLOCK = ITEMS.register("shadow_model_block",
-            () -> new BlockItem(BlockInit.SHADOW_MODEL_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> DINS_SACRED_PEDESTAL = ITEMS.register("dins_sacred_pedestal",
-            () -> new BlockItem(BlockInit.DINS_SACRED_PEDESTAL.get(), new Item.Properties()));
-    public static final RegistryObject<Item> FARORES_SACRED_PEDESTAL = ITEMS.register("farores_sacred_pedestal",
-            () -> new BlockItem(BlockInit.FARORES_SACRED_PEDESTAL.get(), new Item.Properties()));
-    public static final RegistryObject<Item> NAYRUS_SACRED_PEDESTAL = ITEMS.register("nayrus_sacred_pedestal",
-            () -> new BlockItem(BlockInit.NAYRUS_SACRED_PEDESTAL.get(), new Item.Properties()));
-    public static final RegistryObject<Item> DINS_FLAME = ITEMS.register("dins_flame",
-            () -> new BlockItem(BlockInit.DINS_FLAME.get(), new Item.Properties()));
-    public static final RegistryObject<Item> FARORES_FLAME = ITEMS.register("farores_flame",
-            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
-    public static final RegistryObject<Item> NAYRUS_FLAME = ITEMS.register("nayrus_flame",
-            () -> new BlockItem(BlockInit.NAYRUS_FLAME.get(), new Item.Properties()));
-    public static final RegistryObject<Item> FAN = ITEMS.register("fan",
-            () -> new BlockItem(BlockInit.FAN.get(), new Item.Properties()));
-    public static final RegistryObject<Item> SWITCHABLE_FAN = ITEMS.register("switchable_fan",
-            () -> new BlockItem(BlockInit.SWITCHABLE_FAN.get(), new Item.Properties()));
-    public static final RegistryObject<Item> GRAPPLE_BLOCK = ITEMS.register("grapple_block",
-            () -> new BlockItem(BlockInit.GRAPPLE_BLOCK.get(), new Item.Properties()));;
-    public static final RegistryObject<Item> GRATE_BLOCK = ITEMS.register("grate_block",
-            () -> new BlockItem(BlockInit.GRATE_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> CRATE_BLOCK = ITEMS.register("crate_block",
-            () -> new BlockItem(BlockInit.CRATE_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> PUSH_STONE = ITEMS.register("push_stone",
-            () -> new BlockItem(BlockInit.PUSH_STONE.get(), new Item.Properties()));
-    public static final RegistryObject<Item> SILVER_PUSH_STONE = ITEMS.register("silver_push_stone",
-            () -> new BlockItem(BlockInit.SILVER_PUSH_STONE.get(), new Item.Properties()));
-    public static final RegistryObject<Item> BLACK_PUSH_STONE = ITEMS.register("black_push_stone",
-            () -> new BlockItem(BlockInit.BLACK_PUSH_STONE.get(), new Item.Properties()));
-    public static final RegistryObject<Item> GOSSIP_STONE_BLOCK = ITEMS.register("gossip_stone_block",
-            () -> new BlockItem(BlockInit.GOSSIP_STONE_BLOCK.get(), new Item.Properties()));
-    //public static final RegistryObject<Item> SMALL_LOCK = ITEMS.register("small_lock", () -> new BlockItem(BlockInit.SMALL_LOCK));
-    //public static final RegistryObject<Item> LOCKED_DOOR = ITEMS.register("locked_door", () -> new BlockItem(BlockInit.LOCKED_DOOR));
-    public static final RegistryObject<Item> DUNGEON_DOOR = ITEMS.register("dungeon_door",
-            () -> new BlockItem(BlockInit.DUNGEON_DOOR.get(), new Item.Properties()));
-    public static final RegistryObject<Item> LOCKED_DUNGEON_DOOR = ITEMS.register("locked_dungeon_door",
-            () -> new BlockItem(BlockInit.LOCKED_DUNGEON_DOOR.get(), new Item.Properties()));
-    public static final RegistryObject<Item> BOSS_DOOR = ITEMS.register("boss_door",
-            () -> new BlockItem(BlockInit.BOSS_DOOR.get(), new Item.Properties()));
-    public static final RegistryObject<Item> LOCKED_BOSS_DOOR = ITEMS.register("locked_boss_door",
-            () -> new BlockItem(BlockInit.LOCKED_BOSS_DOOR.get(), new Item.Properties()));
-    public static final RegistryObject<Item> LOCKED_WOODEN_DOOR = ITEMS.register("locked_wooden_door",
-            () -> new BlockItem(BlockInit.LOCKED_WOODEN_DOOR.get(), new Item.Properties()));
-    public static final RegistryObject<Item> WOODEN_BOSS_DOOR = ITEMS.register("wooden_boss_door",
-            () -> new BlockItem(BlockInit.WOODEN_BOSS_DOOR.get(), new Item.Properties()));
-    public static final RegistryObject<Item> POSTBOX_BLOCK = ITEMS.register("postbox_block",
-            () -> new BlockItem(BlockInit.POSTBOX_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> TOMBSTONE_BLOCK = ITEMS.register("tombstone_block",
-            () -> new BlockItem(BlockInit.TOMBSTONE_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> CHAIN_LINK_FENCE_BLOCK = ITEMS.register("chain_link_fence_block",
-            () -> new BlockItem(BlockInit.CHAIN_LINK_FENCE_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> SPIKES_BLOCK = ITEMS.register("spikes_block",
-            () -> new BlockItem(BlockInit.SPIKES_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> TORCH_TOWER = ITEMS.register("torch_tower",
-            () -> new BlockItem(BlockInit.TORCH_TOWER.get(), new Item.Properties()));
-    public static final RegistryObject<Item> OWL_STATUE = ITEMS.register("owl_statue",
-            () -> new BlockItem(BlockInit.OWL_STATUE.get(), new Item.Properties()));
-    public static final RegistryObject<Item> POT_BLOCK = ITEMS.register("pot_block",
-            () -> new BlockItem(BlockInit.POT_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> JAR_BLOCK = ITEMS.register("jar_block",
-            () -> new BlockItem(BlockInit.JAR_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> PEDESTAL = ITEMS.register("pedestal",
-            () -> new BlockItem(BlockInit.PEDESTAL.get(), new Item.Properties()));
-    public static final RegistryObject<Item> STONE_PATH_BLOCK = ITEMS.register("stone_path_block",
-            () -> new BlockItem(BlockInit.STONE_PATH_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> STONE_TILE_BLOCK = ITEMS.register("stone_tile_block",
-            () -> new BlockItem(BlockInit.STONE_TILE_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> BLUE_FLOOR_SWITCH = ITEMS.register("blue_floor_switch",
-            () -> new BlockItem(BlockInit.BLUE_FLOOR_SWITCH.get(), new Item.Properties()));
-    public static final RegistryObject<Item> YELLOW_FLOOR_SWITCH = ITEMS.register("yellow_floor_switch",
-            () -> new BlockItem(BlockInit.YELLOW_FLOOR_SWITCH.get(), new Item.Properties()));
-    public static final RegistryObject<Item> RED_FLOOR_SWITCH = ITEMS.register("red_floor_switch",
-            () -> new BlockItem(BlockInit.RED_FLOOR_SWITCH.get(), new Item.Properties()));
-    public static final RegistryObject<Item> RUSTED_FLOOR_SWITCH = ITEMS.register("rusted_floor_switch",
-            () -> new BlockItem(BlockInit.RUSTED_FLOOR_SWITCH.get(), new Item.Properties()));
-    public static final RegistryObject<Item> ROYAL_TILE = ITEMS.register("royal_tile",
-            () -> new BlockItem(BlockInit.ROYAL_TILE.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> CRACKED_BOMB_WALL = ITEMS.register("cracked_bomb_wall",
+//            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> BLOCK_OF_TIME = ITEMS.register("block_of_time",
+//            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> SHADOW_BLOCK = ITEMS.register("shadow_block",
+//            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> HIDDEN_SHADOW_BLOCK = ITEMS.register("hidden_shadow_block",
+//            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> FALSE_SHADOW_BLOCK = ITEMS.register("false_shadow_block",
+//            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> SHADOW_MODEL_BLOCK = ITEMS.register("shadow_model_block",
+//            () -> new BlockItem(BlockInit.SHADOW_MODEL_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> DINS_SACRED_PEDESTAL = ITEMS.register("dins_sacred_pedestal",
+//            () -> new BlockItem(BlockInit.DINS_SACRED_PEDESTAL.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> FARORES_SACRED_PEDESTAL = ITEMS.register("farores_sacred_pedestal",
+//            () -> new BlockItem(BlockInit.FARORES_SACRED_PEDESTAL.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> NAYRUS_SACRED_PEDESTAL = ITEMS.register("nayrus_sacred_pedestal",
+//            () -> new BlockItem(BlockInit.NAYRUS_SACRED_PEDESTAL.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> DINS_FLAME = ITEMS.register("dins_flame",
+//            () -> new BlockItem(BlockInit.DINS_FLAME.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> FARORES_FLAME = ITEMS.register("farores_flame",
+//            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> NAYRUS_FLAME = ITEMS.register("nayrus_flame",
+//            () -> new BlockItem(BlockInit.NAYRUS_FLAME.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> FAN = ITEMS.register("fan",
+//            () -> new BlockItem(BlockInit.FAN.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> SWITCHABLE_FAN = ITEMS.register("switchable_fan",
+//            () -> new BlockItem(BlockInit.SWITCHABLE_FAN.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> GRAPPLE_BLOCK = ITEMS.register("grapple_block",
+//            () -> new BlockItem(BlockInit.GRAPPLE_BLOCK.get(), new Item.Properties()));;
+//    public static final RegistryObject<Item> GRATE_BLOCK = ITEMS.register("grate_block",
+//            () -> new BlockItem(BlockInit.GRATE_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> CRATE_BLOCK = ITEMS.register("crate_block",
+//            () -> new BlockItem(BlockInit.CRATE_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> PUSH_STONE = ITEMS.register("push_stone",
+//            () -> new BlockItem(BlockInit.PUSH_STONE.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> SILVER_PUSH_STONE = ITEMS.register("silver_push_stone",
+//            () -> new BlockItem(BlockInit.SILVER_PUSH_STONE.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> BLACK_PUSH_STONE = ITEMS.register("black_push_stone",
+//            () -> new BlockItem(BlockInit.BLACK_PUSH_STONE.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> GOSSIP_STONE_BLOCK = ITEMS.register("gossip_stone_block",
+//            () -> new BlockItem(BlockInit.GOSSIP_STONE_BLOCK.get(), new Item.Properties()));
+//    //public static final RegistryObject<Item> SMALL_LOCK = ITEMS.register("small_lock", () -> new BlockItem(BlockInit.SMALL_LOCK));
+//    //public static final RegistryObject<Item> LOCKED_DOOR = ITEMS.register("locked_door", () -> new BlockItem(BlockInit.LOCKED_DOOR));
+//    public static final RegistryObject<Item> DUNGEON_DOOR = ITEMS.register("dungeon_door",
+//            () -> new BlockItem(BlockInit.DUNGEON_DOOR.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> LOCKED_DUNGEON_DOOR = ITEMS.register("locked_dungeon_door",
+//            () -> new BlockItem(BlockInit.LOCKED_DUNGEON_DOOR.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> BOSS_DOOR = ITEMS.register("boss_door",
+//            () -> new BlockItem(BlockInit.BOSS_DOOR.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> LOCKED_BOSS_DOOR = ITEMS.register("locked_boss_door",
+//            () -> new BlockItem(BlockInit.LOCKED_BOSS_DOOR.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> LOCKED_WOODEN_DOOR = ITEMS.register("locked_wooden_door",
+//            () -> new BlockItem(BlockInit.LOCKED_WOODEN_DOOR.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> WOODEN_BOSS_DOOR = ITEMS.register("wooden_boss_door",
+//            () -> new BlockItem(BlockInit.WOODEN_BOSS_DOOR.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> POSTBOX_BLOCK = ITEMS.register("postbox_block",
+//            () -> new BlockItem(BlockInit.POSTBOX_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> TOMBSTONE_BLOCK = ITEMS.register("tombstone_block",
+//            () -> new BlockItem(BlockInit.TOMBSTONE_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> CHAIN_LINK_FENCE_BLOCK = ITEMS.register("chain_link_fence_block",
+//            () -> new BlockItem(BlockInit.CHAIN_LINK_FENCE_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> SPIKES_BLOCK = ITEMS.register("spikes_block",
+//            () -> new BlockItem(BlockInit.SPIKES_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> TORCH_TOWER = ITEMS.register("torch_tower",
+//            () -> new BlockItem(BlockInit.TORCH_TOWER.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> OWL_STATUE = ITEMS.register("owl_statue",
+//            () -> new BlockItem(BlockInit.OWL_STATUE.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> POT_BLOCK = ITEMS.register("pot_block",
+//            () -> new BlockItem(BlockInit.POT_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> JAR_BLOCK = ITEMS.register("jar_block",
+//            () -> new BlockItem(BlockInit.JAR_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> PEDESTAL = ITEMS.register("pedestal",
+//            () -> new BlockItem(BlockInit.PEDESTAL.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> STONE_PATH_BLOCK = ITEMS.register("stone_path_block",
+//            () -> new BlockItem(BlockInit.STONE_PATH_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> STONE_TILE_BLOCK = ITEMS.register("stone_tile_block",
+//            () -> new BlockItem(BlockInit.STONE_TILE_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> BLUE_FLOOR_SWITCH = ITEMS.register("blue_floor_switch",
+//            () -> new BlockItem(BlockInit.BLUE_FLOOR_SWITCH.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> YELLOW_FLOOR_SWITCH = ITEMS.register("yellow_floor_switch",
+//            () -> new BlockItem(BlockInit.YELLOW_FLOOR_SWITCH.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> RED_FLOOR_SWITCH = ITEMS.register("red_floor_switch",
+//            () -> new BlockItem(BlockInit.RED_FLOOR_SWITCH.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> RUSTED_FLOOR_SWITCH = ITEMS.register("rusted_floor_switch",
+//            () -> new BlockItem(BlockInit.RUSTED_FLOOR_SWITCH.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> ROYAL_TILE = ITEMS.register("royal_tile",
+//            () -> new BlockItem(BlockInit.ROYAL_TILE.get(), new Item.Properties()));
     public static final RegistryObject<Item> WARP_PAD = ITEMS.register("warp_pad",
             () -> new BlockItem(BlockInit.WARP_PAD.get(), new Item.Properties()));
-    public static final RegistryObject<Item> OAK_PEG_BLOCK = ITEMS.register("oak_peg_block",
-            () -> new BlockItem(BlockInit.OAK_PEG_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> SPRUCE_PEG_BLOCK = ITEMS.register("spruce_peg_block",
-            () -> new BlockItem(BlockInit.SPRUCE_PEG_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> BIRCH_PEG_BLOCK = ITEMS.register("birch_peg_block",
-            () -> new BlockItem(BlockInit.BIRCH_PEG_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> JUNGLE_PEG_BLOCK = ITEMS.register("jungle_peg_block",
-            () -> new BlockItem(BlockInit.JUNGLE_PEG_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> ACACIA_PEG_BLOCK = ITEMS.register("acacia_peg_block",
-            () -> new BlockItem(BlockInit.ACACIA_PEG_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> DARK_OAK_PEG_BLOCK = ITEMS.register("dark_oak_peg_block",
-            () -> new BlockItem(BlockInit.DARK_OAK_PEG_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> RUSTED_PEG_BLOCK = ITEMS.register("rusted_peg_block",
-            () -> new BlockItem(BlockInit.RUSTED_PEG_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> SPIKED_PEG_BLOCK = ITEMS.register("spiked_peg_block",
-            () -> new BlockItem(BlockInit.SPIKED_PEG_BLOCK.get(), new Item.Properties()));
-    //public static final RegistryObject<Item> LIGHT_EMITTER = ITEMS.register("light_emitter", () -> new BlockItem(BlockInit.LIGHT_EMITTER));
-    //public static final RegistryObject<Item> LIGHT_PRISM = ITEMS.register("light_prism", () -> new BlockItem(BlockInit.LIGHT_PRISM));
-
-    public static final RegistryObject<Item> ODD_MUSHROOM = ITEMS.register("odd_mushroom",
-            () -> new BlockItem(BlockInit.ODD_MUSHROOM.get(), new Item.Properties()));
-    public static final RegistryObject<Item> MAGIC_MUSHROOM = ITEMS.register("magic_mushroom",
-            () -> new BlockItem(BlockInit.MAGIC_MUSHROOM.get(), new Item.Properties()));
-    public static final RegistryObject<Item> DEKU_FLOWER_BLOCK = ITEMS.register("deku_flower_block",
-            () -> new BlockItem(BlockInit.DEKU_FLOWER_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> YELLOW_DEKU_FLOWER_BLOCK = ITEMS.register("yellow_deku_flower_block",
-            () -> new BlockItem(BlockInit.YELLOW_DEKU_FLOWER_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> BUSH_BLOCK = ITEMS.register("bush_block",
-            () -> new BlockItem(BlockInit.BUSH_BLOCK.get(), new Item.Properties()));*/
+//    public static final RegistryObject<Item> OAK_PEG_BLOCK = ITEMS.register("oak_peg_block",
+//            () -> new BlockItem(BlockInit.OAK_PEG_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> SPRUCE_PEG_BLOCK = ITEMS.register("spruce_peg_block",
+//            () -> new BlockItem(BlockInit.SPRUCE_PEG_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> BIRCH_PEG_BLOCK = ITEMS.register("birch_peg_block",
+//            () -> new BlockItem(BlockInit.BIRCH_PEG_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> JUNGLE_PEG_BLOCK = ITEMS.register("jungle_peg_block",
+//            () -> new BlockItem(BlockInit.JUNGLE_PEG_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> ACACIA_PEG_BLOCK = ITEMS.register("acacia_peg_block",
+//            () -> new BlockItem(BlockInit.ACACIA_PEG_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> DARK_OAK_PEG_BLOCK = ITEMS.register("dark_oak_peg_block",
+//            () -> new BlockItem(BlockInit.DARK_OAK_PEG_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> RUSTED_PEG_BLOCK = ITEMS.register("rusted_peg_block",
+//            () -> new BlockItem(BlockInit.RUSTED_PEG_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> SPIKED_PEG_BLOCK = ITEMS.register("spiked_peg_block",
+//            () -> new BlockItem(BlockInit.SPIKED_PEG_BLOCK.get(), new Item.Properties()));
+//    //public static final RegistryObject<Item> LIGHT_EMITTER = ITEMS.register("light_emitter", () -> new BlockItem(BlockInit.LIGHT_EMITTER));
+//    //public static final RegistryObject<Item> LIGHT_PRISM = ITEMS.register("light_prism", () -> new BlockItem(BlockInit.LIGHT_PRISM));
+//
+//    public static final RegistryObject<Item> ODD_MUSHROOM = ITEMS.register("odd_mushroom",
+//            () -> new BlockItem(BlockInit.ODD_MUSHROOM.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> MAGIC_MUSHROOM = ITEMS.register("magic_mushroom",
+//            () -> new BlockItem(BlockInit.MAGIC_MUSHROOM.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> DEKU_FLOWER_BLOCK = ITEMS.register("deku_flower_block",
+//            () -> new BlockItem(BlockInit.DEKU_FLOWER_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> YELLOW_DEKU_FLOWER_BLOCK = ITEMS.register("yellow_deku_flower_block",
+//            () -> new BlockItem(BlockInit.YELLOW_DEKU_FLOWER_BLOCK.get(), new Item.Properties()));
+//    public static final RegistryObject<Item> BUSH_BLOCK = ITEMS.register("bush_block",
+//            () -> new BlockItem(BlockInit.BUSH_BLOCK.get(), new Item.Properties()));
     //public static final RegistryObject<Item> GRASS_PATCH_BLOCK = ITEMS.register("grass_patch_block", () -> new BlockItem(BlockInit.GRASS_PATCH_BLOCK));
 
 
     //public static final RegistryObject<Item> COOKING_POT = ITEMS.register("cooking_pot", () -> new BlockItem(BlockInit.COOKING_POT));
     //public static final RegistryObject<Item> SUN_SWITCH = ITEMS.register("sun_switch", () -> new SunSwitchItem(BlockInit.SUN_SWITCH));
 
-    /*public static final Map<FoodCategory, Item> foodCategoryItems = Util.make(new EnumMap<FoodCategory, Item>(FoodCategory.class), map ->
-    {
-        for (FoodCategory category : FoodCategory.values())
-        {
-            Item categoryItem = new Item(new Item.Properties());
-            ITEMS.register("food_category_" + category.name().toLowerCase(), () -> categoryItem);
-            map.put(category, categoryItem);
-        }
-    });*/
+//    public static final Map<FoodCategory, Item> foodCategoryItems = Util.make(new EnumMap<FoodCategory, Item>(FoodCategory.class), map ->
+//    {
+//        for (FoodCategory category : FoodCategory.values())
+//        {
+//            Item categoryItem = new Item(new Item.Properties());
+//            ITEMS.register("food_category_" + category.name().toLowerCase(), () -> categoryItem);
+//            map.put(category, categoryItem);
+//        }
+//    });
 
     public static void register(IEventBus eventBus)
     {

@@ -1,5 +1,6 @@
 package com.superworldsun.superslegend.items.item;
 
+import com.superworldsun.superslegend.client.screen.OcarinaScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -37,7 +38,7 @@ public class OcarinaOfTime extends Item
     {
         Minecraft client = Minecraft.getInstance();
         //TODO, re add OcarinaScreen
-        //client.setScreen(new OcarinaScreen());
+        client.setScreen(new OcarinaScreen());
     }
 
     @OnlyIn(Dist.CLIENT)

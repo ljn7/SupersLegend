@@ -2,7 +2,6 @@ package com.superworldsun.superslegend.registries;
 
 import com.superworldsun.superslegend.itemgroup.ModItemGroup;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 
 public class ItemGroupInit {
     public static final CreativeModeTab RESOURCES = ModItemGroup.create("supers_legend", ItemInit.TRIFORCE);

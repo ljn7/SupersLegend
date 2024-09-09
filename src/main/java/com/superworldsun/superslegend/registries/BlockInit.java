@@ -2,12 +2,10 @@ package com.superworldsun.superslegend.registries;
 
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.blocks.*;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -204,20 +202,13 @@ public class BlockInit {
     public static final RegistryObject<Block> SUN_SWITCH = registerBlock("sun_switch",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.STONE)));
 
-    public static final RegistryObject<Block> WARP_PAD = registerBlock("warp_pad",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(4).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> WARP_PAD_LIGHT = registerBlock("warp_pad_light",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(4).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> WARP_PAD_FOREST = registerBlock("warp_pad_forest",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(4).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> WARP_PAD_FIRE = registerBlock("warp_pad_fire",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(4).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> WARP_PAD_WATER = registerBlock("warp_pad_water",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(4).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> WARP_PAD_SPIRIT = registerBlock("warp_pad_spirit",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(4).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> WARP_PAD_SHADOW = registerBlock("warp_pad_shadow",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(4).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> WARP_PAD = BLOCKS.register("warp_pad", WarpPadBlock::new);
+    public static final RegistryObject<WarpPadBlock> WARP_PAD_LIGHT = BLOCKS.register("warp_pad_light", WarpPadBlock::new);
+    public static final RegistryObject<WarpPadBlock> WARP_PAD_FOREST = BLOCKS.register("warp_pad_forest", WarpPadBlock::new);
+    public static final RegistryObject<WarpPadBlock> WARP_PAD_FIRE = BLOCKS.register("warp_pad_fire", WarpPadBlock::new);
+    public static final RegistryObject<WarpPadBlock> WARP_PAD_WATER = BLOCKS.register("warp_pad_water", WarpPadBlock::new);
+    public static final RegistryObject<WarpPadBlock> WARP_PAD_SPIRIT = BLOCKS.register("warp_pad_spirit", WarpPadBlock::new);
+    public static final RegistryObject<WarpPadBlock> WARP_PAD_SHADOW = BLOCKS.register("warp_pad_shadow", WarpPadBlock::new);
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {

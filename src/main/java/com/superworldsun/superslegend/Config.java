@@ -18,7 +18,7 @@ public class Config {
     private static final ForgeConfigSpec.BooleanValue BOOMERANGS_ACTIVATE_BUTTONS = BUILDER.define("Boomerangs activate buttons", true);
     private static final ForgeConfigSpec.BooleanValue BOOMERANGS_ACTIVATE_PRESSURE_PLATES = BUILDER.define("Boomerangs activate pressure plates", true);
     private static final ForgeConfigSpec.BooleanValue BOOMERANGS_ACTIVATE_TRIP_WIRES = BUILDER.define("Boomerangs activate trip wires", true);
-
+    private static final ForgeConfigSpec.BooleanValue SONG_SHEET_CONSUMED = BUILDER.define("songSheetConsumed", true);
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static int base_player_heath;
@@ -29,6 +29,7 @@ public class Config {
     public static boolean boomerangs_activate_buttons;
     public static boolean boomerangs_activate_pressure_plates;
     public static boolean boomerangs_activate_trip_wires;
+    public static boolean song_sheet_consumed;
 
     @SubscribeEvent
     static void load(ModConfigEvent event) {
@@ -40,5 +41,6 @@ public class Config {
         boomerangs_activate_buttons = BOOMERANGS_ACTIVATE_BUTTONS.get();
         boomerangs_activate_pressure_plates = BOOMERANGS_ACTIVATE_PRESSURE_PLATES.get();
         boomerangs_activate_trip_wires = BOOMERANGS_ACTIVATE_TRIP_WIRES.get();
+        song_sheet_consumed = SONG_SHEET_CONSUMED.get();
     }
 }
