@@ -60,7 +60,8 @@ public class CreativeModTabsInit {
                         pOutput.accept(ItemInit.VOID_CONTAINER.get());
                         pOutput.accept(ItemInit.UNAPPRAISED_RING.get());
                         pOutput.accept(ItemInit.APPRAISED_RING_BOX.get());
-                        /*pOutput.accept(ItemInit.ZELDAS_LULLABY_SHEET.get());
+                        pOutput.accept(ItemInit.ZELDAS_LULLABY_SHEET.get());
+
                         pOutput.accept(ItemInit.EPONAS_SONG_SHEET.get());
                         pOutput.accept(ItemInit.SARIAS_SONG_SHEET.get());
                         pOutput.accept(ItemInit.SONG_OF_TIME_SHEET.get());
@@ -82,7 +83,8 @@ public class CreativeModTabsInit {
                         pOutput.accept(ItemInit.ELEGY_OF_EMPTYNESS_SHEET.get());
                         pOutput.accept(ItemInit.SONG_OF_HEALING_SHEET.get());
                         pOutput.accept(ItemInit.ALL_SONGS_SHEET.get());
-                        pOutput.accept(ItemInit.AMNEISA_SHEET.get());*/
+                        pOutput.accept(ItemInit.AMNEISA_SHEET.get());
+
                         pOutput.accept(ItemInit.HYRULE_BASS.get());
                         pOutput.accept(ItemInit.COOKED_HYRULE_BASS.get());
                         pOutput.accept(ItemInit.HYLIAN_LOACH.get());
@@ -428,12 +430,12 @@ public class CreativeModTabsInit {
                         pOutput.accept(BlockInit.OWL_STATUE.get());
                         pOutput.accept(BlockInit.SUN_SWITCH.get());
                         pOutput.accept(BlockInit.WARP_PAD.get());
-                        pOutput.accept(BlockInit.WARP_PAD_LIGHT.get());
-                        pOutput.accept(BlockInit.WARP_PAD_FOREST.get());
-                        pOutput.accept(BlockInit.WARP_PAD_FIRE.get());
-                        pOutput.accept(BlockInit.WARP_PAD_WATER.get());
-                        pOutput.accept(BlockInit.WARP_PAD_SPIRIT.get());
-                        pOutput.accept(BlockInit.WARP_PAD_SHADOW.get());
+//                        pOutput.accept(BlockInit.WARP_PAD_LIGHT.get());
+//                        pOutput.accept(BlockInit.WARP_PAD_FOREST.get());
+//                        pOutput.accept(BlockInit.WARP_PAD_FIRE.get());
+//                        pOutput.accept(BlockInit.WARP_PAD_WATER.get());
+//                        pOutput.accept(BlockInit.WARP_PAD_SPIRIT.get());
+//                        pOutput.accept(BlockInit.WARP_PAD_SHADOW.get());
                     }))
                     .build());
 

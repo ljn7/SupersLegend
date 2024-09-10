@@ -3,6 +3,7 @@ package com.superworldsun.superslegend;
 import com.mojang.logging.LogUtils;
 import com.superworldsun.superslegend.client.init.ItemModelPropertiesInit;
 import com.superworldsun.superslegend.registries.*;
+import com.superworldsun.superslegend.songs.LearnedSongs;
 import com.superworldsun.superslegend.world.biome.BiomeModifiers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,7 +41,7 @@ public class SupersLegendMain
         BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
         BiomeModifiers.register(modEventBus);
         MenuTypeInit.MENU_TYPES.register(modEventBus);
-
+        OcarinaSongInit.OCARINA_SONGS.register(modEventBus);
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::addCreative);
@@ -51,6 +52,7 @@ public class SupersLegendMain
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
+        MinecraftForge.EVENT_BUS.register(LearnedSongs.Provider.class);
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event)

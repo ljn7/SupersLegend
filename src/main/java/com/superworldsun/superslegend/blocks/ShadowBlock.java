@@ -4,14 +4,10 @@ import java.util.Optional;
 import java.util.Random;
 
 import com.superworldsun.superslegend.blocks.entity.ShadowBlockEntity;
-import com.superworldsun.superslegend.items.block.ShadowBlockBaseItem;
 
 import com.superworldsun.superslegend.items.block.ShadowBlockItem;
-import com.superworldsun.superslegend.registries.BlockEntityInit;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -20,24 +16,13 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.TerrainParticle;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 

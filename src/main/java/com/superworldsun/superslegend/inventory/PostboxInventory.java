@@ -1,16 +1,10 @@
 package com.superworldsun.superslegend.inventory;
 
 import com.superworldsun.superslegend.blocks.entity.PostboxBlockEntity;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
-
-import java.util.Optional;
 
 public class PostboxInventory extends ItemStackHandler {
 	private final PostboxBlockEntity postbox;

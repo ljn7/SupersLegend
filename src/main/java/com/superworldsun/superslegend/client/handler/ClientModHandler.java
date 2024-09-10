@@ -21,6 +21,7 @@ public class ClientModHandler {
     public static void clientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             MenuScreens.register(MenuTypeInit.POSTBOX_MENU.get(), PostboxScreen::new);
+
         });
     }
 

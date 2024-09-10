@@ -1,6 +1,5 @@
 package com.superworldsun.superslegend.entities.projectiles.bombs;
 
-import com.superworldsun.superslegend.items.armors.KokiriArmor;
 import com.superworldsun.superslegend.registries.EntityTypeInit;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;

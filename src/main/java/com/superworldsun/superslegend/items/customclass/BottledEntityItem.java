@@ -2,7 +2,6 @@ package com.superworldsun.superslegend.items.customclass;
 
 import com.superworldsun.superslegend.registries.SoundInit;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

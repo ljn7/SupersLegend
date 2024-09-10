@@ -3,7 +3,6 @@ package com.superworldsun.superslegend.items.block;
 import javax.annotation.Nullable;
 
 import com.superworldsun.superslegend.blocks.*;
-import com.superworldsun.superslegend.blocks.BushBlock;
 import com.superworldsun.superslegend.client.render.bewlr.ShadowBlockItemRenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.InteractionHand;
