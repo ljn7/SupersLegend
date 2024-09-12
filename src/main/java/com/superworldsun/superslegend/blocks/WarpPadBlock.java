@@ -142,7 +142,7 @@ public class WarpPadBlock extends HorizontalDirectionalBlock {
         VoxelShape blockShape = Block.box(-16, 0, -16, 32, 2, 32);
         int blockShapeShiftX = -getBlockPartX(blockState);
         int blockShapeShiftZ = -getBlockPartZ(blockState);
-        return blockShape.move(blockShapeShiftX / 16.0, 0, blockShapeShiftZ / 16.0);
+        return blockShape.move(blockShapeShiftX, 0, blockShapeShiftZ);
     }
 
     protected boolean isCenterBlock(BlockState blockState) {
