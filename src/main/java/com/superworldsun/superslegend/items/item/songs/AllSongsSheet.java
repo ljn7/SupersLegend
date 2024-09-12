@@ -43,7 +43,8 @@ public class AllSongsSheet extends Item
 	public InteractionResultHolder<ItemStack> use(Level world, Player playerEntity, InteractionHand hand)
 	{
 		LearnedSongs learnedSongs = LearnedSongs.Provider.getLearnedSongs(playerEntity);
-		Set<OcarinaSong> learnedSongsSet = learnedSongs.getLearnedSongs();		if (!world.isClientSide)
+		Set<OcarinaSong> learnedSongsSet = learnedSongs.getLearnedSongs();
+		if (!world.isClientSide)
 		{
 			playerEntity.sendSystemMessage(Component.translatable("You have learned all available songs").withStyle(ChatFormatting.DARK_GREEN));
 			for (Supplier<OcarinaSong> songSupplier : OcarinaSongInit.getAllSongSuppliers()) {

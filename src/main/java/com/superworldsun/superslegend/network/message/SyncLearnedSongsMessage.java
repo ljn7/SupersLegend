@@ -33,7 +33,7 @@ public class SyncLearnedSongsMessage {
     public static void receive(SyncLearnedSongsMessage message, Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
         ctx.setPacketHandled(true);
-        ctx.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClientPacket(message)));
+        ctx.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> SyncLearnedSongsMessage.handleClientPacket(message)));
     }
 
     @OnlyIn(Dist.CLIENT)

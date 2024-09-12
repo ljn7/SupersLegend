@@ -4,6 +4,7 @@ import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.network.NetworkDispatcher;
 import com.superworldsun.superslegend.network.message.SyncLearnedSongsMessage;
 import com.superworldsun.superslegend.registries.OcarinaSongInit;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -103,10 +104,8 @@ public class LearnedSongs implements INBTSerializable<CompoundTag> {
         public static void onPlayerClone(PlayerEvent.Clone event) {
             Player original = event.getOriginal();
             Player player = event.getEntity();
-            CompoundTag data = original.getPersistentData().getCompound(LEARNED_SONGS_KEY);
-            if (!data.isEmpty()) {
-                player.getPersistentData().put(LEARNED_SONGS_KEY, data.copy());
-            }
+            LearnedSongs originalPlayerSongs = getLearnedSongs(original);
+            saveLearnedSongs(player, originalPlayerSongs);
         }
 
         @SubscribeEvent
