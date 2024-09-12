@@ -29,16 +29,16 @@ public class OcarinaOfTime extends Item
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> showOcarinaScreen());
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> showOcarinaScreen(player));
         return InteractionResultHolder.success(player.getItemInHand(hand));
     }
 
     @OnlyIn(value = Dist.CLIENT)
-    private void showOcarinaScreen()
+    private void showOcarinaScreen(Player player)
     {
         Minecraft client = Minecraft.getInstance();
         //TODO, re add OcarinaScreen
-        client.setScreen(new OcarinaScreen());
+        client.setScreen(new OcarinaScreen(player));
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -22,6 +22,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,9 +55,11 @@ public class OcarinaScreen extends Screen {
     private int hintNoteTimer;
     private int closeDelay = -1;
     private boolean initialized = false;
+    static public Player player;
 
-    public OcarinaScreen() {
+    public OcarinaScreen(Player player) {
         super(Component.empty());
+        this.player = player;
         clearPlayedNotes();
     }
 
@@ -68,8 +71,9 @@ public class OcarinaScreen extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if (!initialized)
+        if (!initialized && this.minecraft == null)
             return;
+
         renderOcarinaBackground(guiGraphics);
         renderControls(guiGraphics);
         renderPlayedNotes(guiGraphics);
@@ -89,7 +93,7 @@ public class OcarinaScreen extends Screen {
 
         for (Note note : Note.values()) {
             Component noteKeyName = note.keyMapping.getTranslatedKeyMessage();
-            minecraft.getTextureManager().bindForSetup(TEXTURE);
+//            minecraft.getTextureManager().bindForSetup(TEXTURE);
             note.render(guiGraphics, controlsX, controlsY);
             controlsX += NOTE_ICON_SIZE + NOTE_ICON_TEXT_SPACING;
             guiGraphics.drawString(font, noteKeyName, controlsX, controlsY + 1, 0xFFFFFF);
@@ -97,6 +101,7 @@ public class OcarinaScreen extends Screen {
         }
     }
     private void renderOcarinaBackground(GuiGraphics guiGraphics) {
+        guiGraphics.fill(0, 0, width, height, 0x80000000);
         RenderSystem.setShaderTexture(0, TEXTURE);
         guiGraphics.blit(TEXTURE, (width - 156) / 2, (int) (height * PLAYED_NOTES_Y) - 30 / 2, 0, 0, 156, 30, 256, 256);
     }
@@ -122,7 +127,7 @@ public class OcarinaScreen extends Screen {
         for (RegistryObject<OcarinaSong> songRegistryObject : OcarinaSongInit.OCARINA_SONGS.getEntries()) {
             OcarinaSong song = songRegistryObject.get();
             int color = UNLEARNED_SONG_ICON_COLOR;
-            boolean isSongLearned = LearnedSongs.Provider.getLearnedSongs(minecraft.player).getLearnedSongs().contains(song);
+            boolean isSongLearned = LearnedSongs.Provider.getLearnedSongs(player).getLearnedSongs().contains(song);
 
             if (isSongLearned) {
                 color = song.getSongIconColor();
@@ -151,7 +156,7 @@ public class OcarinaScreen extends Screen {
 
         for (RegistryObject<OcarinaSong> songRegistryObject : OcarinaSongInit.OCARINA_SONGS.getEntries()) {
             OcarinaSong song = songRegistryObject.get();
-            boolean isSongLearned = LearnedSongs.Provider.getLearnedSongs(minecraft.player).getLearnedSongs().contains(song);
+            boolean isSongLearned = LearnedSongs.Provider.getLearnedSongs(player).getLearnedSongs().contains(song);
             boolean isMouseOver = mouseX >= songsX && mouseX <= songsX + SONG_ICON_WIDTH &&
                     mouseY >= songsY && mouseY <= songsY + SONG_ICON_HEIGHT;
 
@@ -178,7 +183,7 @@ public class OcarinaScreen extends Screen {
 
         for (RegistryObject<OcarinaSong> songRegistryObject : OcarinaSongInit.OCARINA_SONGS.getEntries()) {
             OcarinaSong song = songRegistryObject.get();
-            boolean isSongLearned = LearnedSongs.Provider.getLearnedSongs(minecraft.player).getLearnedSongs().contains(song);
+            boolean isSongLearned = LearnedSongs.Provider.getLearnedSongs(player).getLearnedSongs().contains(song);
             boolean isMouseOver = mouseX >= songsX && mouseX <= songsX + SONG_ICON_WIDTH &&
                     mouseY >= songsY && mouseY <= songsY + SONG_ICON_HEIGHT;
             boolean canShowSongHint = hintTimer == 0;
@@ -221,7 +226,7 @@ public class OcarinaScreen extends Screen {
     }
 
     private void checkIfSongWasPlayed(RegistryObject<OcarinaSong> song) {
-        boolean isSongLearned = LearnedSongs.Provider.getLearnedSongs(minecraft.player).getLearnedSongs().contains(song.get());
+        boolean isSongLearned = LearnedSongs.Provider.getLearnedSongs(player).getLearnedSongs().contains(song.get());
 
         if (!isSongLearned) {
             return;
@@ -239,9 +244,9 @@ public class OcarinaScreen extends Screen {
         if (isPlayedPatternCorrect) {
             setPlayedSong(song.get());
             closeAfterDelay(20);
-            LearnedSongs learnedSongs = LearnedSongs.Provider.getLearnedSongs(minecraft.player);
+            LearnedSongs learnedSongs = LearnedSongs.Provider.getLearnedSongs(player);
             learnedSongs.setCurrentSong(null);
-            LearnedSongs.Provider.saveLearnedSongs(minecraft.player, learnedSongs);
+            LearnedSongs.Provider.saveLearnedSongs(player, learnedSongs);
         }
     }
 
@@ -286,7 +291,7 @@ public class OcarinaScreen extends Screen {
 
     private void updateDelayedClose() {
         if (closeDelay == 0) {
-            boolean canApplySongEffect = minecraft.player.isHolding(ItemInit.OCARINA_OF_TIME.get()) || !playedSong.requiresOcarinaOfTime();
+            boolean canApplySongEffect = player.isHolding(ItemInit.OCARINA_OF_TIME.get()) || !playedSong.requiresOcarinaOfTime();
             if (canApplySongEffect) {
                 NetworkDispatcher.network_channel.sendToServer(new PlaySongMessage(playedSong));
                 int songColor = playedSong.getSongIconColor();
@@ -294,12 +299,12 @@ public class OcarinaScreen extends Screen {
                         .withStyle(style -> style.withColor(TextColor.fromRgb(songColor)));
                 MutableComponent message = Component.translatable("screen.ocarina.song_played", songName)
                         .withStyle(ChatFormatting.GOLD);
-                minecraft.player.sendSystemMessage(message);            }
+                player.sendSystemMessage(message);            }
             minecraft.setScreen(null);
-            minecraft.getSoundManager().play(new OcarinaSongSound(minecraft.player, playedSong));
-            LearnedSongs learnedSongs = LearnedSongs.Provider.getLearnedSongs(minecraft.player);
+            minecraft.getSoundManager().play(new OcarinaSongSound(player, playedSong));
+            LearnedSongs learnedSongs = LearnedSongs.Provider.getLearnedSongs(player);
             learnedSongs.setCurrentSong(playedSong);
-            LearnedSongs.Provider.saveLearnedSongs(minecraft.player, learnedSongs);
+            LearnedSongs.Provider.saveLearnedSongs(player, learnedSongs);
         }
 
         if (closeDelay > 0) {
@@ -370,8 +375,7 @@ public class OcarinaScreen extends Screen {
         }
 
         void play() {
-            Minecraft minecraft = Minecraft.getInstance();
-            minecraft.player.playSound(soundObject.get(), 1F, 1F);
+            player.playSound(soundObject.get(), 1F, 1F);
             playedNotes.add(this);
             playedPattern += this.name().toLowerCase();
         }
