@@ -18,10 +18,13 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
@@ -375,7 +378,34 @@ public class OcarinaScreen extends Screen {
         }
 
         void play() {
-            player.playSound(soundObject.get(), 1F, 1F);
+
+            Minecraft.getInstance().getSoundManager().play(new AbstractTickableSoundInstance(soundObject.get(),
+                    SoundSource.PLAYERS, RandomSource.create()) {
+
+                @Override
+                public void tick() {
+                    if (!player.isAlive()) {
+                        stop();
+                        return;
+                    }
+                    x = player.getX();
+                    y = player.getY();
+                    z = player.getZ();
+                }
+
+                @Override
+                public boolean canPlaySound()
+                {
+                    return !player.isSilent();
+                }
+
+                @Override
+                public boolean canStartSilent()
+                {
+                    return true;
+                }
+            });
+
             playedNotes.add(this);
             playedPattern += this.name().toLowerCase();
         }
