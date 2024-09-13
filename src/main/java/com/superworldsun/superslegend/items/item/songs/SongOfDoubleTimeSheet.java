@@ -18,8 +18,7 @@ public class SongOfDoubleTimeSheet extends SongSheetItem
 	protected void addSongDescription(List<Component> list)
 	{
 		list.add(Component.literal("Playing this will accelerate the passage of time.").withStyle(ChatFormatting.GRAY));
-		list.add(Component.literal("Play a second time to return it to normal").withStyle(ChatFormatting.GRAY));
+		list.add(Component.literal("Play second time to return it to normal").withStyle(ChatFormatting.GRAY));
 		list.add(Component.literal("Only works in single player").withStyle(ChatFormatting.GRAY));
-
 	}
 }

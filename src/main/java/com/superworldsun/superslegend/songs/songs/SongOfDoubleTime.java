@@ -6,11 +6,13 @@ import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.registries.SoundInit;
 import com.superworldsun.superslegend.songs.OcarinaSong;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
@@ -36,49 +38,49 @@ public class SongOfDoubleTime extends OcarinaSong
 	{
 		return SoundInit.SONG_OF_DOUBLE_TIME.get();
 	}
-	
+
 	@Override
-	public void onSongPlayed(Player player, Level level)
-	{
-		ServerLevel serverWorld = (ServerLevel) level;
-		MinecraftServer minecraftServer = serverWorld.getServer();
-		
-		if (minecraftServer.getGameRules().getRule(RULE_RANDOMTICKING).get() != 6)
-		{
-			player.sendSystemMessage(Component.translatable("text.ocarina.doubled", player.getName()));
-			setGameRule(minecraftServer, 6);
-			timer = 24000 * 3;
+	public void onSongPlayed(Player player, Level level) {
+		if (!(level instanceof ServerLevel serverLevel)) {
+			return;
 		}
-		else
-		{
-			minecraftServer.getPlayerList().getPlayers().forEach(p -> p.sendSystemMessage(
-					Component.translatable("text.ocarina.doubled_second", p.getName())));
-			setGameRule(minecraftServer, 3);
+
+		GameRules gameRules = serverLevel.getGameRules();
+		int currentTickingSpeed = gameRules.getInt(GameRules.RULE_RANDOMTICKING);
+		if (currentTickingSpeed != 6) {
+			player.sendSystemMessage(Component.translatable("text.ocarina.doubled", player.getName()).withStyle(ChatFormatting.GREEN));
+			gameRules.getRule(GameRules.RULE_RANDOMTICKING).set(6, serverLevel.getServer());
+			timer = 24000 * 3;
+		} else {
+			for (ServerPlayer p : serverLevel.getServer().getPlayerList().getPlayers()) {
+				p.sendSystemMessage(Component.translatable("text.ocarina.doubled_second", p.getName()).withStyle(ChatFormatting.YELLOW));
+			}
+			gameRules.getRule(GameRules.RULE_RANDOMTICKING).set(3, serverLevel.getServer());
 			timer = 0;
 		}
 	}
-	
+
 	@SubscribeEvent
-	public static void onWorldTick(TickEvent.ServerTickEvent event)
-	{
-		MinecraftServer minecraftServer = ServerLifecycleHooks.getCurrentServer();
-		timer = timer - 1;
-		
-		if (timer <= 0 && minecraftServer.getGameRules().getRule(RULE_RANDOMTICKING).get() == 6)
-		{
-			setGameRule(minecraftServer, 3);
+	public static void onServerTick(TickEvent.ServerTickEvent event) {
+		timer--;
+		if (timer <= 0) {
+			ServerLevel overworld = event.getServer().overworld();
+			if (overworld.getGameRules().getInt(GameRules.RULE_RANDOMTICKING) == 6) {
+				overworld.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(3, event.getServer());
+			}
 		}
 	}
 
-	private static void setGameRule(MinecraftServer minecraftServer, int value) {
-		GameRules gameRules = minecraftServer.getGameRules();
-		GameRules.IntegerValue gameRule = gameRules.getRule(GameRules.RULE_RANDOMTICKING);
+	@SubscribeEvent
+	public static void onWorldTick(TickEvent.ServerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
+			ServerLevel level = event.getServer().getLevel(Level.OVERWORLD);
+			if (level == null) return;
 
-		gameRule.set(value, minecraftServer);
-
-		minecraftServer.getPlayerList().getPlayers().forEach(player -> {
-			player.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.CHANGE_GAME_MODE, 0));
-			player.connection.send(new ClientboundEntityEventPacket(player, (byte)70));
-		});
+			int tickSpeed = level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+			if (tickSpeed == 6) {
+				level.setDayTime(level.getDayTime() + 3);
+			}
+		}
 	}
 }
