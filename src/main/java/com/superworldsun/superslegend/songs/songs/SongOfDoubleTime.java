@@ -32,7 +32,8 @@ public class SongOfDoubleTime extends OcarinaSong
 	
 	// TODO: this is not being saved when the game is closed
 	static int timer;
-	
+	private static final long TICKS_PER_DAY = 24000L;
+	private static long lastTickTime = 0;
 	@Override
 	public SoundEvent getPlayingSound()
 	{
@@ -62,25 +63,28 @@ public class SongOfDoubleTime extends OcarinaSong
 
 	@SubscribeEvent
 	public static void onServerTick(TickEvent.ServerTickEvent event) {
-		timer--;
-		if (timer <= 0) {
-			ServerLevel overworld = event.getServer().overworld();
-			if (overworld.getGameRules().getInt(GameRules.RULE_RANDOMTICKING) == 6) {
-				overworld.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(3, event.getServer());
-			}
-		}
-	}
+		if (event.phase != TickEvent.Phase.END) return;
 
-	@SubscribeEvent
-	public static void onWorldTick(TickEvent.ServerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END) {
-			ServerLevel level = event.getServer().getLevel(Level.OVERWORLD);
-			if (level == null) return;
+		ServerLevel serverLevel = event.getServer().getLevel(Level.OVERWORLD);
+		if (serverLevel == null) return;
 
-			int tickSpeed = level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
-			if (tickSpeed == 6) {
-				level.setDayTime(level.getDayTime() + 3);
+		int tickSpeed = serverLevel.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+
+		if (tickSpeed == 6) {
+			long currentTime = serverLevel.getDayTime();
+			long elapsedTime = currentTime - lastTickTime;
+
+			long newTime = (currentTime + elapsedTime) % TICKS_PER_DAY;
+			serverLevel.setDayTime(newTime);
+
+			lastTickTime = newTime;
+
+			timer--;
+			if (timer <= 0) {
+				serverLevel.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(3, event.getServer());
 			}
+		} else {
+			lastTickTime = serverLevel.getDayTime();
 		}
 	}
 }
