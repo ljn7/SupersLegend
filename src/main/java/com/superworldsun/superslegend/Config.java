@@ -21,26 +21,67 @@ public class Config {
     private static final ForgeConfigSpec.BooleanValue SONG_SHEET_CONSUMED = BUILDER.define("songSheetConsumed", true);
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
-    public static int base_player_heath;
-    public static boolean enable_temperature;
-    public static boolean boomerangs_turn_back_on_hit;
-    public static boolean boomerangs_break_soft_blocks;
-    public static boolean boomerangs_activate_levers;
-    public static boolean boomerangs_activate_buttons;
-    public static boolean boomerangs_activate_pressure_plates;
-    public static boolean boomerangs_activate_trip_wires;
-    public static boolean song_sheet_consumed;
+    private static boolean isLoaded = false;
+
+    private static int base_player_heath;
+    private static boolean enable_temperature;
+    private static boolean boomerangs_turn_back_on_hit;
+    private static boolean boomerangs_break_soft_blocks;
+    private static boolean boomerangs_activate_levers;
+    private static boolean boomerangs_activate_buttons;
+    private static boolean boomerangs_activate_pressure_plates;
+    private static boolean boomerangs_activate_trip_wires;
+    private static boolean song_sheet_consumed;
 
     @SubscribeEvent
     static void load(ModConfigEvent event) {
-        base_player_heath = BASE_PLAYER_HEALTH.get();
-        enable_temperature = ENABLE_TEMPERATURE.get();
-        boomerangs_turn_back_on_hit = BOOMERANGS_TURN_BACK_ON_HIT.get();
-        boomerangs_break_soft_blocks = BOOMERANGS_BREAK_SOFT_BLOCKS.get();
-        boomerangs_activate_levers = BOOMERANGS_ACTIVATE_LEVERS.get();
-        boomerangs_activate_buttons = BOOMERANGS_ACTIVATE_BUTTONS.get();
-        boomerangs_activate_pressure_plates = BOOMERANGS_ACTIVATE_PRESSURE_PLATES.get();
-        boomerangs_activate_trip_wires = BOOMERANGS_ACTIVATE_TRIP_WIRES.get();
-        song_sheet_consumed = SONG_SHEET_CONSUMED.get();
+        if (event.getConfig().getSpec() == SPEC) {
+            base_player_heath = BASE_PLAYER_HEALTH.get();
+            enable_temperature = ENABLE_TEMPERATURE.get();
+            boomerangs_turn_back_on_hit = BOOMERANGS_TURN_BACK_ON_HIT.get();
+            boomerangs_break_soft_blocks = BOOMERANGS_BREAK_SOFT_BLOCKS.get();
+            boomerangs_activate_levers = BOOMERANGS_ACTIVATE_LEVERS.get();
+            boomerangs_activate_buttons = BOOMERANGS_ACTIVATE_BUTTONS.get();
+            boomerangs_activate_pressure_plates = BOOMERANGS_ACTIVATE_PRESSURE_PLATES.get();
+            boomerangs_activate_trip_wires = BOOMERANGS_ACTIVATE_TRIP_WIRES.get();
+            song_sheet_consumed = SONG_SHEET_CONSUMED.get();
+            isLoaded = true;
+        }
+    }
+
+    public static int getBasePlayerHealth() {
+        return isLoaded ? base_player_heath : BASE_PLAYER_HEALTH.get();
+    }
+
+    public static boolean isTemperatureEnabled() {
+        return isLoaded ? enable_temperature : ENABLE_TEMPERATURE.get();
+    }
+
+    public static boolean doBoomerangsTurnBackOnHit() {
+        return isLoaded ? boomerangs_turn_back_on_hit : BOOMERANGS_TURN_BACK_ON_HIT.get();
+    }
+
+    public static boolean doBoomerangsBreakSoftBlocks() {
+        return isLoaded ? boomerangs_break_soft_blocks : BOOMERANGS_BREAK_SOFT_BLOCKS.get();
+    }
+
+    public static boolean doBoomerangsActivateLevers() {
+        return isLoaded ? boomerangs_activate_levers : BOOMERANGS_ACTIVATE_LEVERS.get();
+    }
+
+    public static boolean doBoomerangsActivateButtons() {
+        return isLoaded ? boomerangs_activate_buttons : BOOMERANGS_ACTIVATE_BUTTONS.get();
+    }
+
+    public static boolean doBoomerangsActivatePressurePlates() {
+        return isLoaded ? boomerangs_activate_pressure_plates : BOOMERANGS_ACTIVATE_PRESSURE_PLATES.get();
+    }
+
+    public static boolean doBoomerangsActivateTripWires() {
+        return isLoaded ? boomerangs_activate_trip_wires : BOOMERANGS_ACTIVATE_TRIP_WIRES.get();
+    }
+
+    public static boolean isSongSheetConsumed() {
+        return isLoaded ? song_sheet_consumed : SONG_SHEET_CONSUMED.get();
     }
 }

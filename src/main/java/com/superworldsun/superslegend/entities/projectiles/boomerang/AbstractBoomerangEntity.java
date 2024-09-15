@@ -174,20 +174,20 @@ public abstract class AbstractBoomerangEntity extends Entity {
     }
 
     protected boolean canBreakBlock(Block block) {
-        if (block.defaultDestroyTime() == 0f && Config.boomerangs_break_soft_blocks) return true;
+        if (block.defaultDestroyTime() == 0f && Config.doBoomerangsBreakSoftBlocks()) return true;
         return false;
     }
 
     protected boolean canActivateBlock(Block block, BlockPos pos) {
         if (activatedPos != null && activatedPos.equals(pos)) return false;
-        if (block instanceof LeverBlock && Config.boomerangs_activate_levers) return true;
-        if (block instanceof ButtonBlock && Config.boomerangs_activate_buttons) return true;
-        if (block instanceof PressurePlateBlock && Config.boomerangs_activate_pressure_plates) return true;
-        return block instanceof TripWireBlock && Config.boomerangs_activate_trip_wires;
+        if (block instanceof LeverBlock && Config.doBoomerangsActivateLevers()) return true;
+        if (block instanceof ButtonBlock && Config.doBoomerangsActivateButtons()) return true;
+        if (block instanceof PressurePlateBlock && Config.doBoomerangsActivatePressurePlates()) return true;
+        return block instanceof TripWireBlock && Config.doBoomerangsActivateTripWires();
     }
 
     protected void activateBlock(BlockState state, BlockHitResult hitResult) {
-        if (turnBackTimer > 0 && Config.boomerangs_turn_back_on_hit) {
+        if (turnBackTimer > 0 && Config.doBoomerangsTurnBackOnHit()) {
             turnBackTimer = 0;
         }
         if (getOwner() == null) return;
@@ -211,7 +211,7 @@ public abstract class AbstractBoomerangEntity extends Entity {
         } else {
             return;
         }
-        if (turnBackTimer > 0 && Config.boomerangs_turn_back_on_hit) {
+        if (turnBackTimer > 0 && Config.doBoomerangsTurnBackOnHit()) {
             turnBackTimer = 0;
         }
     }
