@@ -420,6 +420,7 @@ public class CreativeModTabsInit {
                         pOutput.accept(BlockInit.FAN.get());
                         pOutput.accept(BlockInit.SWITCHABLE_FAN.get());
 
+                        pOutput.accept(BlockInit.OWL_STATUE.get());
 //
                         //pOutput.accept(BlockInit.LIGHT_EMITTER.get());
                         //pOutput.accept(BlockInit.LIGHT_PRISM.get());

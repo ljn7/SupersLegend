@@ -1,40 +1,52 @@
 package com.superworldsun.superslegend.network.message;
 
-import com.superworldsun.superslegend.waypoints.WaypointsManager;
+import com.superworldsun.superslegend.capability.waypoint.WaypointsProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class SetWaypointNameMessage {
     private final BlockPos pos;
     private final String text;
-
-    public SetWaypointNameMessage(BlockPos pos, String text) {
+    private final UUID playerUUID;
+    public SetWaypointNameMessage(BlockPos pos, String text, UUID playerUUID) {
         this.pos = pos;
         this.text = text;
+        this.playerUUID = playerUUID;
+    }
+
+    public static void encode(SetWaypointNameMessage message, FriendlyByteBuf buf) {
+        buf.writeBlockPos(message.pos);
+        buf.writeUtf(message.text);
+        buf.writeUUID(message.playerUUID);
     }
 
     public static SetWaypointNameMessage decode(FriendlyByteBuf buf) {
-        return new SetWaypointNameMessage(buf.readBlockPos(), buf.readUtf());
+        return new SetWaypointNameMessage(buf.readBlockPos(), buf.readUtf(), buf.readUUID());
     }
 
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeBlockPos(pos);
-        buf.writeUtf(text);
-    }
-
-    public static void handle(SetWaypointNameMessage message, Supplier<NetworkEvent.Context> ctxSupplier) {
-        NetworkEvent.Context ctx = ctxSupplier.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer player = ctx.getSender();
+    public static void handle(SetWaypointNameMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        context.setPacketHandled(true);
+        context.enqueueWork(() -> {
+            // Make sure we're on the server side
+            ServerLevel level = context.getSender().serverLevel();
+            Player player = level.getPlayerByUUID(message.playerUUID);
             if (player != null) {
-                WaypointsManager.addWaypoint(player, new WaypointsManager.Waypoint(message.text, message.pos));
-                WaypointsManager.syncToClient(player);
+                player.getCapability(WaypointsProvider.WAYPOINTS_CAPABILITY).ifPresent(waypoints -> {
+                    waypoints.createWaypoint(message.pos, message.text, level.dimension());
+                    // Optionally, you might want to sync the waypoints after creation
+                    WaypointsProvider.sync((ServerPlayer) player);
+                });
             }
         });
-        ctx.setPacketHandled(true);
+
     }
 }

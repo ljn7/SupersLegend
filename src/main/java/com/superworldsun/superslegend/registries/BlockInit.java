@@ -197,8 +197,8 @@ public class BlockInit {
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(0.5f).explosionResistance(0.5f).sound(SoundType.STONE)));
     public static final RegistryObject<Block> BLOCK_OF_TIME = registerBlock("block_of_time",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(30).explosionResistance(120).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> OWL_STATUE = registerBlock("owl_statue",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(8).explosionResistance(8).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> OWL_STATUE = BLOCKS.register("owl_statue",
+            () -> new OwlStatueBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(8).explosionResistance(8).sound(SoundType.STONE).strength(8f, 8f)));
     public static final RegistryObject<Block> SUN_SWITCH = registerBlock("sun_switch",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.STONE)));
 

@@ -2,10 +2,7 @@ package com.superworldsun.superslegend.registries;
 
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.items.armors.*;
-import com.superworldsun.superslegend.items.block.FalseShadowBlockItem;
-import com.superworldsun.superslegend.items.block.HiddenShadowBlockItem;
-import com.superworldsun.superslegend.items.block.ModHiddenBlockItem;
-import com.superworldsun.superslegend.items.block.ShadowBlockItem;
+import com.superworldsun.superslegend.items.block.*;
 import com.superworldsun.superslegend.items.containers.LetterItem;
 import com.superworldsun.superslegend.items.curios.charms.GoldenScale;
 import com.superworldsun.superslegend.items.curios.charms.SilverScale;
@@ -858,8 +855,8 @@ public class ItemInit {
 //            () -> new BlockItem(BlockInit.SPIKES_BLOCK.get(), new Item.Properties()));
 //    public static final RegistryObject<Item> TORCH_TOWER = ITEMS.register("torch_tower",
 //            () -> new BlockItem(BlockInit.TORCH_TOWER.get(), new Item.Properties()));
-//    public static final RegistryObject<Item> OWL_STATUE = ITEMS.register("owl_statue",
-//            () -> new BlockItem(BlockInit.OWL_STATUE.get(), new Item.Properties()));
+    public static final RegistryObject<Item> OWL_STATUE = ITEMS.register("owl_statue",
+            () -> new OwlStatueItem(BlockInit.OWL_STATUE));
 //    public static final RegistryObject<Item> POT_BLOCK = ITEMS.register("pot_block",
 //            () -> new BlockItem(BlockInit.POT_BLOCK.get(), new Item.Properties()));
 //    public static final RegistryObject<Item> JAR_BLOCK = ITEMS.register("jar_block",

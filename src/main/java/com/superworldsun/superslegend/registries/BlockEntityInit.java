@@ -20,6 +20,9 @@ public class BlockEntityInit
 	public static final RegistryObject<BlockEntityType<ShadowBlockEntity>> SHADOW_ENTITY = BLOCK_ENTITIES.register("shadow", ShadowBlockEntity::createShadowType);
 	public static final RegistryObject<BlockEntityType<FalseShadowBlockEntity>> FALSE_SHADOW = BLOCK_ENTITIES.register("false_shadow", FalseShadowBlockEntity::createFalseShadowType);
 	public static final RegistryObject<BlockEntityType<HiddenShadowBlockEntity>> HIDDEN_SHADOW = BLOCK_ENTITIES.register("hidden_shadow", HiddenShadowBlockEntity::createHiddenShadowType);
+	public static final RegistryObject<BlockEntityType<OwlStatueBlockEntity>> OWL_STATUE = BLOCK_ENTITIES.register("owl_statue", OwlStatueBlockEntity::createType);
+
+
 	public static void register(IEventBus eventBus) {
 		BLOCK_ENTITIES.register(eventBus);
 	}
