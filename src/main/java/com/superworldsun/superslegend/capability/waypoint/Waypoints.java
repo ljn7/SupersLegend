@@ -73,8 +73,10 @@ public class Waypoints implements INBTSerializable<CompoundTag> {
             // Serialize Waypoint
             Waypoint waypoint = entry.getValue();
             waypointTag.putString("name", waypoint.getName());
+            waypointTag.putString("dimension", waypoint.getDimension());
 
             waypointsList.add(waypointTag);
+
         }
 
         nbt.put("waypoints", waypointsList);
@@ -97,16 +99,15 @@ public class Waypoints implements INBTSerializable<CompoundTag> {
 
             // Deserialize Waypoint
             String name = waypointTag.getString("name");
-            ResourceLocation dimLocation = new ResourceLocation(waypointTag.getString("dimension"));
-            ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, dimLocation);
-            Waypoint waypoint = new Waypoint(name, pos, dimension);
+            String dimLocation = waypointTag.getString("dimension");
+            Waypoint waypoint = new Waypoint(name, pos, dimLocation);
 
             waypoints.put(pos, waypoint);
         }
     }
 
 
-    public void createWaypoint(BlockPos pos, String name, ResourceKey<Level> dimension) {
+    public void createWaypoint(BlockPos pos, String name, String dimension) {
         waypoints.put(pos, new Waypoint(name, pos, dimension));
     }
 }

@@ -25,7 +25,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//@OnlyIn(Dist.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class OwlStatueRenderer implements BlockEntityRenderer<OwlStatueBlockEntity> {
     private static final ResourceLocation TEXTURE_CLOSED = new ResourceLocation(SupersLegendMain.MOD_ID, "textures/models/block/owl_statue.png");
     private static final ResourceLocation TEXTURE_OPEN = new ResourceLocation(SupersLegendMain.MOD_ID, "textures/models/block/owl_statue_open.png");
@@ -40,9 +40,6 @@ public class OwlStatueRenderer implements BlockEntityRenderer<OwlStatueBlockEnti
     @Override
     public void render(OwlStatueBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         Minecraft client = Minecraft.getInstance();
-//        if (client.player != null)
-//            return;
-
         poseStack.pushPose();
         Direction blockFacing = blockEntity.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
         poseStack.translate(0.5D, 1.5D, 0.5D);

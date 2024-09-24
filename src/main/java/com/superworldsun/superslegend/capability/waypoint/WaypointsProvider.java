@@ -16,6 +16,7 @@ import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.network.PacketDistributor;
@@ -61,6 +62,25 @@ public class WaypointsProvider extends SavedData implements ICapabilitySerializa
 
         Player player = (Player) event.getEntity();
         WaypointsProvider.sync((ServerPlayer) player);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        Player originalPlayer = event.getOriginal();
+        Player newPlayer = event.getEntity();
+
+        originalPlayer.reviveCaps();
+        originalPlayer.getCapability(WAYPOINTS_CAPABILITY).ifPresent(oldWaypoints -> {
+            newPlayer.getCapability(WAYPOINTS_CAPABILITY).ifPresent(newWaypoints -> {
+                CompoundTag nbt = oldWaypoints.serializeNBT();
+                newWaypoints.deserializeNBT(nbt);
+            });
+        });
+        originalPlayer.invalidateCaps();
+
+        if (newPlayer instanceof ServerPlayer serverPlayer) {
+            sync(serverPlayer);
+        }
     }
 
     @Override

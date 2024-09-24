@@ -42,7 +42,7 @@ public class AttemptTeleportationMessage {
                         player.getCapability(WaypointsProvider.WAYPOINTS_CAPABILITY).ifPresent(waypoints -> {
                             Waypoint waypoint = waypoints.getWaypoint(message.pos);
                             if (waypoint != null) {
-                                if (player.level().dimension() == waypoint.getDimension()) {
+                                if (player.level().dimension().toString().equals(waypoint.getDimension())) {
                                     player.teleportTo(message.pos.getX(), message.pos.getY(), message.pos.getZ());
                                     player.connection.send(new ClientboundPlayerPositionPacket(message.pos.getX(), message.pos.getY(), message.pos.getZ(), 0, 0, Collections.emptySet(), 0));
                                     player.displayClientMessage(Component.literal("Teleported to waypoint").withStyle(ChatFormatting.DARK_GREEN)
@@ -52,7 +52,7 @@ public class AttemptTeleportationMessage {
                                     System.out.println("Teleported player to: " + waypoint);
                                     System.out.println(waypoint.getDimension());
                                 } else {
-                                    System.out.println("Cross-dimension teleportation not implemented");
+                                    System.out.println(player.level().dimension());
                                 }
                             } else {
                                 System.out.println("Waypoint not found at position: " + message.pos);

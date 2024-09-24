@@ -14,9 +14,9 @@ public class Waypoint {
 
     private final String name;
     private final BlockPos statuePos;
-    private ResourceKey<Level> dimension = Level.OVERWORLD;
+    private final String dimension;
 
-    public Waypoint(String name, BlockPos statuePos, ResourceKey<Level> dimension)
+    public Waypoint(String name, BlockPos statuePos, String dimension)
     {
         this.name = name;
         this.statuePos = statuePos;
@@ -38,7 +38,7 @@ public class Waypoint {
         CompoundTag nbt = new CompoundTag();
         nbt.putString("name", name);
         nbt.put("pos", NbtUtils.writeBlockPos(statuePos));
-        nbt.putString("dimension", dimension.location().toString());
+        nbt.putString("dimension", dimension);
         return nbt;
     }
 
@@ -46,12 +46,11 @@ public class Waypoint {
     {
         String name = nbt.getString("name");
         BlockPos statuePos = NbtUtils.readBlockPos(nbt.getCompound("pos"));
-        ResourceLocation dimLocation = new ResourceLocation(nbt.getString("dimension"));
-        ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, dimLocation);
+        String dimension = nbt.getString("dimension");
         return new Waypoint(name, statuePos, dimension);
     }
 
-    public ResourceKey<Level> getDimension() {
+    public String getDimension() {
         return this.dimension;
     }
 }

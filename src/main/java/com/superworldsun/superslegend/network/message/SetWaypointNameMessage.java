@@ -36,13 +36,11 @@ public class SetWaypointNameMessage {
         NetworkEvent.Context context = contextSupplier.get();
         context.setPacketHandled(true);
         context.enqueueWork(() -> {
-            // Make sure we're on the server side
             ServerLevel level = context.getSender().serverLevel();
             Player player = level.getPlayerByUUID(message.playerUUID);
             if (player != null) {
                 player.getCapability(WaypointsProvider.WAYPOINTS_CAPABILITY).ifPresent(waypoints -> {
-                    waypoints.createWaypoint(message.pos, message.text, level.dimension());
-                    // Optionally, you might want to sync the waypoints after creation
+                    waypoints.createWaypoint(message.pos, message.text, level.dimension().toString());
                     WaypointsProvider.sync((ServerPlayer) player);
                 });
             }
