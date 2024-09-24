@@ -2,23 +2,27 @@ package com.superworldsun.superslegend.blocks;
 
 
 //TODO Partially ported, a couple errors
-/*import com.superworldsun.superslegend.SupersLegendMain;
+import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.blocks.util.Floodable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.RandomSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.event.level.BlockEvent;
@@ -31,19 +35,9 @@ import java.util.Random;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = SupersLegendMain.MOD_ID)
 public class GrateBlock extends Block implements Floodable {
 
-    public GrateBlock(Block.Properties properties) {
+    public GrateBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FLUID_STATE_PROPERTY, 0));
-    }
-
-    @Override
-    public boolean isRandomlyTicking(BlockState blockState) {
-        return blockState.getFluidState().isRandomlyTicking();
-    }
-
-    @Override
-    public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-        state.getFluidState().randomTick(worldIn, pos, random);
     }
 
     @Override
@@ -52,10 +46,9 @@ public class GrateBlock extends Block implements Floodable {
     }
 
     @Override
-    public FluidState getFluidState(BlockState blockState) {
-        int fluidId = blockState.getValue(FLUID_STATE_PROPERTY);
-        FluidState fluidState = Fluid.FLUID_STATE_REGISTRY.byId(fluidId);
-        return fluidState;
+    public FluidState getFluidState(BlockState state) {
+        int fluidId = state.getValue(FLUID_STATE_PROPERTY);
+        return Fluid.FLUID_STATE_REGISTRY.byId(fluidId);
     }
 
     @Override
@@ -64,77 +57,61 @@ public class GrateBlock extends Block implements Floodable {
     }
 
     @Override
-    public boolean canPlaceLiquid(BlockGetter p_204510_1_, BlockPos p_204510_2_, BlockState p_204510_3_, Fluid p_204510_4_) {
+    public boolean canPlaceLiquid(BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
         return true;
     }
 
     @Override
-    public boolean placeLiquid(LevelAccessor world, BlockPos blockPos, BlockState blockState, FluidState fluidState) {
-        world.setBlock(blockPos, getBlockState(fluidState), 11);
+    public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+        level.setBlock(pos, getBlockState(fluidState), 11);
         return true;
     }
 
     @Override
-    public void neighborChanged(BlockState blockState, Level world, BlockPos blockPos, Block block, BlockPos neighborBlockState, boolean b) {
-        Fluid fluid = blockState.getFluidState().getType();
-        world.scheduleTick(blockPos, fluid, fluid.getTickDelay(world));
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        level.scheduleTick(pos, state.getFluidState().getType(), state.getFluidState().getType().getTickDelay(level));
     }
 
     @Override
-    public void onPlace(BlockState blockState, Level world, BlockPos blockPos, BlockState oldBlockState, boolean b) {
-        Fluid fluid = blockState.getFluidState().getType();
-        world.scheduleTick(blockPos, fluid, fluid.getTickDelay(world));
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        level.scheduleTick(pos, state.getFluidState().getType(), state.getFluidState().getType().getTickDelay(level));
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter world, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
         return Shapes.empty();
     }
 
-    public Fluid takeLiquid(LevelAccessor levelAccessor, BlockPos blockPos, BlockState blockState) {
-        FluidState fluidState = getFluidState(blockState);
-
+    @Override
+    public ItemStack pickupBlock(LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
+        FluidState fluidState = getFluidState(pState);
         if (fluidState.isSource()) {
-            levelAccessor.setBlock(blockPos, defaultBlockState(), 11);
-            return fluidState.getType();
+            pLevel.setBlock(pPos, defaultBlockState(), 11);
+            return new ItemStack(fluidState.getType().getBucket());
         }
+        return ItemStack.EMPTY;
+    }
 
-        return Fluids.EMPTY;
+    @Override
+    public Optional<SoundEvent> getPickupSound() {
+        return Optional.of(SoundEvents.BUCKET_FILL);
     }
 
     @Override
     public BlockState getBlockState(FluidState fluidState) {
         int fluidStateId = 0;
-
         if (fluidState.getType() != Fluids.EMPTY) {
             fluidStateId = Fluid.FLUID_STATE_REGISTRY.getId(fluidState);
         }
-
         return defaultBlockState().setValue(FLUID_STATE_PROPERTY, fluidStateId);
     }
 
     @SubscribeEvent
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
-        Block placedBlock = event.getState().getBlock();
-
-        if (placedBlock instanceof GrateBlock) {
-            BlockState oldBlockState = event.getBlockSnapshot().getReplacedBlock();
-
-            if (oldBlockState.getBlock() instanceof LiquidBlock) {
-                GrateBlock grateBlock = (GrateBlock) placedBlock;
-                BlockState floodedGrateState = grateBlock.getBlockState(oldBlockState.getFluidState());
-                event.getLevel().setBlock(event.getPos(), floodedGrateState, 11);
-            }
+        if (event.getPlacedBlock().getBlock() instanceof GrateBlock && event.getPlacedAgainst().getBlock() instanceof LiquidBlock) {
+            GrateBlock grateBlock = (GrateBlock) event.getPlacedBlock().getBlock();
+            BlockState floodedGrateState = grateBlock.getBlockState(event.getPlacedAgainst().getFluidState());
+            event.getLevel().setBlock(event.getPos(), floodedGrateState, 11);
         }
     }
-
-    @Override
-    public ItemStack pickupBlock(LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
-        return null;
-    }
-
-    @Override
-    public Optional<SoundEvent> getPickupSound() {
-        return Optional.empty();
-    }
-}*/
+}

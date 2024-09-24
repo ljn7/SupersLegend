@@ -38,10 +38,10 @@ public class BlockInit {
             () -> new PostboxBlock(BlockBehaviour.Properties.of().destroyTime(2).explosionResistance(2).sound(SoundType.WOOD)));
     public static final RegistryObject<Block> SPIKES_BLOCK = registerBlock("spikes_block",
             () -> new SpikesBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(13).explosionResistance(13).sound(SoundType.METAL)));
-    public static final RegistryObject<Block> GOSSIP_STONE_BLOCK = registerBlock("gossip_stone_block",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(11).explosionResistance(11).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> GOSSIP_STONE_TOP = registerBlock("gossip_stone_top",
-            () -> new Block(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(11).explosionResistance(11).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> GOSSIP_STONE_BLOCK = BLOCKS.register("gossip_stone_block",
+            () -> new GossipStoneBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(11).explosionResistance(11).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> GOSSIP_STONE_TOP = BLOCKS.register("gossip_stone_top",
+            () -> new GossipStoneTopBlock(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(11).explosionResistance(11).sound(SoundType.STONE)));
     public static final RegistryObject<Block> DUNGEON_DOOR = registerBlock("dungeon_door",
             () -> new DoorBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BlockSetType.IRON));
     public static final RegistryObject<Block> LOCKED_DUNGEON_DOOR = registerBlock("locked_dungeon_door",
@@ -71,8 +71,8 @@ public class BlockInit {
             () -> new Block(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(0.5f).explosionResistance(0.5f).sound(SoundType.GLASS)));
     public static final RegistryObject<Block> POSTBOX_TOP = BLOCKS.register("postbox_top",
             () -> new PostboxTopBlock(BlockBehaviour.Properties.of().noLootTable().destroyTime(2).explosionResistance(2).sound(SoundType.WOOD)));
-    public static final RegistryObject<Block> GRATE_BLOCK = registerBlock("grate_block",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(6).explosionResistance(6).sound(SoundType.METAL)));
+    public static final RegistryObject<Block> GRATE_BLOCK = BLOCKS.register("grate_block",
+            () -> new GrateBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(6).explosionResistance(6).sound(SoundType.METAL)));
     public static final RegistryObject<Block> CRATE_BLOCK = registerBlock("crate_block",
             () -> new CrateBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(4).explosionResistance(3).sound(SoundType.WOOD)));
     public static final RegistryObject<Block> PUSH_STONE = registerBlock("push_stone",
@@ -185,18 +185,18 @@ public class BlockInit {
 
     public static final RegistryObject<Block> PEDESTAL = registerBlock("pedestal",
             () -> new PedestalBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2.2F).explosionResistance(2.2F).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> FAN = registerBlock("fan",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(7).explosionResistance(10).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> SWITCHABLE_FAN = registerBlock("switchable_fan",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(7).explosionResistance(10).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> FAN = BLOCKS.register("fan",
+            () -> new FanBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(7).explosionResistance(10).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> SWITCHABLE_FAN = BLOCKS.register("switchable_fan",
+            () -> new SwitchableFanBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(7).explosionResistance(10).sound(SoundType.STONE)));
     /*public static final RegistryObject<Block> LIGHT_EMITTER = registerBlock("light_emitter",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.GLASS)));
     public static final RegistryObject<Block> LIGHT_PRISM = registerBlock("light_prism",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.GLASS)));*/
     public static final RegistryObject<Block> ROYAL_TILE = registerBlock("royal_tile",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(0.5f).explosionResistance(0.5f).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> BLOCK_OF_TIME = registerBlock("block_of_time",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(30).explosionResistance(120).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> BLOCK_OF_TIME = BLOCKS.register("block_of_time",
+            () -> new TimeBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(30).explosionResistance(120).sound(SoundType.STONE)));
     public static final RegistryObject<Block> OWL_STATUE = BLOCKS.register("owl_statue",
             () -> new OwlStatueBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(8).explosionResistance(8).sound(SoundType.STONE).strength(8f, 8f)));
     public static final RegistryObject<Block> SUN_SWITCH = registerBlock("sun_switch",

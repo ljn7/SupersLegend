@@ -20,47 +20,38 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(FlowingFluid.class)
 public abstract class MixinFlowingFluid {
 
-    @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
-    public void tick(Level level, BlockPos blockPos, FluidState fluidState, CallbackInfo callbackInfo) {
-        Block originalBlock = level.getBlockState(blockPos).getBlock();
+    @Shadow protected abstract void spread(Level pLevel, BlockPos pPos, FluidState pState);
+    @Shadow protected abstract FluidState getNewLiquid(Level pLevel, BlockPos pPos, BlockState pBlockState);
+    @Shadow protected abstract boolean canPassThroughWall(Direction pDirection, BlockGetter pLevel, BlockPos p_76064_, BlockState p_76065_, BlockPos p_76066_, BlockState p_76067_);
 
-        if (originalBlock instanceof Floodable) {
-            if (!fluidState.isSource()) {
-                FluidState newFluidState = getNewLiquid(level, blockPos, level.getBlockState(blockPos));
-                int spreadDelay = getSpreadDelay(level, blockPos, fluidState, newFluidState);
-
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    public void onTick(Level level, BlockPos pos, FluidState state, CallbackInfo ci) {
+        Block block = level.getBlockState(pos).getBlock();
+        if (block instanceof Floodable) {
+            if (!state.isSource()) {
+                FluidState newFluidState = this.getNewLiquid(level, pos, level.getBlockState(pos));
                 if (newFluidState.isEmpty()) {
-                    fluidState = newFluidState;
-                    level.setBlock(blockPos, originalBlock.defaultBlockState(), 3);
-                } else if (!newFluidState.equals(fluidState)) {
-                    fluidState = newFluidState;
-                    BlockState blockstate = ((Floodable) originalBlock).getBlockState(fluidState);
-                    level.setBlock(blockPos, blockstate, 2);
-                    level.scheduleTick(blockPos, newFluidState.getType(), spreadDelay);
-                    level.updateNeighborsAt(blockPos, blockstate.getBlock());
+                    level.setBlock(pos, block.defaultBlockState(), 3);
+                    ci.cancel();
+                } else if (!newFluidState.equals(state)) {
+                    BlockState blockstate = ((Floodable) block).getBlockState(newFluidState);
+                    level.setBlock(pos, blockstate, 2);
+                    level.scheduleTick(pos, newFluidState.getType(), this.getSpreadDelay(level, pos, state, newFluidState));
+                    level.updateNeighborsAt(pos, blockstate.getBlock());
+                    ci.cancel();
                 }
             }
-
-            spread(level, blockPos, fluidState);
-            callbackInfo.cancel();
+            this.spread(level, pos, state);
+            ci.cancel();
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "canPassThroughWall", cancellable = true)
-    private void injectCanPassThroughWall(Direction direction, BlockGetter world, BlockPos blockPosFrom, BlockState blockStateFrom, BlockPos blockPosTo,
-                                          BlockState blockStateTo, CallbackInfoReturnable<Boolean> callbackInfo) {
-        if (blockStateFrom.getBlock() instanceof Floodable || blockStateTo.getBlock() instanceof Floodable) {
-            callbackInfo.setReturnValue(true);
+    @Inject(method = "canPassThroughWall", at = @At("HEAD"), cancellable = true)
+    private void onCanPassThroughWall(Direction direction, BlockGetter level, BlockPos fromPos, BlockState fromState, BlockPos toPos, BlockState toState, CallbackInfoReturnable<Boolean> cir) {
+        if (fromState.getBlock() instanceof Floodable || toState.getBlock() instanceof Floodable) {
+            cir.setReturnValue(true);
         }
     }
 
-    //TODO, these 2 shadows are giving errors but dont crash game
-    //@Shadow
-    protected abstract FluidState getNewLiquid(LevelAccessor levelAccessor, BlockPos blockPos, BlockState blockState);
-
-    @Shadow
-    protected abstract int getSpreadDelay(Level level, BlockPos blockPos, FluidState fluidState, FluidState newFluidState);
-
-    //@Shadow
-    protected abstract void spread(LevelAccessor levelAccessor, BlockPos blockPos, FluidState fluidState);
+    @Shadow protected abstract int getSpreadDelay(Level pLevel, BlockPos pPos, FluidState p_76000_, FluidState p_76001_);
 }
