@@ -136,7 +136,7 @@ public abstract class SongSheetItem extends Item {
             Set<OcarinaSong> learnedSongsSet = learnedSongs.getLearnedSongs();
 
             if (!learnedSongsSet.contains(songSupplier.get())) {
-                if (Config.song_sheet_consumed) {
+                if (Config.isSongSheetConsumed()) {
                     player.getItemInHand(hand).shrink(1);
                 }
 

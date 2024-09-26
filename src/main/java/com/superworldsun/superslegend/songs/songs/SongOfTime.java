@@ -1,5 +1,6 @@
 package com.superworldsun.superslegend.songs.songs;
 
+import com.superworldsun.superslegend.blocks.TimeBlock;
 import com.superworldsun.superslegend.registries.SoundInit;
 import com.superworldsun.superslegend.songs.OcarinaSong;
 
@@ -34,10 +35,9 @@ public class SongOfTime extends OcarinaSong {
 		BlockState blockState = level.getBlockState(pos);
 		Block block = blockState.getBlock();
 
-//		if (block instanceof TimeBlock) {
-//			TimeBlock timeBlock = (TimeBlock) block;
-//			timeBlock.toggle(level, blockState, pos);
-//		}
+		if (block instanceof TimeBlock timeBlock) {
+			timeBlock.toggle(level, blockState, pos);
+		}
 	}
 
 	private Iterable<BlockPos> getBlocksInAreaOfEffect(Player player) {

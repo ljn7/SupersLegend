@@ -2,10 +2,7 @@ package com.superworldsun.superslegend.registries;
 
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.items.armors.*;
-import com.superworldsun.superslegend.items.block.FalseShadowBlockItem;
-import com.superworldsun.superslegend.items.block.HiddenShadowBlockItem;
-import com.superworldsun.superslegend.items.block.ModHiddenBlockItem;
-import com.superworldsun.superslegend.items.block.ShadowBlockItem;
+import com.superworldsun.superslegend.items.block.*;
 import com.superworldsun.superslegend.items.containers.LetterItem;
 import com.superworldsun.superslegend.items.curios.charms.GoldenScale;
 import com.superworldsun.superslegend.items.curios.charms.SilverScale;
@@ -794,8 +791,8 @@ public class ItemInit {
 
 //    public static final RegistryObject<Item> CRACKED_BOMB_WALL = ITEMS.register("cracked_bomb_wall",
 //            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
-//    public static final RegistryObject<Item> BLOCK_OF_TIME = ITEMS.register("block_of_time",
-//            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
+    public static final RegistryObject<Item> BLOCK_OF_TIME = ITEMS.register("block_of_time",
+            () -> new BlockOfTimeItem(BlockInit.BLOCK_OF_TIME.get()));
 //    public static final RegistryObject<Item> SHADOW_BLOCK = ITEMS.register("shadow_block",
 //            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
 //    public static final RegistryObject<Item> HIDDEN_SHADOW_BLOCK = ITEMS.register("hidden_shadow_block",
@@ -816,14 +813,13 @@ public class ItemInit {
 //            () -> new BlockItem(BlockInit.FARORES_FLAME.get(), new Item.Properties()));
 //    public static final RegistryObject<Item> NAYRUS_FLAME = ITEMS.register("nayrus_flame",
 //            () -> new BlockItem(BlockInit.NAYRUS_FLAME.get(), new Item.Properties()));
-//    public static final RegistryObject<Item> FAN = ITEMS.register("fan",
-//            () -> new BlockItem(BlockInit.FAN.get(), new Item.Properties()));
-//    public static final RegistryObject<Item> SWITCHABLE_FAN = ITEMS.register("switchable_fan",
-//            () -> new BlockItem(BlockInit.SWITCHABLE_FAN.get(), new Item.Properties()));
+public static final RegistryObject<Item> FAN = ITEMS.register("fan", () -> new BlockItem(BlockInit.FAN.get(), new Item.Properties().stacksTo(64)));
+public static final RegistryObject<Item> SWITCHABLE_FAN = ITEMS.register("switchable_fan", () -> new BlockItem(BlockInit.SWITCHABLE_FAN.get(), new Item.Properties().stacksTo(64)));
+
 //    public static final RegistryObject<Item> GRAPPLE_BLOCK = ITEMS.register("grapple_block",
 //            () -> new BlockItem(BlockInit.GRAPPLE_BLOCK.get(), new Item.Properties()));;
-//    public static final RegistryObject<Item> GRATE_BLOCK = ITEMS.register("grate_block",
-//            () -> new BlockItem(BlockInit.GRATE_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> GRATE_BLOCK = ITEMS.register("grate_block",
+            () -> new GrateItem(BlockInit.GRATE_BLOCK.get()));
 //    public static final RegistryObject<Item> CRATE_BLOCK = ITEMS.register("crate_block",
 //            () -> new BlockItem(BlockInit.CRATE_BLOCK.get(), new Item.Properties()));
 //    public static final RegistryObject<Item> PUSH_STONE = ITEMS.register("push_stone",
@@ -832,8 +828,8 @@ public class ItemInit {
 //            () -> new BlockItem(BlockInit.SILVER_PUSH_STONE.get(), new Item.Properties()));
 //    public static final RegistryObject<Item> BLACK_PUSH_STONE = ITEMS.register("black_push_stone",
 //            () -> new BlockItem(BlockInit.BLACK_PUSH_STONE.get(), new Item.Properties()));
-//    public static final RegistryObject<Item> GOSSIP_STONE_BLOCK = ITEMS.register("gossip_stone_block",
-//            () -> new BlockItem(BlockInit.GOSSIP_STONE_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> GOSSIP_STONE_BLOCK = ITEMS.register("gossip_stone_block",
+            () -> new BlockItem(BlockInit.GOSSIP_STONE_BLOCK.get(), new Item.Properties()));
 //    //public static final RegistryObject<Item> SMALL_LOCK = ITEMS.register("small_lock", () -> new BlockItem(BlockInit.SMALL_LOCK));
 //    //public static final RegistryObject<Item> LOCKED_DOOR = ITEMS.register("locked_door", () -> new BlockItem(BlockInit.LOCKED_DOOR));
 //    public static final RegistryObject<Item> DUNGEON_DOOR = ITEMS.register("dungeon_door",
@@ -858,8 +854,8 @@ public class ItemInit {
 //            () -> new BlockItem(BlockInit.SPIKES_BLOCK.get(), new Item.Properties()));
 //    public static final RegistryObject<Item> TORCH_TOWER = ITEMS.register("torch_tower",
 //            () -> new BlockItem(BlockInit.TORCH_TOWER.get(), new Item.Properties()));
-//    public static final RegistryObject<Item> OWL_STATUE = ITEMS.register("owl_statue",
-//            () -> new BlockItem(BlockInit.OWL_STATUE.get(), new Item.Properties()));
+    public static final RegistryObject<Item> OWL_STATUE = ITEMS.register("owl_statue",
+            () -> new OwlStatueItem(BlockInit.OWL_STATUE));
 //    public static final RegistryObject<Item> POT_BLOCK = ITEMS.register("pot_block",
 //            () -> new BlockItem(BlockInit.POT_BLOCK.get(), new Item.Properties()));
 //    public static final RegistryObject<Item> JAR_BLOCK = ITEMS.register("jar_block",
