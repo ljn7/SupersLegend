@@ -1,7 +1,7 @@
 {
 	"texture_size": [58, 48],
 	"textures": {
-		"0": "superslegend:models/block/fan"
+		"0": "superslegend:item/fan"
 	},
 	"elements": [
 		{
