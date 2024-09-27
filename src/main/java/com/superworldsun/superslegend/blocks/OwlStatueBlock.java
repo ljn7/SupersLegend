@@ -70,7 +70,7 @@ public class OwlStatueBlock extends Block implements EntityBlock {
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!level.isClientSide()) {
             BlockPos waypointPos = blockPos.relative(blockState.getValue(FACING));
-            Waypoint waypoint =  WaypointsProvider.get(player).getWaypoint(blockPos);
+            Waypoint waypoint =  WaypointsProvider.get(player).getWaypoint(waypointPos);
             Waypoints savedWaypoints = WaypointsProvider.get(player);
             if (waypoint != null)
             {
