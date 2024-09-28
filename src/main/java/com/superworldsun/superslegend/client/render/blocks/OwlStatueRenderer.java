@@ -62,5 +62,6 @@ public class OwlStatueRenderer implements BlockEntityRenderer<OwlStatueBlockEnti
         model.renderToBuffer(poseStack, vertexConsumer, combinedLight, combinedOverlay, 1F, 1F, 1F, 1F);
 
         poseStack.popPose();
+        waypointSaved.set(false);
     }
 }

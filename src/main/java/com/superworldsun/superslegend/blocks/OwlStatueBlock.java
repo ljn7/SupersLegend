@@ -5,10 +5,12 @@ import com.superworldsun.superslegend.blocks.entity.OwlStatueBlockEntity;
 import com.superworldsun.superslegend.capability.waypoint.Waypoint;
 import com.superworldsun.superslegend.capability.waypoint.Waypoints;
 import com.superworldsun.superslegend.capability.waypoint.WaypointsProvider;
+import com.superworldsun.superslegend.capability.waypoint.WaypointsServerData;
 import com.superworldsun.superslegend.client.screen.WaypointCreationScreen;
 import com.superworldsun.superslegend.network.NetworkDispatcher;
 import com.superworldsun.superslegend.network.message.ShowWaystoneCreationScreenMessage;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 
 import net.minecraft.client.renderer.RenderType;
@@ -70,7 +72,7 @@ public class OwlStatueBlock extends Block implements EntityBlock {
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!level.isClientSide()) {
             BlockPos waypointPos = blockPos.relative(blockState.getValue(FACING));
-            Waypoint waypoint =  WaypointsProvider.get(player).getWaypoint(waypointPos);
+            Waypoint waypoint = WaypointsServerData.get((ServerLevel) level).getWaypoint(waypointPos);
             Waypoints savedWaypoints = WaypointsProvider.get(player);
             if (waypoint != null)
             {
@@ -81,13 +83,19 @@ public class OwlStatueBlock extends Block implements EntityBlock {
                         // if already maximum waypoints
                         if (savedWaypoints.getWaypoints().size() == savedWaypoints.getMaxWaypoints())
                         {
-                            player.sendSystemMessage(Component.translatable("block.superslegend.owl_statue.maximum", savedWaypoints.getMaxWaypoints()));
+                            player.sendSystemMessage(
+                                    Component.translatable("block.superslegend.owl_statue.maximum",
+                                            savedWaypoints.getMaxWaypoints()).withStyle(ChatFormatting.DARK_RED)
+                            );
                         }
                         else
                         {
                             savedWaypoints.addWaypoint(waypoint);
                             WaypointsProvider.sync((ServerPlayer) player);
-                            player.sendSystemMessage(Component.translatable("block.superslegend.owl_statue.saved", waypoint.getName()));
+                            player.sendSystemMessage(
+                                    Component.translatable("block.superslegend.owl_statue.saved",
+                                            waypoint.getName()).withStyle(ChatFormatting.DARK_GREEN)
+                            );
                         }
                     }
                 }
@@ -106,17 +114,12 @@ public class OwlStatueBlock extends Block implements EntityBlock {
         if (!state.is(newState.getBlock())) {
             if (!level.isClientSide()) {
                 BlockPos waypointPos = pos.relative(state.getValue(FACING));
+                Waypoint waypoint = WaypointsServerData.get((ServerLevel) level).getWaypoint(waypointPos);
 
-                // Remove the waypoint from all online players
-                for (ServerPlayer player : ((ServerLevel)level).getServer().getPlayerList().getPlayers()) {
-                    player.getCapability(WaypointsProvider.WAYPOINTS_CAPABILITY).ifPresent(waypoints -> {
-                        Waypoint waypoint = waypoints.getWaypoint(waypointPos);
-                        if (waypoint != null) {
-                            waypoints.removeWaypoint(waypointPos);
-                            WaypointsProvider.sync(player);
-                            player.sendSystemMessage(Component.translatable("block.superslegend.owl_statue.removed", waypoint.getName()));
-                        }
-                    });
+                // if a waypoint exist on server
+                if (waypoint != null)
+                {
+                    WaypointsServerData.get((ServerLevel) level).removeWaypoint(waypointPos);
                 }
             }
 
