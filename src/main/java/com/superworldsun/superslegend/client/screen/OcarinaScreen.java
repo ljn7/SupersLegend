@@ -69,14 +69,19 @@ public class OcarinaScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+        if (this.minecraft == null) {
+            this.minecraft = Minecraft.getInstance();
+        } else if (this.font == null) {
+            this.font = Minecraft.getInstance().font;
+        }
         this.initialized = true;
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if (!initialized && this.minecraft == null)
-            return;
+        if (!checkInit()) return;
 
+        renderBackground(guiGraphics);
         renderOcarinaBackground(guiGraphics);
         renderControls(guiGraphics);
         renderPlayedNotes(guiGraphics);
@@ -85,6 +90,8 @@ public class OcarinaScreen extends Screen {
 //        super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
     private void renderControls(GuiGraphics guiGraphics) {
+        if (!checkInit()) return;
+
         int controlsWidth = NOTE_ICON_SIZE * 5 + NOTE_ICON_SPACING * 4 + NOTE_ICON_TEXT_SPACING * 5;
 
         for (Note note : Note.values()) {
@@ -110,6 +117,8 @@ public class OcarinaScreen extends Screen {
     }
 
     private void renderPlayedNotes(GuiGraphics guiGraphics) {
+        if (!checkInit()) return;
+
         minecraft.getTextureManager().bindForSetup(TEXTURE);
         int notesX = (width - 156) / 2 + 23;
         int notesY = (int) (height * PLAYED_NOTES_Y) - 30 / 2;
@@ -121,6 +130,8 @@ public class OcarinaScreen extends Screen {
     }
 
     private void renderSongsIcons(GuiGraphics guiGraphics) {
+        if (!checkInit()) return;
+
         minecraft.getTextureManager().bindForSetup(TEXTURE);
         int songsRowWidth = SONG_ICON_WIDTH * 7 + SONG_ICON_HORIZONTAL_SPACING * 6;
         int songsX = (width - songsRowWidth) / 2;
@@ -152,6 +163,8 @@ public class OcarinaScreen extends Screen {
     }
 
     private void renderSongsHoverText(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        if (!checkInit()) return;
+
         int songsRowWidth = SONG_ICON_WIDTH * 7 + SONG_ICON_HORIZONTAL_SPACING * 6;
         int songsX = (width - songsRowWidth) / 2;
         int songsY = (int) (height * SONGS_Y);
@@ -175,6 +188,17 @@ public class OcarinaScreen extends Screen {
                 songsY += SONG_ICON_HEIGHT + SONG_ICON_VERTICAL_SPACING;
             }
         }
+    }
+
+    private boolean checkInit() {
+        if (!this.initialized || this.minecraft == null || this.font == null) {
+            init();
+            if (!this.initialized || this.minecraft == null || this.font == null) {
+                System.err.println("Failed to initialize OcarinaScreen");
+                return this.initialized = false;
+            }
+        }
+        return true;
     }
 
     @Override

@@ -7,8 +7,10 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -18,11 +20,15 @@ public class WaypointCreationScreen extends Screen {
     private EditBox nameTextField;
     private Button doneButton;
     private Player player;
+    private Vec3 teleportPos;
+    private final Direction facing;
 
-    public WaypointCreationScreen(BlockPos pos, Player player) {
+    public WaypointCreationScreen(BlockPos pos, Vec3 teleportPos, Direction facing, Player player) {
         super(Component.translatable("screen.waypoints.title"));
         waypointPos = pos;
         this.player = player;
+        this.facing = facing;
+        this.teleportPos = teleportPos;
     }
 
     @Override
@@ -54,7 +60,7 @@ public class WaypointCreationScreen extends Screen {
     @Override
     public void onClose() {
         if (!nameTextField.getValue().isEmpty()) {
-            NetworkDispatcher.network_channel.sendToServer(new SetWaypointNameMessage(waypointPos, nameTextField.getValue(), player.getUUID()));
+            NetworkDispatcher.network_channel.sendToServer(new SetWaypointNameMessage(waypointPos, teleportPos, facing, nameTextField.getValue(), player.getUUID()));
         }
 
         super.onClose();
