@@ -26,6 +26,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@OnlyIn(Dist.CLIENT)
 public class OcarinaScreen extends Screen {
     private static final ResourceLocation TEXTURE = new ResourceLocation(SupersLegendMain.MOD_ID, "textures/gui/ocarina.png");
     private static final int NOTE_ICON_SIZE = 11;
@@ -61,7 +64,7 @@ public class OcarinaScreen extends Screen {
     static public Player player;
 
     public OcarinaScreen(Player player) {
-        super(Component.empty());
+        super(Component.literal("Ocarina"));
         this.player = player;
         clearPlayedNotes();
     }
@@ -79,15 +82,15 @@ public class OcarinaScreen extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         if (!checkInit()) return;
-
         renderBackground(guiGraphics);
         renderOcarinaBackground(guiGraphics);
         renderControls(guiGraphics);
         renderPlayedNotes(guiGraphics);
         renderSongsIcons(guiGraphics);
         renderSongsHoverText(guiGraphics, mouseX, mouseY);
-//        super.render(guiGraphics, mouseX, mouseY, partialTick);
+
     }
     private void renderControls(GuiGraphics guiGraphics) {
         if (!checkInit()) return;
