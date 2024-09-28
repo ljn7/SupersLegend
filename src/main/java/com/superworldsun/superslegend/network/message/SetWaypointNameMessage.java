@@ -1,6 +1,7 @@
 package com.superworldsun.superslegend.network.message;
 
 import com.superworldsun.superslegend.capability.waypoint.WaypointsProvider;
+import com.superworldsun.superslegend.capability.waypoint.WaypointsServerData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -37,13 +38,7 @@ public class SetWaypointNameMessage {
         context.setPacketHandled(true);
         context.enqueueWork(() -> {
             ServerLevel level = context.getSender().serverLevel();
-            Player player = level.getPlayerByUUID(message.playerUUID);
-            if (player != null) {
-                player.getCapability(WaypointsProvider.WAYPOINTS_CAPABILITY).ifPresent(waypoints -> {
-                    waypoints.createWaypoint(message.pos, message.text, level.dimension().toString());
-                    WaypointsProvider.sync((ServerPlayer) player);
-                });
-            }
+            context.enqueueWork(() -> WaypointsServerData.get(level).createWaypoint(message.pos, message.text, level.dimension().toString()));
         });
 
     }
