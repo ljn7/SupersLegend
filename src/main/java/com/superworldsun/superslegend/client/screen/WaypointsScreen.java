@@ -106,7 +106,7 @@ public class WaypointsScreen extends Screen {
         }
     }
     private void attemptTeleporting(Waypoint waypoint) {
-        NetworkDispatcher.network_channel.sendToServer(new AttemptTeleportationMessage(waypoint.getStatuePosition(), player.getUUID()));
+        NetworkDispatcher.network_channel.sendToServer(new AttemptTeleportationMessage(waypoint.getStatuePosition()));
         onClose();
     }
 

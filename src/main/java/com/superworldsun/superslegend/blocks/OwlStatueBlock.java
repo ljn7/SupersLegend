@@ -8,6 +8,7 @@ import com.superworldsun.superslegend.capability.waypoint.WaypointsProvider;
 import com.superworldsun.superslegend.capability.waypoint.WaypointsServerData;
 import com.superworldsun.superslegend.client.screen.WaypointCreationScreen;
 import com.superworldsun.superslegend.network.NetworkDispatcher;
+import com.superworldsun.superslegend.network.message.RemoveWaypointMessage;
 import com.superworldsun.superslegend.network.message.ShowWaystoneCreationScreenMessage;
 
 import net.minecraft.ChatFormatting;
@@ -38,6 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -54,6 +56,7 @@ import java.util.UUID;
 public class OwlStatueBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16D, 20.0D, 16D);
+    private record TeleportInfo(Vec3 position, Direction facing) {}
 
     public OwlStatueBlock(Properties properties) {
         super(properties);
@@ -63,16 +66,22 @@ public class OwlStatueBlock extends Block implements EntityBlock {
     @Override
     public void setPlacedBy(Level level, BlockPos blockPos, BlockState blockState, LivingEntity entity, ItemStack stack) {
         if (entity instanceof Player && level.isClientSide()) {
-            BlockPos waypointPos = blockPos.relative(blockState.getValue(FACING));
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> showWaypointCreationScreen(waypointPos, (Player) entity));
+            Direction facing = blockState.getValue(FACING);
+            BlockPos waypointPos = blockPos.relative(facing);
+            TeleportInfo teleportInfo = calculateTeleportInfo(blockPos, facing);
+
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () ->
+                    () -> showWaypointCreationScreen(waypointPos, teleportInfo.position(), teleportInfo.facing(), (Player) entity));
         }
     }
 
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!level.isClientSide()) {
-            BlockPos waypointPos = blockPos.relative(blockState.getValue(FACING));
+            Direction facing = blockState.getValue(FACING);
+            BlockPos waypointPos = blockPos.relative(facing);
             Waypoint waypoint = WaypointsServerData.get((ServerLevel) level).getWaypoint(waypointPos);
+            TeleportInfo teleportInfo = calculateTeleportInfo(blockPos, facing);
             Waypoints savedWaypoints = WaypointsProvider.get(player);
             if (waypoint != null)
             {
@@ -102,7 +111,9 @@ public class OwlStatueBlock extends Block implements EntityBlock {
             }
             else
             {
-                NetworkDispatcher.network_channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ShowWaystoneCreationScreenMessage(waypointPos, player.getUUID()));
+                NetworkDispatcher.network_channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+                        new ShowWaystoneCreationScreenMessage(waypointPos, teleportInfo.position(), teleportInfo.facing(), player.getUUID())
+                );
             }
         }
 
@@ -120,6 +131,7 @@ public class OwlStatueBlock extends Block implements EntityBlock {
                 if (waypoint != null)
                 {
                     WaypointsServerData.get((ServerLevel) level).removeWaypoint(waypointPos);
+                    NetworkDispatcher.network_channel.sendToServer(new RemoveWaypointMessage(waypointPos));
                 }
             }
 
@@ -168,7 +180,17 @@ public class OwlStatueBlock extends Block implements EntityBlock {
     }
 
     @OnlyIn(Dist.CLIENT)
-    private void showWaypointCreationScreen(BlockPos blockPos, Player player) {
-        net.minecraft.client.Minecraft.getInstance().setScreen(new WaypointCreationScreen(blockPos, player));
+    private void showWaypointCreationScreen(BlockPos blockPos, Vec3 teleportPos, Direction facing, Player player) {
+        net.minecraft.client.Minecraft.getInstance().setScreen(new WaypointCreationScreen(blockPos, teleportPos, facing, player));
+    }
+
+    private TeleportInfo calculateTeleportInfo(BlockPos blockPos, Direction facing) {
+        Vec3 basePos = Vec3.atBottomCenterOf(blockPos);
+        Vec3 teleportPos = new Vec3(
+                basePos.x + facing.getStepX(),
+                basePos.y,
+                basePos.z + facing.getStepZ()
+        );
+        return new TeleportInfo(teleportPos, facing);
     }
 }

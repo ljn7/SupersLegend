@@ -1,11 +1,13 @@
 package com.superworldsun.superslegend.capability.waypoint;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,8 +42,8 @@ public class WaypointsServerData extends SavedData {
         return nbt;
     }
 
-    public void createWaypoint(BlockPos pos, String name, String dimension) {
-        waypoints.put(pos, new Waypoint(name, pos, dimension));
+    public void createWaypoint(BlockPos pos, Vec3 teleportPos, Direction facing, String name, String dimension) {
+        waypoints.put(pos, new Waypoint(name, pos, teleportPos, facing, dimension));
         setDirty();
     }
 

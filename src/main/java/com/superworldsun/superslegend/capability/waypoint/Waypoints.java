@@ -2,6 +2,7 @@ package com.superworldsun.superslegend.capability.waypoint;
 
 import com.superworldsun.superslegend.capability.waypoint.Waypoint;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -10,6 +11,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -75,6 +77,16 @@ public class Waypoints implements INBTSerializable<CompoundTag> {
             waypointTag.putString("name", waypoint.getName());
             waypointTag.putString("dimension", waypoint.getDimension());
 
+            Vec3 teleportPos = waypoint.getTeleportPos();
+            CompoundTag teleportTag = new CompoundTag();
+            teleportTag.putDouble("x", teleportPos.x);
+            teleportTag.putDouble("y", teleportPos.y);
+            teleportTag.putDouble("z", teleportPos.z);
+            nbt.put("teleportPos", teleportTag);
+
+            Direction facing = waypoint.getFacing();
+            waypointTag.putInt("facing", facing.get3DDataValue());
+
             waypointsList.add(waypointTag);
 
         }
@@ -100,14 +112,24 @@ public class Waypoints implements INBTSerializable<CompoundTag> {
             // Deserialize Waypoint
             String name = waypointTag.getString("name");
             String dimLocation = waypointTag.getString("dimension");
-            Waypoint waypoint = new Waypoint(name, pos, dimLocation);
+
+            CompoundTag teleportTag = nbt.getCompound("teleportPos");
+            Vec3 teleportPos = new Vec3(
+                    teleportTag.getDouble("x"),
+                    teleportTag.getDouble("y"),
+                    teleportTag.getDouble("z")
+            );
+
+            Direction facing = Direction.from3DDataValue(waypointTag.getInt("facing"));
+
+            Waypoint waypoint = new Waypoint(name, pos, teleportPos, facing, dimLocation);
 
             waypoints.put(pos, waypoint);
         }
     }
 
 
-    public void createWaypoint(BlockPos pos, String name, String dimension) {
-        waypoints.put(pos, new Waypoint(name, pos, dimension));
+    public void createWaypoint(BlockPos pos, Direction facing, String name, String dimension, Vec3 teleportPos) {
+        waypoints.put(pos, new Waypoint(name, pos, teleportPos, facing, dimension));
     }
 }
