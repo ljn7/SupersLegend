@@ -9,6 +9,7 @@ import com.superworldsun.superslegend.entities.projectiles.bombs.BombEntity;
 import com.superworldsun.superslegend.entities.projectiles.bombs.WaterBombEntity;
 import com.superworldsun.superslegend.entities.projectiles.boomerang.BoomerangEntity;
 import com.superworldsun.superslegend.entities.projectiles.boomerang.MagicBoomerangEntity;
+import com.superworldsun.superslegend.entities.projectiles.hooks.HookshotEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.FireballEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.IceballEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.MasterSwordBeamEntity;
@@ -68,6 +69,10 @@ public class EntityTypeInit
     /*public static final RegistryObject<EntityType<AncientArrowEntity>> ICE_BEAM = ENTITY_TYPES.register("ice_beam",
             () -> EntityType.Builder.<AncientArrowEntity>of(AncientArrowEntity::new, MobCategory.MISC)
                     .sized(1F, 1F).build("ice_beam"));*/
+
+    public static final RegistryObject<EntityType<HookshotEntity>> HOOKSHOT_ENTITY = ENTITY_TYPES.register("hookshot",
+            HookshotEntity::createEntityType);
+
 
     public static final RegistryObject<EntityType<HeartEntity>> HEART = ENTITY_TYPES.register("heart",
             () -> EntityType.Builder.<HeartEntity>of(HeartEntity::new, MobCategory.MISC)

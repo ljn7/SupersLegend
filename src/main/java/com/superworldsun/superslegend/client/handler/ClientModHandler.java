@@ -5,16 +5,21 @@ import com.superworldsun.superslegend.client.model.FanModel;
 import com.superworldsun.superslegend.client.model.ModelLayers;
 import com.superworldsun.superslegend.client.model.OpenOwlStatueModel;
 import com.superworldsun.superslegend.client.model.OwlStatueModel;
+import com.superworldsun.superslegend.client.model.hooks.HookshotModel;
 import com.superworldsun.superslegend.client.render.blocks.*;
+import com.superworldsun.superslegend.client.render.hookshot.HookshotRender;
 import com.superworldsun.superslegend.client.screen.PostboxScreen;
 import com.superworldsun.superslegend.registries.BlockEntityInit;
 import com.superworldsun.superslegend.registries.MenuTypeInit;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+
+import static com.superworldsun.superslegend.registries.EntityTypeInit.HOOKSHOT_ENTITY;
 
 
 @Mod.EventBusSubscriber(modid = SupersLegendMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -41,5 +46,6 @@ public class ClientModHandler {
         event.registerLayerDefinition(ModelLayers.OWL_STATUE_CLOSED, OwlStatueModel::createBodyLayer);
         event.registerLayerDefinition(ModelLayers.OWL_STATUE_OPEN, OpenOwlStatueModel::createBodyLayer);
         event.registerLayerDefinition(ModelLayers.FAN, FanModel::createBodyLayer);
+        event.registerLayerDefinition(ModelLayers.HOOKSHOT, HookshotModel::createBodyLayer);
     }
 }
