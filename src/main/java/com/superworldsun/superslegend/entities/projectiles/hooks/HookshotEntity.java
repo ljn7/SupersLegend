@@ -12,6 +12,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
@@ -196,9 +197,26 @@ public class HookshotEntity extends AbstractArrow {
             owner.setNoGravity(false);
             owner.setPose(Pose.STANDING);
             owner.setDeltaMovement(0, 0, 0);
+
+            SPRITE = false;
+            if (owner instanceof ServerPlayer serverPlayer) {
+                serverPlayer.inventoryMenu.broadcastChanges();
+            }
         }
-        owner.hurtMarked = true;
+
+        if (owner != null) {
+            owner.hurtMarked = true;
+        }
+
         super.kill();
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        super.remove(reason);
+        if (this.getOwner() instanceof Player player) {
+            HookshotItem.resetSprite(player);
+        }
     }
 
     @Override
