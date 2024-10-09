@@ -4,6 +4,7 @@ import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.client.render.arrows.*;
 import com.superworldsun.superslegend.client.render.boomerang.BoomerangRenderer;
 import com.superworldsun.superslegend.client.render.entites.*;
+import com.superworldsun.superslegend.client.render.hookshot.HookshotRender;
 import com.superworldsun.superslegend.client.render.magic.FireBallRenderer;
 import com.superworldsun.superslegend.client.render.magic.IceBallRenderer;
 import com.superworldsun.superslegend.client.render.seeds.*;
@@ -56,6 +57,7 @@ public class EntityRendererInit {
         event.registerEntityRenderer(EntityTypeInit.MELON_SEED.get(), MelonSeedRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.PUMPKIN_SEED.get(), PumpkinSeedRenderer::new);
         event.registerEntityRenderer(EntityTypeInit.COCOA_BEAN.get(), CocoaBeanRenderer::new);
+        event.registerEntityRenderer(EntityTypeInit.HOOKSHOT_ENTITY.get(),  HookshotRender::new);
     }
 
     private static <T extends LivingEntity, M extends EntityModel<T>> void attachRenderLayers(LivingEntityRenderer<T, M> renderer) {

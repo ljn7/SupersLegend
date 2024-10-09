@@ -23,6 +23,8 @@ public class ItemModelPropertiesInit {
         makeShield(ItemInit.SACRED_SHIELD.get());
 
         makeFishingrod(ItemInit.FISHING_ROD.get());
+
+        makeHookshot(ItemInit.HOOKSHOT.get());
     }
 
     private static void makeBow(Item item) {
@@ -76,6 +78,12 @@ public class ItemModelPropertiesInit {
 
                 return (flag || flag1) && p_174587_ instanceof Player && ((Player)p_174587_).fishing != null ? 1.0F : 0.0F;
             }
+        });
+    }
+
+    private static void makeHookshot(Item item) {
+        ItemProperties.register(item, new ResourceLocation("pulling"), (stack, level, entity, seed) -> {
+            return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
         });
     }
 }
