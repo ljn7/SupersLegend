@@ -1,8 +1,12 @@
 package com.superworldsun.superslegend.client.init;
 
 import com.superworldsun.superslegend.capability.magic.MagicProvider;
+import com.superworldsun.superslegend.items.hookshot.HookshotItem;
+import com.superworldsun.superslegend.items.hookshot.LongshotItem;
 import com.superworldsun.superslegend.registries.ItemInit;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.FishingRodItem;
@@ -24,7 +28,8 @@ public class ItemModelPropertiesInit {
 
         makeFishingrod(ItemInit.FISHING_ROD.get());
 
-        makeHookshot(ItemInit.HOOKSHOT.get());
+        makeHookshot(ItemInit.HOOKSHOT.get(), "cast", HOOKSHOT_CAST);
+        makeHookshot(ItemInit.LONGSHOT.get(), "cast", LONGSHOT_CAST);
     }
 
     private static void makeBow(Item item) {
@@ -81,9 +86,13 @@ public class ItemModelPropertiesInit {
         });
     }
 
-    private static void makeHookshot(Item item) {
-        ItemProperties.register(item, new ResourceLocation("pulling"), (stack, level, entity, seed) -> {
-            return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
-        });
+    private static void makeHookshot(Item item, String name, ItemPropertyFunction property) {
+        ItemProperties.register(item, new ResourceLocation(name), property);
     }
+
+    private static final ItemPropertyFunction HOOKSHOT_CAST = (stack, level, entity, seed) ->
+            HookshotItem.SPRITE ? 1.0F : 0.0F;
+
+    private static final ItemPropertyFunction LONGSHOT_CAST = (stack, level, entity, seed) ->
+            LongshotItem.LONG_SPRITE ? 1.0F : 0.0F;
 }

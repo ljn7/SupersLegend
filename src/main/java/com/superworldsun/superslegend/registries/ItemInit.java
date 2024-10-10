@@ -15,6 +15,7 @@ import com.superworldsun.superslegend.items.customclass.BottledEntityItem;
 import com.superworldsun.superslegend.items.customclass.ItemCustomBow;
 import com.superworldsun.superslegend.items.customclass.ItemCustomSword;
 import com.superworldsun.superslegend.items.hookshot.HookshotItem;
+import com.superworldsun.superslegend.items.hookshot.LongshotItem;
 import com.superworldsun.superslegend.items.item.*;
 import com.superworldsun.superslegend.items.item.ammo.*;
 import com.superworldsun.superslegend.items.item.songs.*;
@@ -353,7 +354,7 @@ public class ItemInit {
     public static final RegistryObject<Item> HOOKSHOT = ITEMS.register("hookshot",
             () -> new HookshotItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LONGSHOT = ITEMS.register("longshot",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new LongshotItem(new Item.Properties().stacksTo(1)));
 
     //add back in ItemModelPropertiesInit
 	/*public static final RegistryObject<Item> CLAWSHOT = ITEMS.register("clawshot",

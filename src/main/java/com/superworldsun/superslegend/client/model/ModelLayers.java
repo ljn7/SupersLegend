@@ -9,5 +9,6 @@ public class ModelLayers {
     public static final ModelLayerLocation OWL_STATUE_OPEN = new ModelLayerLocation(new ResourceLocation(SupersLegendMain.MOD_ID, "owl_statue_open"), "main");
     public static final ModelLayerLocation FAN = new ModelLayerLocation(new ResourceLocation(SupersLegendMain.MOD_ID, "fan"), "main");
     public static final ModelLayerLocation HOOKSHOT = new ModelLayerLocation(new ResourceLocation(SupersLegendMain.MOD_ID, "hookshot"), "main");
+    public static final ModelLayerLocation LONGSHOT = new ModelLayerLocation(new ResourceLocation(SupersLegendMain.MOD_ID, "longshot"), "main");
 
 }

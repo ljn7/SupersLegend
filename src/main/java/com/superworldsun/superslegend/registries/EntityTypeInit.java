@@ -10,6 +10,7 @@ import com.superworldsun.superslegend.entities.projectiles.bombs.WaterBombEntity
 import com.superworldsun.superslegend.entities.projectiles.boomerang.BoomerangEntity;
 import com.superworldsun.superslegend.entities.projectiles.boomerang.MagicBoomerangEntity;
 import com.superworldsun.superslegend.entities.projectiles.hooks.HookshotEntity;
+import com.superworldsun.superslegend.entities.projectiles.hooks.LongshotEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.FireballEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.IceballEntity;
 import com.superworldsun.superslegend.entities.projectiles.magic.MasterSwordBeamEntity;
@@ -73,6 +74,7 @@ public class EntityTypeInit
     public static final RegistryObject<EntityType<HookshotEntity>> HOOKSHOT_ENTITY = ENTITY_TYPES.register("hookshot",
             HookshotEntity::createEntityType);
 
+    public static final RegistryObject<EntityType<LongshotEntity>> LONGSHOT_ENTITY = ENTITY_TYPES.register("longshot", LongshotEntity::createEntityType);
 
     public static final RegistryObject<EntityType<HeartEntity>> HEART = ENTITY_TYPES.register("heart",
             () -> EntityType.Builder.<HeartEntity>of(HeartEntity::new, MobCategory.MISC)
