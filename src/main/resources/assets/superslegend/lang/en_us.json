@@ -515,5 +515,6 @@
   "death.attack.heat.player": "%1$s died from heatstroke whilst fighting %2$s",
   "superslegend.message.warp_not_found": "There is no warp pad that you can teleport to",
   "superslegend.message.warp_destroyed": "Warp pad that you are trying teleport to was destroyed",
-  "superslegend.message.warp_saved": "Warp pad position saved"
+  "superslegend.message.warp_saved": "Warp pad position saved",
+  "superslegend.message.warp_already_saved": "Warp pad position already saved!"
 }

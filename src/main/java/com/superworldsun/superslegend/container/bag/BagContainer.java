@@ -1,12 +1,18 @@
-package com.superworldsun.superslegend.items.bags;
+package com.superworldsun.superslegend.container.bag;
 
 import com.superworldsun.superslegend.container.SimpleContainer;
+import com.superworldsun.superslegend.container.inventory.BagInventory;
+import com.superworldsun.superslegend.container.slot.BagSlot;
+import com.superworldsun.superslegend.container.slot.LockedSlot;
 import com.superworldsun.superslegend.container.slot.SlotFactory;
+import com.superworldsun.superslegend.registries.ContainerInit;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 
 public class BagContainer extends SimpleContainer {
     private final InteractionHand handHoldingBag;
@@ -38,7 +44,7 @@ public class BagContainer extends SimpleContainer {
         return handHoldingBag == InteractionHand.MAIN_HAND && playerInventory.selected == slotIndex;
     }
 
-    private static Container createBagInventory(Inventory playerInventory, InteractionHand handHoldingBag, int containerSize) {
+    protected static Container createBagInventory(Inventory playerInventory, InteractionHand handHoldingBag, int containerSize) {
         return BagInventory.fromStack(((Player)playerInventory.player).getItemInHand(handHoldingBag), containerSize);
     }
 }

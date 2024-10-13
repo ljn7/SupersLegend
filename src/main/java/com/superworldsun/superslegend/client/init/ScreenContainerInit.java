@@ -2,6 +2,8 @@ package com.superworldsun.superslegend.client.init;
 
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.client.screen.SimpleContainerScreen;
+import com.superworldsun.superslegend.registries.ContainerInit;
+import com.superworldsun.superslegend.registries.MenuTypeInit;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.api.distmarker.Dist;
@@ -14,11 +16,11 @@ public class ScreenContainerInit {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-//            MenuScreens.register(MenuTypeInit.BAG.get(), createScreenFactory("bag"));
-//            MenuScreens.register(MenuTypeInit.RING_BOX.get(), createScreenFactory("ring_box"));
-//            MenuScreens.register(MenuTypeInit.RING_BOX_BIG.get(), createScreenFactory("big_ring_box"));
-//            MenuScreens.register(MenuTypeInit.RING_BOX_BIGGEST.get(), createScreenFactory("biggest_ring_box"));
-//            MenuScreens.register(MenuTypeInit.LETTER.get(), createScreenFactory("letter"));
+            MenuScreens.register(ContainerInit.BAG.get(), createScreenFactory("bag"));
+            MenuScreens.register(ContainerInit.RING_BOX.get(), createScreenFactory("ring_box"));
+            MenuScreens.register(ContainerInit.RING_BOX_BIG.get(), createScreenFactory("big_ring_box"));
+            MenuScreens.register(ContainerInit.RING_BOX_BIGGEST.get(), createScreenFactory("biggest_ring_box"));
+            MenuScreens.register(ContainerInit.LETTER.get(), createScreenFactory("letter"));
 //            MenuScreens.register(MenuTypeInit.POSTBOX.get(), createScreenFactory("postbox"));
 //            MenuScreens.register(MenuTypeInit.SELECT_CONTAINER.get(), SelectScreen::new);
 //            MenuScreens.register(MenuTypeInit.COOKING_POT.get(), CookingPotScreen::new);

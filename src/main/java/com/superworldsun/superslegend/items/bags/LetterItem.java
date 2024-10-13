@@ -1,7 +1,6 @@
 package com.superworldsun.superslegend.items.bags;
 
 import com.superworldsun.superslegend.container.bag.LetterContainer;
-import com.superworldsun.superslegend.container.bag.RingBoxContainer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
