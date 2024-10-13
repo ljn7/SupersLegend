@@ -1,6 +1,7 @@
 package com.superworldsun.superslegend.warppads;
 
 import com.superworldsun.superslegend.SupersLegendMain;
+import com.superworldsun.superslegend.network.NetworkDispatcher;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -31,16 +32,19 @@ public class WarpPadsStorage {
                 .map(warpPads -> warpPads.get(warpPad));
     }
 
-    public static void saveWarpPosition(Player player, Block warpPad, BlockPos pos) {
-        if (player.level().isClientSide()) {
-            return;
-        }
+    public static boolean saveWarpPosition(ServerPlayer player, Block warpPad, BlockPos pos) {
         Map<Block, BlockPos> warpPads = playerWarpPads.computeIfAbsent(player.getUUID(), k -> new HashMap<>());
         BlockPos previousPos = warpPads.put(warpPad, pos);
-        if (previousPos != null && !previousPos.equals(pos)) {
-            player.sendSystemMessage(Component.translatable("superslegend.message.warp_saved").withStyle(ChatFormatting.GREEN));
+        boolean isNewPosition = previousPos == null || !previousPos.equals(pos);
+
+//        if (previousPos != null && !previousPos.equals(pos)) {
+//            player.sendSystemMessage(Component.translatable("superslegend.message.warp_saved").withStyle(ChatFormatting.GREEN));
+//        }
+        if (isNewPosition) {
+            savePlayerData(player);
         }
-        savePlayerData((ServerPlayer) player);
+
+        return isNewPosition;
     }
 
     private static void savePlayerData(ServerPlayer player) {
