@@ -1,8 +1,10 @@
 package com.superworldsun.superslegend.entities.projectiles.bombs;
 
+import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.registries.EntityTypeInit;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -40,5 +42,11 @@ public class BombEntity extends AbstractBombEntity implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
+    }
+
+    public static EntityType<BombEntity> createEntityType() {
+        return EntityType.Builder.<BombEntity>of(BombEntity::new, MobCategory.MISC)
+                .sized(1F, 1F)
+                .build(SupersLegendMain.MOD_ID + ":bomb");
     }
 }

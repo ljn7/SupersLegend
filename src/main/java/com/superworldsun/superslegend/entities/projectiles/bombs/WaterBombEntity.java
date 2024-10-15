@@ -1,8 +1,12 @@
 package com.superworldsun.superslegend.entities.projectiles.bombs;
 
+import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.registries.EntityTypeInit;
+import com.superworldsun.superslegend.registries.ItemInit;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -11,7 +15,7 @@ import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInst
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
 
-public class WaterBombEntity extends AbstractBombEntity implements GeoEntity {
+public class WaterBombEntity extends AbstractWaterBombEntity implements GeoEntity {
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
     private static final float SECONDS_TO_EXPLODE = 4.0f;
     private static final float SECONDS_TO_FLASH_RAPIDLY = 2.0f;
@@ -23,7 +27,7 @@ public class WaterBombEntity extends AbstractBombEntity implements GeoEntity {
     }
 
     public WaterBombEntity(LivingEntity shooter, Level world) {
-        super(EntityTypeInit.BOMB.get(), shooter, world, SECONDS_TO_EXPLODE, SECONDS_TO_FLASH_RAPIDLY, EXPLOSION_POWER, BOUNCE_DAMPENING_FACTOR);
+        super(EntityTypeInit.WATER_BOMB.get(), shooter, world, SECONDS_TO_EXPLODE, SECONDS_TO_FLASH_RAPIDLY, EXPLOSION_POWER, BOUNCE_DAMPENING_FACTOR);
     }
 
     @Override
@@ -39,5 +43,16 @@ public class WaterBombEntity extends AbstractBombEntity implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
+    }
+
+    public static EntityType<WaterBombEntity> createEntityType() {
+        return EntityType.Builder.<WaterBombEntity>of(WaterBombEntity::new, MobCategory.MISC)
+                .sized(1F, 1F)
+                .build(SupersLegendMain.MOD_ID + ":water_bomb");
+    }
+
+    @Override
+    protected Item getDefaultItem() {
+        return ItemInit.WATER_BOMB.get();
     }
 }
