@@ -39,5 +39,6 @@ public class NetworkDispatcher {
 		network_channel.registerMessage(14, RemoveWaypointMessage.class, RemoveWaypointMessage::encode, RemoveWaypointMessage::decode, RemoveWaypointMessage::handle, Optional.of(PLAY_TO_SERVER));
 		network_channel.registerMessage(3, SetGossipStoneTextMessage.class, SetGossipStoneTextMessage::encode, SetGossipStoneTextMessage::decode, SetGossipStoneTextMessage::handle, Optional.of(PLAY_TO_SERVER));
 		network_channel.registerMessage(18, SyncHookshot.class, SyncHookshot::encode, SyncHookshot::new, SyncHookshot::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		network_channel.registerMessage(16, SyncFreezeEffectMessage.class, SyncFreezeEffectMessage::encode, SyncFreezeEffectMessage::decode, SyncFreezeEffectMessage::receive, Optional.of(PLAY_TO_CLIENT));
 	}
 }
