@@ -3,6 +3,7 @@ package com.superworldsun.superslegend.registries;
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.blocks.*;
 import net.minecraft.data.worldgen.features.TreeFeatures;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -21,6 +22,8 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.function.Supplier;
 
 public class BlockInit {
+    public static final BlockSetType BLOCK_SET_TYPE = new BlockSetType("iron", true, SoundType.METAL, SoundEvents.IRON_DOOR_CLOSE, SoundEvents.IRON_DOOR_OPEN, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundEvents.IRON_TRAPDOOR_OPEN, SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF, SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON, SoundEvents.STONE_BUTTON_CLICK_OFF, SoundEvents.STONE_BUTTON_CLICK_ON);
+
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, SupersLegendMain.MOD_ID);
 
@@ -43,17 +46,17 @@ public class BlockInit {
     public static final RegistryObject<Block> GOSSIP_STONE_TOP = BLOCKS.register("gossip_stone_top",
             () -> new GossipStoneTopBlock(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(11).explosionResistance(11).sound(SoundType.STONE)));
     public static final RegistryObject<Block> DUNGEON_DOOR = registerBlock("dungeon_door",
-            () -> new DoorBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BlockSetType.IRON));
+            () -> new RedStoneDisabledDoorBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
     public static final RegistryObject<Block> LOCKED_DUNGEON_DOOR = registerBlock("locked_dungeon_door",
-            () -> new LockedDungeonDoor(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BlockSetType.IRON));
+            () -> new LockedDungeonDoor(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
     public static final RegistryObject<Block> BOSS_DOOR = registerBlock("boss_door",
-            () -> new DoorBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BlockSetType.IRON));
+            () -> new RedStoneDisabledDoorBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
     public static final RegistryObject<Block> LOCKED_BOSS_DOOR = registerBlock("locked_boss_door",
-            () -> new LockedBossDoor(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BlockSetType.IRON));
+            () -> new LockedBossDoor(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
     public static final RegistryObject<Block> LOCKED_WOODEN_DOOR = registerBlock("locked_wooden_door",
-            () -> new LockedWoodenDoor(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BlockSetType.IRON));
+            () -> new LockedWoodenDoor(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
     public static final RegistryObject<Block> WOODEN_BOSS_DOOR = registerBlock("wooden_boss_door",
-            () -> new LockedWoodenBossDoor(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BlockSetType.IRON));
+            () -> new LockedWoodenBossDoor(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
 
     public static final RegistryObject<Block> BUSH_BLOCK = registerBlock("bush_block",
             () -> new BushBlock(BlockBehaviour.Properties.of().noLootTable().destroyTime(0.1f).explosionResistance(0.1f).sound(SoundType.CROP)));
@@ -194,7 +197,7 @@ public class BlockInit {
     public static final RegistryObject<Block> LIGHT_PRISM = registerBlock("light_prism",
             () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(2).explosionResistance(2).sound(SoundType.GLASS)));*/
     public static final RegistryObject<Block> ROYAL_TILE = registerBlock("royal_tile",
-            () -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(0.5f).explosionResistance(0.5f).sound(SoundType.STONE)));
+            () -> new RoyalTileBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(0.5f).explosionResistance(0.5f).sound(SoundType.STONE)));
     public static final RegistryObject<Block> BLOCK_OF_TIME = BLOCKS.register("block_of_time",
             () -> new TimeBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().destroyTime(30).explosionResistance(120).sound(SoundType.STONE)));
     public static final RegistryObject<Block> OWL_STATUE = BLOCKS.register("owl_statue",

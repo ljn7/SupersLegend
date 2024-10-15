@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
-public class LockedBossDoor extends DoorBlock {
+public class LockedBossDoor extends RedStoneDisabledDoorBlock {
     public LockedBossDoor(Properties pProperties, BlockSetType pType) {
         super(pProperties, pType);
     }
