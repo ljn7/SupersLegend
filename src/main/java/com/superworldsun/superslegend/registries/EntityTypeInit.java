@@ -60,8 +60,7 @@ public class EntityTypeInit
                     .sized(1F, 1F).build("magic_ice_arrow"));
 
     public static final RegistryObject<EntityType<MagicLightArrowEntity>> MAGIC_LIGHT_ARROW = ENTITY_TYPES.register("magic_light_arrow",
-            () -> EntityType.Builder.<MagicLightArrowEntity>of(MagicLightArrowEntity::new, MobCategory.MISC)
-                    .sized(1F, 1F).build("magic_light_arrow"));
+            MagicLightArrowEntity::createEntityType);
 
     public static final RegistryObject<EntityType<MasterSwordBeamEntity>> MASTERSWORD_SWORD_BEAM = ENTITY_TYPES.register("master_sword_beam",
             () -> EntityType.Builder.<MasterSwordBeamEntity>of(MasterSwordBeamEntity::new, MobCategory.MISC)

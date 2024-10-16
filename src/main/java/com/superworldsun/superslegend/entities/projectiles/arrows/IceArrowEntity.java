@@ -93,7 +93,7 @@ public class IceArrowEntity extends AbstractArrow {
         }
 
         this.playSound(SoundInit.ARROW_HIT_ICE.get(), 1f, 1f);
-        this.discard();
+        super.onHitBlock(result);
     }
 
     @Override
@@ -114,6 +114,7 @@ public class IceArrowEntity extends AbstractArrow {
                 livingEntity.setArrowCount(livingEntity.getArrowCount() - 1);
             }
         }
+        super.onHitEntity(result);
     }
 
     @Override

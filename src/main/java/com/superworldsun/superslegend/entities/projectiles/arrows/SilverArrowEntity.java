@@ -3,6 +3,7 @@ package com.superworldsun.superslegend.entities.projectiles.arrows;
 import com.superworldsun.superslegend.registries.EntityTypeInit;
 import com.superworldsun.superslegend.registries.ItemInit;
 import com.superworldsun.superslegend.registries.TagInit;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.*;
@@ -33,6 +34,15 @@ public class SilverArrowEntity extends AbstractArrow
     }
 
     @Override
+    public void tick() {
+        if (!this.inGround) {
+            this.level().addParticle(ParticleTypes.FIREWORK, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D,
+                    0.0D);
+        }
+        super.tick();
+    }
+
+    @Override
     protected @NotNull ItemStack getPickupItem() {
         return new ItemStack(ItemInit.SILVER_ARROW.get());
     }
@@ -45,23 +55,27 @@ public class SilverArrowEntity extends AbstractArrow
     @Override
     protected void onHitEntity(EntityHitResult result)
     {
-        Mob entity = (Mob) result.getEntity();
+        Entity hitEntity = result.getEntity();
 
-        var isType = entity.getType().is(TagInit.WEAK_TO_LIGHT);
-        System.out.println(isType);
-        if (entity.getType().is(TagInit.WEAK_TO_LIGHT) || entity.getMobType() == MobType.UNDEAD)
-        {
-            setBaseDamage(getBaseDamage() * 8);
+        if (!(hitEntity instanceof LivingEntity livingEntity)) {
+            super.onHitEntity(result);
+            return;
         }
-        else if (!entity.getType().is(TagInit.WEAK_TO_LIGHT))
-        {
 
+        double originalDamage = this.getBaseDamage();
+
+        boolean isWeakToLight = hitEntity.getType().is(TagInit.WEAK_TO_LIGHT);
+
+        if (isWeakToLight || livingEntity.getMobType() == MobType.UNDEAD) {
+            this.setBaseDamage(originalDamage * 8);
         }
+
         super.onHitEntity(result);
-        LivingEntity livingentity = entity;
-            this.getBaseDamage();
-            if (!this.level().isClientSide && this.getPierceLevel() <= 0) {
-                livingentity.setArrowCount(livingentity.getArrowCount() - 1);
-            }
+
+        this.setBaseDamage(originalDamage);
+
+        if (!this.level().isClientSide && this.getPierceLevel() <= 0) {
+            livingEntity.setArrowCount(livingEntity.getArrowCount() - 1);
         }
+    }
 }

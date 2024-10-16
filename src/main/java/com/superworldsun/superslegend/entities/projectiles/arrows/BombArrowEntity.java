@@ -1,5 +1,7 @@
 package com.superworldsun.superslegend.entities.projectiles.arrows;
 
+import com.superworldsun.superslegend.Config;
+import com.superworldsun.superslegend.registries.BlockInit;
 import com.superworldsun.superslegend.registries.EntityTypeInit;
 import com.superworldsun.superslegend.registries.ItemInit;
 import com.superworldsun.superslegend.registries.SoundInit;
@@ -13,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,34 +62,6 @@ public class BombArrowEntity extends AbstractArrow
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (!level().isClientSide) {
-            if (this.level().dimension().location().equals(level().NETHER.location())) {
-                {
-                    BlockPos explosionPos = this.blockPosition();
-                    this.level().explode(this, this.getX(), this.getY(), this.getZ(), 3.0f, Level.ExplosionInteraction.BLOCK);
-                    int radius = 3;
-                }
-                if (inGround) {
-                    if (!isInWater())
-                        {
-                            this.level().explode(this, this.getX(), this.getY(), this.getZ(), 3.0f, Level.ExplosionInteraction.BLOCK);
-                            this.discard();
-                        }
-                    this.discard();
-                }
-            }
-
-            addSmokeToFlightPath();
-            defuseInWater();
-            explodeInHeat();
-            playFuseSoundEveryNinthTick();
-        }
-    }
-
-    //TODO, add this back when config added back
-    /*@Override
     public void tick()
     {
         super.tick();
@@ -94,21 +69,21 @@ public class BombArrowEntity extends AbstractArrow
         {
             if (this.level().dimension().location().equals(level().NETHER.location()))
             {
-                if(SupersLegendConfig.getInstance().explosivegriefing())
+                if(Config.explosivegriefing())
                 {
-                    this.level.explode(this, this.getX(), this.getY(), this.getZ(), 3.0f, Mode.BREAK);
+                    this.level().explode(this, this.getX(), this.getY(), this.getZ(), 3.0f, Level.ExplosionInteraction.BLOCK);
                     this.discard();
                 }
                 else
                 {
                     BlockPos explosionPos = this.blockPosition();
-                    this.level.explode(this, this.getX(), this.getY(), this.getZ(), 3.0f, Explosion.Mode.NONE);
+                    this.level().explode(this, this.getX(), this.getY(), this.getZ(), 3.0f, Level.ExplosionInteraction.NONE);
 
                     int radius = 3;
                     for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
-                        Block block = this.level.getBlockState(pos).getBlock();
+                        Block block = this.level().getBlockState(pos).getBlock();
                         if (block == BlockInit.CRACKED_BOMB_WALL.get()) {
-                            this.level.destroyBlock(pos, false);
+                            this.level().destroyBlock(pos, false);
                         }
                     }
                 }
@@ -116,15 +91,15 @@ public class BombArrowEntity extends AbstractArrow
             if (inGround)
             {
                 if (!isInWater())
-                    if(SupersLegendConfig.getInstance().explosivegriefing())
+                    if(Config.explosivegriefing())
                     {
-                        this.level().explode(this, this.getX(), this.getY(), this.getZ(), 3.0f, Mode.BREAK);
+                        this.level().explode(this, this.getX(), this.getY(), this.getZ(), 3.0f, Level.ExplosionInteraction.BLOCK);
                         this.discard();
                     }
                     else
                     {
                         BlockPos explosionPos = this.blockPosition();
-                        this.level().explode(this, this.getX(), this.getY(), this.getZ(), 3.0f, Explosion.Mode.NONE);
+                        this.level().explode(this, this.getX(), this.getY(), this.getZ(), 3.0f, Level.ExplosionInteraction.NONE);
 
                         int radius = 3;
                         for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
@@ -142,7 +117,7 @@ public class BombArrowEntity extends AbstractArrow
         defuseInWater();
         explodeInHeat();
         playFuseSoundEveryNinthTick();
-    }*/
+    }
 
     private void addSmokeToFlightPath()
     {
