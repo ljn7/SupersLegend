@@ -1,334 +1,318 @@
 package com.superworldsun.superslegend.entities.projectiles.arrows;
 
+import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.registries.*;
+import com.superworldsun.superslegend.util.BuildingHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
+import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.network.NetworkHooks;
-import org.jetbrains.annotations.NotNull;
 
-public class IceArrowEntity extends AbstractArrow
-{
-    public IceArrowEntity(EntityType<? extends IceArrowEntity> type, Level level)
-    {
+import java.util.List;
+
+public class IceArrowEntity extends AbstractArrow {
+
+    private BlockState lastStateChecked;
+    private int inGroundTime;
+    private int life;
+
+    public IceArrowEntity(EntityType<? extends IceArrowEntity> type, Level level) {
         super(type, level);
     }
 
-    public IceArrowEntity(Level worldIn, LivingEntity shooter)
-    {
-        super(EntityTypeInit.ICE_ARROW.get(), shooter, worldIn);
+    public IceArrowEntity(Level level, LivingEntity shooter) {
+        super(EntityTypeInit.ICE_ARROW.get(), shooter, level);
+    }
+
+    public IceArrowEntity(Level level, double x, double y, double z) {
+        super(EntityTypeInit.ICE_ARROW.get(), x, y, z, level);
     }
 
     @Override
-    public void onAddedToWorld()
-    {
-        super.onAddedToWorld();
-        setBaseDamage(4.0D);
+    protected void onHit(HitResult hitResult) {
+        super.onHit(hitResult);
     }
 
     @Override
-    protected @NotNull ItemStack getPickupItem()
-    {
-        return new ItemStack(ItemInit.ICE_ARROW.get());
+    protected void onHitBlock(BlockHitResult result) {
+        BlockState blockHit = this.level().getBlockState(result.getBlockPos());
+        if (blockHit.is(Blocks.WATER)) {
+            List<BlockPos> platformShape = BuildingHelper.createRoundPlatformShape(result.getBlockPos(), 4);
+            platformShape.removeIf(pos -> !this.level().getBlockState(pos).getFluidState().is(FluidTags.WATER));
+            platformShape.forEach(pos -> this.level().setBlockAndUpdate(pos, Blocks.FROSTED_ICE.defaultBlockState()));
+            this.discard();
+        } else if (blockHit.is(Blocks.LAVA)) {
+            if (blockHit.getValue(LiquidBlock.LEVEL) == 0) {
+                this.level().setBlockAndUpdate(result.getBlockPos(), Blocks.OBSIDIAN.defaultBlockState());
+            } else {
+                this.level().setBlockAndUpdate(result.getBlockPos(), Blocks.COBBLESTONE.defaultBlockState());
+            }
+            this.discard();
+        } else {
+            BlockPos hitPos = result.getBlockPos().relative(result.getDirection());
+            if (this.level().isEmptyBlock(hitPos)) {
+                this.level().setBlock(hitPos, Blocks.SNOW.defaultBlockState(), 11);
+            }
+            this.discard();
+        }
+
+        this.playSound(SoundInit.ARROW_HIT_ICE.get(), 1f, 1f);
+        super.onHitBlock(result);
     }
 
     @Override
-    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
+    protected void onHitEntity(EntityHitResult result) {
+        super.onHitEntity(result);
+        Entity entity = result.getEntity();
+
+        if (entity.getType().is(TagInit.WEAK_TO_ICE)) {
+            setBaseDamage(getBaseDamage() * 2);
+        }
+
+        if (entity.getType().is(TagInit.RESISTANT_TO_ICE)) {
+            setBaseDamage(getBaseDamage() / 2);
+        }
+
+        if (entity instanceof LivingEntity livingEntity) {
+            if (!level().isClientSide() && getPierceLevel() <= 0) {
+                livingEntity.setArrowCount(livingEntity.getArrowCount() - 1);
+            }
+        }
+        super.onHitEntity(result);
     }
 
-    //TODO, needs to be finished porting
-    /*@Override
-    public void tick()
-    {
-        if (!inGround)
-        {
-            level().addParticle(ParticleTypes.ITEM_SNOWBALL, getX(), getY(), getZ(), 0.0D, 0.0D, 0.0D);
-            level().addParticle(ParticleTypes.SPIT, getX(), getY(), getZ(), 0.0D, 0.0D, 0.0D);
-        }
+    @Override
+    protected void doPostHurtEffects(LivingEntity entity) {
+        super.doPostHurtEffects(entity);
+        playSound(SoundInit.ARROW_HIT_ICE.get(), 1f, 1f);
 
-        if (!leftOwner)
-        {
-            leftOwner = checkLeftOwner();
+        if (!entity.hasEffect(EffectInit.FREEZE.get())) {
+            entity.addEffect(new MobEffectInstance(EffectInit.FREEZE.get(), 70, 1, false, false, false));
         }
+    }
 
-        if (!level().isClientSide)
-        {
-            setSharedFlag(6, isGlowing());
-        }
-
+    @Override
+    public void tick() {
         baseTick();
-
-        boolean flag = isNoPhysics();
-        Vec3 vector3d = getDeltaMovement();
-        if (xRotO == 0.0F && yRotO == 0.0F)
-        {
-            float f = MathHelper.sqrt(getHorizontalDistanceSqr(vector3d));
-            yRotO = (float) (MathHelper.atan2(vector3d.x, vector3d.z) * (double) (180F / (float) Math.PI));
-            xRotO = (float) (MathHelper.atan2(vector3d.y, (double) f) * (double) (180F / (float) Math.PI));
-            yRotO = yRotO;
-            xRotO = xRotO;
+        BlockPos blockPos = getOnPos();
+        if (isInWater()) {
+            List<BlockPos> platformShape = BuildingHelper.createRoundPlatformShape(blockPos, 4);
+            platformShape.removeIf(pos -> !this.level().getBlockState(pos).getFluidState().is(FluidTags.WATER));
+            platformShape.forEach(pos -> this.level().setBlockAndUpdate(pos, Blocks.FROSTED_ICE.defaultBlockState()));
+            this.discard();
+        } if (isInLava()) {
+            if (level().getBlockState(blockPos).getValue(LiquidBlock.LEVEL) == 0) {
+                this.level().setBlockAndUpdate(blockPos, Blocks.OBSIDIAN.defaultBlockState());
+            } else {
+                this.level().setBlockAndUpdate(blockPos, Blocks.COBBLESTONE.defaultBlockState());
+            }
+            this.discard();
+        }
+        if (!this.inGround) {
+            this.level().addParticle(ParticleTypes.ITEM_SNOWBALL, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(ParticleTypes.SPIT, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
         }
 
-        BlockPos blockpos = blockPosition();
-        BlockState blockstate = level().getBlockState(blockpos);
+        if (!this.level().isClientSide) {
+            this.setSharedFlag(6, this.isCurrentlyGlowing());
+        }
 
-        if (!blockstate.getBlock().isAir(blockstate, level(), blockpos) && !flag)
-        {
-            VoxelShape voxelshape = blockstate.getCollisionShape(level(), blockpos);
-            if (!voxelshape.isEmpty())
-            {
-                Vec3 vector3d1 = position();
+        Vec3 movement = this.getDeltaMovement();
+        double horizontalSpeed = movement.horizontalDistance();
 
-                for (AxisAlignedBB axisalignedbb : voxelshape.toAabbs())
-                {
-                    if (axisalignedbb.move(blockpos).contains(vector3d1))
-                    {
-                        inGround = true;
+        if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
+            this.setYRot((float)(Mth.atan2(movement.x, movement.z) * (double)(180F / (float)Math.PI)));
+            this.setXRot((float)(Mth.atan2(movement.y, horizontalSpeed) * (double)(180F / (float)Math.PI)));
+            this.yRotO = this.getYRot();
+            this.xRotO = this.getXRot();
+        }
+
+        BlockPos blockpos = this.blockPosition();
+        BlockState blockstate = this.level().getBlockState(blockpos);
+        if (!blockstate.isAir() && !this.isNoPhysics()) {
+            VoxelShape voxelshape = blockstate.getCollisionShape(this.level(), blockpos);
+            if (!voxelshape.isEmpty()) {
+                Vec3 vec31 = this.position();
+                for(AABB aabb : voxelshape.toAabbs()) {
+                    if (aabb.move(blockpos).contains(vec31)) {
+                        this.inGround = true;
                         break;
                     }
                 }
             }
         }
 
-        if (shakeTime > 0)
-        {
-            --shakeTime;
+        if (this.shakeTime > 0) {
+            --this.shakeTime;
         }
 
-        if (isInWaterOrRain())
-        {
-            clearFire();
+        if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW)) {
+            this.clearFire();
         }
 
-        if (inGround && !flag)
-        {
-            if (lastState != blockstate && shouldFall())
-            {
-                startFalling();
+        if (this.inGround) {
+            if (this.shouldFallOutOfGround(blockstate)) {
+                this.startFalling();
+            } else if (!this.level().isClientSide) {
+                this.tickDespawn();
             }
-            else if (!level().isClientSide)
-            {
-                tickDespawn();
-            }
-
-            ++inGroundTime;
-        }
-        else
-        {
-            inGroundTime = 0;
-            Vec3 vector3d2 = position();
-            Vec3 vector3d3 = vector3d2.add(vector3d);
-            RayTraceResult raytraceresult = level()
-                    .clip(new RayTraceContext(vector3d2, vector3d3, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.ANY, this));
-            if (raytraceresult.getType() != RayTraceResult.Type.MISS)
-            {
-                vector3d3 = raytraceresult.getLocation();
+            ++this.inGroundTime;
+        } else {
+            this.inGroundTime = 0;
+            Vec3 vec32 = this.position();
+            Vec3 vec33 = vec32.add(movement);
+            HitResult hitresult = this.level().clip(new ClipContext(vec32, vec33, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+            if (hitresult.getType() != HitResult.Type.MISS) {
+                vec33 = hitresult.getLocation();
             }
 
-            while (isAlive())
-            {
-                EntityRayTraceResult entityraytraceresult = findHitEntity(vector3d2, vector3d3);
-                if (entityraytraceresult != null)
-                {
-                    raytraceresult = entityraytraceresult;
+            while(!this.isRemoved()) {
+                EntityHitResult entityhitresult = this.findHitEntity(vec32, vec33);
+                if (entityhitresult != null) {
+                    hitresult = entityhitresult;
                 }
 
-                if (raytraceresult != null && raytraceresult.getType() == RayTraceResult.Type.ENTITY)
-                {
-                    Entity entity = ((EntityRayTraceResult) raytraceresult).getEntity();
-                    Entity entity1 = getOwner();
-                    if (entity instanceof Player && entity1 instanceof Player && !((Player) entity1).canHarmPlayer((Player) entity))
-                    {
-                        raytraceresult = null;
-                        entityraytraceresult = null;
+                if (hitresult != null && hitresult.getType() == HitResult.Type.ENTITY) {
+                    Entity entity = ((EntityHitResult)hitresult).getEntity();
+                    Entity entity1 = this.getOwner();
+                    if (entity instanceof Player && entity1 instanceof Player && !((Player)entity1).canHarmPlayer((Player)entity)) {
+                        hitresult = null;
+                        entityhitresult = null;
                     }
                 }
 
-                if (raytraceresult != null && raytraceresult.getType() != RayTraceResult.Type.MISS && !flag
-                        && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
-                {
-                    onHit(raytraceresult);
-                    hasImpulse = true;
+                if (hitresult != null && hitresult.getType() != HitResult.Type.MISS && !this.isNoPhysics() && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+                    this.onHit(hitresult);
+                    this.hasImpulse = true;
                 }
 
-                if (entityraytraceresult == null || getPierceLevel() <= 0)
-                {
+                if (entityhitresult == null || this.getPierceLevel() <= 0) {
                     break;
                 }
 
-                raytraceresult = null;
+                hitresult = null;
             }
 
-            vector3d = getDeltaMovement();
-            double d3 = vector3d.x;
-            double d4 = vector3d.y;
-            double d0 = vector3d.z;
-            if (isCritArrow())
-            {
-                for (int i = 0; i < 4; ++i)
-                {
-                    level().addParticle(ParticleTypes.CRIT, getX() + d3 * (double) i / 4.0D, getY() + d4 * (double) i / 4.0D, getZ() + d0 * (double) i / 4.0D,
-                            -d3, -d4 + 0.2D, -d0);
+            movement = this.getDeltaMovement();
+            double d3 = movement.x;
+            double d4 = movement.y;
+            double d0 = movement.z;
+
+            if (this.isCritArrow()) {
+                for(int i = 0; i < 4; ++i) {
+                    this.level().addParticle(ParticleTypes.CRIT, this.getX() + d3 * (double)i / 4.0D, this.getY() + d4 * (double)i / 4.0D, this.getZ() + d0 * (double)i / 4.0D, -d3, -d4 + 0.2D, -d0);
                 }
             }
 
-            double d5 = getX() + d3;
-            double d1 = getY() + d4;
-            double d2 = getZ() + d0;
-            float f1 = MathHelper.sqrt(getHorizontalDistanceSqr(vector3d));
-            if (flag)
-            {
-                yRotO = (float) (MathHelper.atan2(-d3, -d0) * (double) (180F / (float) Math.PI));
-            }
-            else
-            {
-                yRotO = (float) (MathHelper.atan2(d3, d0) * (double) (180F / (float) Math.PI));
+            double d5 = this.getX() + d3;
+            double d1 = this.getY() + d4;
+            double d2 = this.getZ() + d0;
+            float f1 = (float)movement.horizontalDistance();
+            if (this.isNoPhysics()) {
+                this.setYRot((float)(Mth.atan2(-d3, -d0) * (double)(180F / (float)Math.PI)));
+            } else {
+                this.setYRot((float)(Mth.atan2(d3, d0) * (double)(180F / (float)Math.PI)));
             }
 
-            xRotO = (float) (MathHelper.atan2(d4, (double) f1) * (double) (180F / (float) Math.PI));
-            xRotO = lerpRotation(xRotO, xRotO);
-            yRotO = lerpRotation(yRotO, yRotO);
+            this.setXRot((float)(Mth.atan2(d4, (double)f1) * (double)(180F / (float)Math.PI)));
+            this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
+            this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
             float f2 = 0.99F;
-            if (isInWater())
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    level().addParticle(ParticleTypes.BUBBLE, d5 - d3 * 0.25D, d1 - d4 * 0.25D, d2 - d0 * 0.25D, d3, d4, d0);
+            if (this.isInWater()) {
+                for(int j = 0; j < 4; ++j) {
+                    this.level().addParticle(ParticleTypes.BUBBLE, d5 - d3 * 0.25D, d1 - d4 * 0.25D, d2 - d0 * 0.25D, d3, d4, d0);
                 }
 
-                f2 = getWaterInertia();
+                f2 = this.getWaterInertia();
             }
 
-            setDeltaMovement(vector3d.scale((double) f2));
-            if (!isNoGravity() && !flag)
-            {
-                Vec3 vector3d4 = getDeltaMovement();
-                setDeltaMovement(vector3d4.x, vector3d4.y - (double) 0.05F, vector3d4.z);
+            this.setDeltaMovement(movement.scale((double)f2));
+            if (!this.isNoGravity() && !this.isNoPhysics()) {
+                Vec3 vec34 = this.getDeltaMovement();
+                this.setDeltaMovement(vec34.x, vec34.y - 0.05F, vec34.z);
             }
 
-            setPos(d5, d1, d2);
-            checkInsideBlocks();
+            this.setPos(d5, d1, d2);
+            this.checkInsideBlocks();
         }
     }
 
-    @Override
-    protected void onHitBlock(BlockHitResult result)
-    {
-        super.onHitBlock(result);
-        BlockState blockHit = level().getBlockState(result.getBlockPos());
-
-        if (blockHit.getBlock() == Blocks.WATER)
-        {
-            List<BlockPos> platformShape = BuildingHelper.createRoundPlatformShape(result.getBlockPos(), 4);
-            // We want to replace only water
-            platformShape.removeIf(pos -> !level().getBlockState(pos).is(Blocks.WATER));
-            platformShape.forEach(pos -> level().setBlockAndUpdate(pos, Blocks.FROSTED_ICE.defaultBlockState()));
-            this.discard();
+    private boolean shouldFallOutOfGround(BlockState currentState) {
+        if (this.lastStateChecked == null) {
+            this.lastStateChecked = currentState;
+            return false;
         }
-        else if (blockHit.is(Blocks.LAVA))
-        {
-            // If source block
-            if (blockHit.getValue(ForgeFlowingFluid.Flowing.LEVEL) == 0)
-            {
-                level().setBlockAndUpdate(result.getBlockPos(), Blocks.OBSIDIAN.defaultBlockState());
-            }
-            else
-            {
-                level().setBlockAndUpdate(result.getBlockPos(), Blocks.COBBLESTONE.defaultBlockState());
-            }
-
-            this.discard();
+        if (currentState != this.lastStateChecked) {
+            this.lastStateChecked = currentState;
+            return true;
         }
-        else
-        {
-            BlockPos hitPos = result.getBlockPos().relative(result.getDirection());
-
-            if (level().isEmptyBlock(hitPos))
-            {
-                level().setBlock(hitPos, Blocks.SNOW.defaultBlockState(), 11);
-            }
-
-            this.discard();
-        }
-
-        playSound(SoundInit.ARROW_HIT_ICE.get(), 1f, 1f);
-        super.onHitBlock(result);
+        return false;
     }
 
-    @Override
-    protected void onHitEntity(EntityHitResult rayTraceResult)
-    {
-        super.onHitEntity(rayTraceResult);
-        Entity entity = rayTraceResult.getEntity();
-
-        /*if (TagInit.WEAK_TO_ICE.contains(entity.getType()))
-        {
-            setBaseDamage(getBaseDamage() * 2);
-        }
-
-        if (TagInit.RESISTANT_TO_ICE.contains(entity.getType()))
-        {
-            setBaseDamage(getBaseDamage() / 2);
-        }
-
-        if (entity instanceof LivingEntity) {
-            LivingEntity livingentity = (LivingEntity) entity;
-
-            this.getBaseDamage();
-            if (!this.level().isClientSide && this.getPierceLevel() <= 0) {
-                livingentity.setArrowCount(livingentity.getArrowCount() - 1);
-            }
-        }
-
-        super.onHitEntity(rayTraceResult);
-    }
-
-    @Override
-    protected void doPostHurtEffects(LivingEntity entity)
-    {
-        super.doPostHurtEffects(entity);
-        playSound(SoundInit.ARROW_HIT_ICE.get(), 1f, 1f);
-
-        if (!entity.hasEffect(EffectInit.FREEZE.get()))
-        {
-            entity.addEffect(new EffectInstance(EffectInit.FREEZE.get(), 70, 1, false, false, false));
-        }
-    }
-
-    private boolean shouldFall()
-    {
-        return this.inGround && this.level().noCollision((new AxisAlignedBB(this.position(), this.position())).inflate(0.06D));
-    }
-
-    private void startFalling()
-    {
+    private void startFalling() {
         this.inGround = false;
-        Vec3 vector3d = this.getDeltaMovement();
-        this.setDeltaMovement(vector3d.multiply((double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F),
-                (double) (this.random.nextFloat() * 0.2F)));
+        Vec3 vec3 = this.getDeltaMovement();
+        this.setDeltaMovement(vec3.multiply((double)(this.random.nextFloat() * 0.2F), (double)(this.random.nextFloat() * 0.2F), (double)(this.random.nextFloat() * 0.2F)));
+        this.life = 0;
     }
 
-    private boolean checkLeftOwner()
-    {
-        Entity entity = this.getOwner();
-        if (entity != null)
-        {
-            for (Entity entity1 : this.level().getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D),
-                    entity2 -> !entity2.isSpectator() && entity2.isPickable()))
-            {
-                if (entity1.getRootVehicle() == entity.getRootVehicle())
-                {
-                    return false;
-                }
-            }
+    @Override
+    protected void tickDespawn() {
+        ++this.life;
+        if (this.life >= 1200) {
+            this.discard();
         }
+    }
 
-        return true;
-    }*/
+    @Override
+    protected ItemStack getPickupItem() {
+        return new ItemStack(ItemInit.ICE_ARROW.get());
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    public static EntityType<IceArrowEntity> createEntityType() {
+        return EntityType.Builder.<IceArrowEntity>of(IceArrowEntity::new, MobCategory.MISC)
+                .sized(0.5F, 0.5F)
+                .build(SupersLegendMain.MOD_ID + ":ice_arrow");
+    }
 }

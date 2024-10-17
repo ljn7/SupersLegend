@@ -91,7 +91,7 @@ public abstract class AbstractBoomerangEntity extends Entity {
         super.tick();
     }
 
-    private void updateCarriedItems() {
+    protected void updateCarriedItems() {
         for (ItemEntity item : pickedItems) {
             item.setDeltaMovement(0, 0, 0);
             if (item.isAlive()) {
@@ -100,7 +100,7 @@ public abstract class AbstractBoomerangEntity extends Entity {
         }
     }
 
-    private void updateCollision() {
+    protected void updateCollision() {
         BlockHitResult hitResult = getBlockHit();
         if (hitResult.getType() == BlockHitResult.Type.BLOCK) {
             onBlockHit(hitResult);

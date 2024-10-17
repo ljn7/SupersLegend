@@ -49,6 +49,7 @@ public class SupersLegendMain
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::addCreative);
         AttributeInit.ATTRIBUTES.register(modEventBus);
+        ContainerInit.CONTAINERS.register(modEventBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         GeckoLib.initialize();
     }

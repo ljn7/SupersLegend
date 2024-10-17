@@ -1,5 +1,7 @@
 package com.superworldsun.superslegend.entities.projectiles.bombs;
 
+import com.superworldsun.superslegend.Config;
+import com.superworldsun.superslegend.client.config.SupersLegendConfig;
 import com.superworldsun.superslegend.registries.BlockInit;
 import com.superworldsun.superslegend.registries.ItemInit;
 import com.superworldsun.superslegend.registries.SoundInit;
@@ -16,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -25,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
 import java.time.Instant;
+
+import static net.minecraft.world.entity.Entity.RemovalReason.KILLED;
 
 public class AbstractBombEntity extends ThrowableItemProjectile {
     //Bomb rendering, entity and logic code credited to Spelunkcraft contributor ntfwc
@@ -175,40 +180,21 @@ public class AbstractBombEntity extends ThrowableItemProjectile {
     private void explode() {
         {
             BlockPos explosionPos = this.blockPosition();
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.NONE);
-
-            int radius = (int) Math.ceil(explosionPower);
-            for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
-                Block block = this.level().getBlockState(pos).getBlock();
-                if (block == BlockInit.CRACKED_BOMB_WALL.get()) {
-                    this.level().destroyBlock(pos, false);
+            if(Config.explosivegriefing()) {
+                this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.TNT);
+                this.discard();
+            } else {
+                int radius = (int) Math.ceil(explosionPower);
+                for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
+                    Block block = this.level().getBlockState(pos).getBlock();
+                    if (block == BlockInit.CRACKED_BOMB_WALL.get()) {
+                        this.level().destroyBlock(pos, false);
+                    }
                 }
             }
         }
         this.discard();
     }
-
-    //TODO, add this back instead when config is fixed
-    /*private void explode() {
-        if(SupersLegendConfig.getInstance().explosivegriefing()){
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.BLOCK);
-            this.discard();
-        }
-        else
-        {
-            BlockPos explosionPos = this.blockPosition();
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.NONE);
-
-            int radius = (int) Math.ceil(explosionPower);
-            for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
-                Block block = this.level().getBlockState(pos).getBlock();
-                if (block == BlockInit.CRACKED_BOMB_WALL.get()) {
-                    this.level().destroyBlock(pos, false);
-                }
-            }
-        }
-        this.discard();
-    }*/
 
     public Instant getCreationTime() {
         return this.creationTimestamp;

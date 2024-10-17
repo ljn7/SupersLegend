@@ -1,16 +1,33 @@
 package com.superworldsun.superslegend.entities.projectiles.arrows;
 
-import com.superworldsun.superslegend.registries.EntityTypeInit;
-import com.superworldsun.superslegend.registries.ItemInit;
+import com.superworldsun.superslegend.registries.*;
+import com.superworldsun.superslegend.util.BuildingHelper;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class MagicIceArrowEntity extends AbstractArrow
 {
@@ -18,10 +35,12 @@ public class MagicIceArrowEntity extends AbstractArrow
     {
         super(type, level);
     }
+    private BlockState lastStateChecked;
+    private int life;
 
     public MagicIceArrowEntity(Level worldIn, LivingEntity shooter)
     {
-        super(EntityTypeInit.ICE_ARROW.get(), shooter, worldIn);
+        super(EntityTypeInit.MAGIC_ICE_ARROW.get(), shooter, worldIn);
     }
 
     @Override
@@ -44,179 +63,199 @@ public class MagicIceArrowEntity extends AbstractArrow
     }
 
     //TODO, needs to be finished porting
-    /*@Override
-    public void tick()
-    {
-        if (!inGround)
-        {
-            level().addParticle(ParticleTypes.ITEM_SNOWBALL, getX(), getY(), getZ(), 0.0D, 0.0D, 0.0D);
-            level().addParticle(ParticleTypes.SPIT, getX(), getY(), getZ(), 0.0D, 0.0D, 0.0D);
-        }
-
-        if (!leftOwner)
-        {
-            leftOwner = checkLeftOwner();
-        }
-
-        if (!level().isClientSide)
-        {
-            setSharedFlag(6, isGlowing());
-        }
-
+    @Override
+    public void tick() {
         baseTick();
 
-        boolean flag = isNoPhysics();
-        Vec3 vector3d = getDeltaMovement();
-        if (xRotO == 0.0F && yRotO == 0.0F)
-        {
-            float f = MathHelper.sqrt(getHorizontalDistanceSqr(vector3d));
-            yRotO = (float) (MathHelper.atan2(vector3d.x, vector3d.z) * (double) (180F / (float) Math.PI));
-            xRotO = (float) (MathHelper.atan2(vector3d.y, (double) f) * (double) (180F / (float) Math.PI));
-            yRotO = yRotO;
-            xRotO = xRotO;
+        if (!this.inGround) {
+            this.level().addParticle(ParticleTypes.ITEM_SNOWBALL, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(ParticleTypes.SPIT, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
         }
 
-        BlockPos blockpos = blockPosition();
-        BlockState blockstate = level().getBlockState(blockpos);
+        BlockPos blockPos = getOnPos();
+        if (isInWater()) {
+            List<BlockPos> platformShape = BuildingHelper.createRoundPlatformShape(blockPos, 4);
+            platformShape.removeIf(pos -> !this.level().getBlockState(pos).getFluidState().is(FluidTags.WATER));
+            platformShape.forEach(pos -> this.level().setBlockAndUpdate(pos, Blocks.FROSTED_ICE.defaultBlockState()));
+            this.discard();
+        } if (isInLava()) {
+            if (level().getBlockState(blockPos).getValue(LiquidBlock.LEVEL) == 0) {
+                this.level().setBlockAndUpdate(blockPos, Blocks.OBSIDIAN.defaultBlockState());
+            } else {
+                this.level().setBlockAndUpdate(blockPos, Blocks.COBBLESTONE.defaultBlockState());
+            }
+            this.discard();
+        }
 
-        if (!blockstate.getBlock().isAir(blockstate, level(), blockpos) && !flag)
-        {
-            VoxelShape voxelshape = blockstate.getCollisionShape(level(), blockpos);
-            if (!voxelshape.isEmpty())
-            {
-                Vec3 vector3d1 = position();
+        if (!this.level().isClientSide) {
+            this.setSharedFlag(6, this.isCurrentlyGlowing());
+        }
 
-                for (AxisAlignedBB axisalignedbb : voxelshape.toAabbs())
-                {
-                    if (axisalignedbb.move(blockpos).contains(vector3d1))
-                    {
-                        inGround = true;
+        boolean noPhysics = this.isNoPhysics();
+        Vec3 movement = this.getDeltaMovement();
+
+        if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
+            double f = movement.horizontalDistance();
+            this.setYRot((float)(Mth.atan2(movement.x, movement.z) * (double)(180F / (float)Math.PI)));
+            this.setXRot((float)(Mth.atan2(movement.y, f) * (double)(180F / (float)Math.PI)));
+            this.yRotO = this.getYRot();
+            this.xRotO = this.getXRot();
+        }
+
+        BlockPos blockpos = this.blockPosition();
+        BlockState blockstate = this.level().getBlockState(blockpos);
+
+        if (!blockstate.isAir() && !noPhysics) {
+            VoxelShape voxelshape = blockstate.getCollisionShape(this.level(), blockpos);
+            if (!voxelshape.isEmpty()) {
+                Vec3 position = this.position();
+
+                for(AABB aabb : voxelshape.toAabbs()) {
+                    if (aabb.move(blockpos).contains(position)) {
+                        this.inGround = true;
                         break;
                     }
                 }
             }
         }
 
-        if (shakeTime > 0)
-        {
-            --shakeTime;
+        if (this.shakeTime > 0) {
+            --this.shakeTime;
         }
 
-        if (isInWaterOrRain())
-        {
-            clearFire();
+        if (this.isInWaterOrRain()) {
+            this.clearFire();
         }
 
-        if (inGround && !flag)
-        {
-            if (lastState != blockstate && shouldFall())
-            {
-                startFalling();
-            }
-            else if (!level().isClientSide)
-            {
-                tickDespawn();
+        if (this.inGround && !noPhysics) {
+            if (this.shouldFallOutOfGround(blockstate)) {
+                this.startFalling();
+            } else if (!this.level().isClientSide) {
+                this.tickDespawn();
             }
 
-            ++inGroundTime;
-        }
-        else
-        {
-            inGroundTime = 0;
-            Vec3 vector3d2 = position();
-            Vec3 vector3d3 = vector3d2.add(vector3d);
-            RayTraceResult raytraceresult = level()
-                    .clip(new RayTraceContext(vector3d2, vector3d3, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.ANY, this));
-            if (raytraceresult.getType() != RayTraceResult.Type.MISS)
-            {
-                vector3d3 = raytraceresult.getLocation();
+            ++this.inGroundTime;
+        } else {
+            this.inGroundTime = 0;
+            Vec3 pos = this.position();
+            Vec3 nextPos = pos.add(movement);
+            HitResult hitresult = this.level().clip(new ClipContext(pos, nextPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+
+            if (hitresult.getType() != HitResult.Type.MISS) {
+                nextPos = hitresult.getLocation();
             }
 
-            while (isAlive())
-            {
-                EntityRayTraceResult entityraytraceresult = findHitEntity(vector3d2, vector3d3);
-                if (entityraytraceresult != null)
-                {
-                    raytraceresult = entityraytraceresult;
+            while(this.isAlive()) {
+                EntityHitResult entityhitresult = this.findHitEntity(pos, nextPos);
+                if (entityhitresult != null) {
+                    hitresult = entityhitresult;
                 }
 
-                if (raytraceresult != null && raytraceresult.getType() == RayTraceResult.Type.ENTITY)
-                {
-                    Entity entity = ((EntityRayTraceResult) raytraceresult).getEntity();
-                    Entity entity1 = getOwner();
-                    if (entity instanceof Player && entity1 instanceof Player && !((Player) entity1).canHarmPlayer((Player) entity))
-                    {
-                        raytraceresult = null;
-                        entityraytraceresult = null;
+                if (hitresult != null && hitresult.getType() == HitResult.Type.ENTITY) {
+                    Entity entity = ((EntityHitResult)hitresult).getEntity();
+                    Entity owner = this.getOwner();
+                    if (entity instanceof Player && owner instanceof Player && !((Player)owner).canHarmPlayer((Player)entity)) {
+                        hitresult = null;
+                        entityhitresult = null;
                     }
                 }
 
-                if (raytraceresult != null && raytraceresult.getType() != RayTraceResult.Type.MISS && !flag
-                        && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
-                {
-                    onHit(raytraceresult);
-                    hasImpulse = true;
+                if (hitresult != null && !noPhysics) {
+                    this.onHit(hitresult);
+                    this.hasImpulse = true;
                 }
 
-                if (entityraytraceresult == null || getPierceLevel() <= 0)
-                {
+                if (entityhitresult == null || this.getPierceLevel() <= 0) {
                     break;
                 }
 
-                raytraceresult = null;
+                hitresult = null;
             }
 
-            vector3d = getDeltaMovement();
-            double d3 = vector3d.x;
-            double d4 = vector3d.y;
-            double d0 = vector3d.z;
-            if (isCritArrow())
-            {
-                for (int i = 0; i < 4; ++i)
-                {
-                    level().addParticle(ParticleTypes.CRIT, getX() + d3 * (double) i / 4.0D, getY() + d4 * (double) i / 4.0D, getZ() + d0 * (double) i / 4.0D,
-                            -d3, -d4 + 0.2D, -d0);
+            movement = this.getDeltaMovement();
+            double dx = movement.x;
+            double dy = movement.y;
+            double dz = movement.z;
+
+            if (this.isCritArrow()) {
+                for(int i = 0; i < 4; ++i) {
+                    this.level().addParticle(ParticleTypes.CRIT,
+                            this.getX() + dx * (double)i / 4.0D,
+                            this.getY() + dy * (double)i / 4.0D,
+                            this.getZ() + dz * (double)i / 4.0D,
+                            -dx, -dy + 0.2D, -dz);
                 }
             }
 
-            double d5 = getX() + d3;
-            double d1 = getY() + d4;
-            double d2 = getZ() + d0;
-            float f1 = MathHelper.sqrt(getHorizontalDistanceSqr(vector3d));
-            if (flag)
-            {
-                yRotO = (float) (MathHelper.atan2(-d3, -d0) * (double) (180F / (float) Math.PI));
-            }
-            else
-            {
-                yRotO = (float) (MathHelper.atan2(d3, d0) * (double) (180F / (float) Math.PI));
+            double newX = this.getX() + dx;
+            double newY = this.getY() + dy;
+            double newZ = this.getZ() + dz;
+
+            float horizontalDistance = Mth.sqrt((float)movement.horizontalDistanceSqr());
+
+            if (noPhysics) {
+                this.setYRot((float)(Mth.atan2(-dx, -dz) * (double)(180F / (float)Math.PI)));
+            } else {
+                this.setYRot((float)(Mth.atan2(dx, dz) * (double)(180F / (float)Math.PI)));
             }
 
-            xRotO = (float) (MathHelper.atan2(d4, (double) f1) * (double) (180F / (float) Math.PI));
-            xRotO = lerpRotation(xRotO, xRotO);
-            yRotO = lerpRotation(yRotO, yRotO);
-            float f2 = 0.99F;
-            if (isInWater())
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    level().addParticle(ParticleTypes.BUBBLE, d5 - d3 * 0.25D, d1 - d4 * 0.25D, d2 - d0 * 0.25D, d3, d4, d0);
+            this.setXRot((float)(Mth.atan2(dy, horizontalDistance) * (double)(180F / (float)Math.PI)));
+            this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
+            this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
+
+            float inertia = 0.99F;
+
+            if (this.isInWater()) {
+                for(int j = 0; j < 4; ++j) {
+                    this.level().addParticle(ParticleTypes.BUBBLE,
+                            newX - dx * 0.25D,
+                            newY - dy * 0.25D,
+                            newZ - dz * 0.25D,
+                            dx, dy, dz);
                 }
 
-                f2 = getWaterInertia();
+                inertia = this.getWaterInertia();
             }
 
-            setDeltaMovement(vector3d.scale((double) f2));
-            if (!isNoGravity() && !flag)
-            {
-                Vec3 vector3d4 = getDeltaMovement();
-                setDeltaMovement(vector3d4.x, vector3d4.y - (double) 0.05F, vector3d4.z);
+            this.setDeltaMovement(movement.scale(inertia));
+
+            if (!this.isNoGravity() && !noPhysics) {
+                Vec3 vec3 = this.getDeltaMovement();
+                this.setDeltaMovement(vec3.x, vec3.y - 0.05F, vec3.z);
             }
 
-            setPos(d5, d1, d2);
-            checkInsideBlocks();
+            this.setPos(newX, newY, newZ);
+            this.checkInsideBlocks();
         }
     }
+
+    private boolean shouldFallOutOfGround(BlockState currentState) {
+        if (this.lastStateChecked == null) {
+            this.lastStateChecked = currentState;
+            return false;
+        }
+        if (currentState != this.lastStateChecked) {
+            this.lastStateChecked = currentState;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void tickDespawn() {
+        ++this.life;
+        if (this.life >= 1200) {
+            this.discard();
+        }
+    }
+
+    private void startFalling() {
+        this.inGround = false;
+        Vec3 vec3 = this.getDeltaMovement();
+        this.setDeltaMovement(vec3.multiply((double)(this.random.nextFloat() * 0.2F), (double)(this.random.nextFloat() * 0.2F), (double)(this.random.nextFloat() * 0.2F)));
+        this.life = 0;
+    }
+
 
     @Override
     protected void onHitBlock(BlockHitResult result)
@@ -268,12 +307,12 @@ public class MagicIceArrowEntity extends AbstractArrow
         super.onHitEntity(rayTraceResult);
         Entity entity = rayTraceResult.getEntity();
 
-        /*if (TagInit.WEAK_TO_ICE.contains(entity.getType()))
+        if (entity.getType().is(TagInit.WEAK_TO_ICE))
         {
             setBaseDamage(getBaseDamage() * 2);
         }
 
-        if (TagInit.RESISTANT_TO_ICE.contains(entity.getType()))
+        if (entity.getType().is(TagInit.RESISTANT_TO_ICE))
         {
             setBaseDamage(getBaseDamage() / 2);
         }
@@ -298,38 +337,12 @@ public class MagicIceArrowEntity extends AbstractArrow
 
         if (!entity.hasEffect(EffectInit.FREEZE.get()))
         {
-            entity.addEffect(new EffectInstance(EffectInit.FREEZE.get(), 70, 1, false, false, false));
+            entity.addEffect(new MobEffectInstance(EffectInit.FREEZE.get(), 70, 1, false, false, false));
         }
     }
 
     private boolean shouldFall()
     {
-        return this.inGround && this.level().noCollision((new AxisAlignedBB(this.position(), this.position())).inflate(0.06D));
+        return this.inGround && this.level().noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
     }
-
-    private void startFalling()
-    {
-        this.inGround = false;
-        Vec3 vector3d = this.getDeltaMovement();
-        this.setDeltaMovement(vector3d.multiply((double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F),
-                (double) (this.random.nextFloat() * 0.2F)));
-    }
-
-    private boolean checkLeftOwner()
-    {
-        Entity entity = this.getOwner();
-        if (entity != null)
-        {
-            for (Entity entity1 : this.level().getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D),
-                    entity2 -> !entity2.isSpectator() && entity2.isPickable()))
-            {
-                if (entity1.getRootVehicle() == entity.getRootVehicle())
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }*/
 }

@@ -1,5 +1,6 @@
 package com.superworldsun.superslegend.entities.projectiles.bombs;
 
+import com.superworldsun.superslegend.Config;
 import com.superworldsun.superslegend.registries.BlockInit;
 import com.superworldsun.superslegend.registries.ItemInit;
 import com.superworldsun.superslegend.registries.SoundInit;
@@ -16,6 +17,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -165,53 +168,35 @@ public class AbstractWaterBombEntity extends ThrowableItemProjectile {
 
 
     private void explode() {
-        {
-            BlockPos explosionPos = this.blockPosition();
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.NONE);
-
-            int radius = (int) Math.ceil(explosionPower);
+        BlockPos explosionPos = this.blockPosition();
+        int radius = (int) Math.ceil(explosionPower);
+        if (Config.explosivegriefing()) {
+            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.TNT);
             for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
-                Block block = this.level().getBlockState(pos).getBlock();
+                BlockState blockState = this.level().getBlockState(pos);
+                Block block = blockState.getBlock();
+                if (!blockState.isAir() && block.getExplosionResistance() < Float.MAX_VALUE && !blockState.is(Blocks.BEDROCK)) {
+                    double distance = new Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)
+                            .distance(new Vector3d(explosionPos.getX() + 0.5, explosionPos.getY() + 0.5, explosionPos.getZ() + 0.5));
+                    // closer to center - higher the chance
+                    double destructionChance = radius / 2F / distance;
+                    if (distance <= radius && random.nextFloat() < destructionChance) {
+                        this.level().destroyBlock(pos, true);
+                    }
+                }
+            }
+        } else {
+            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.TNT);
+            for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
+                BlockState blockState = this.level().getBlockState(pos);
+                Block block = blockState.getBlock();
                 if (block == BlockInit.CRACKED_BOMB_WALL.get()) {
-                    this.level().destroyBlock(pos, false);
+                    this.level().destroyBlock(pos, true);
                 }
             }
         }
         this.discard();
     }
-
-    //works underwater
-    //TODO when the bomb is under water and blows up the blocks don't drop from the explosion, but does on land.
-    // Make it so blast drops blocks when breaking underwater
-
-    //TODO, add this back instead when config is fixed
-    /*private void explode() {
-        BlockPos explosionPos = this.blockPosition();
-        int radius = (int) Math.ceil(explosionPower);
-        if(Config.getInstance().explosivegriefing()) {
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.BLOCK);
-            for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
-                Block block = this.level().getBlockState(pos).getBlock();
-                double distance = new Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5).distance(new Vector3d(explosionPos.getX() + 0.5, explosionPos.getY() + 0.5, explosionPos.getZ() + 0.5));
-                // closer to center - higher the chance
-                double destructionChance = radius / 2F / distance;
-                if (distance <= radius && random.nextFloat() < destructionChance) {
-                    this.level().destroyBlock(pos, true);
-                }
-            }
-        }
-        else
-        {
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.NONE);
-            for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
-                Block block = this.level().getBlockState(pos).getBlock();
-                if (block == BlockInit.CRACKED_BOMB_WALL.get()) {
-                    this.level().destroyBlock(pos, true);
-                }
-            }
-        }
-        this.discard();
-    }*/
 
     public Instant getCreationTime() {
         return this.creationTimestamp;

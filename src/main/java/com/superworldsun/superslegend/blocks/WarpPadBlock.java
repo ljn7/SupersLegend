@@ -4,10 +4,13 @@ import com.superworldsun.superslegend.items.item.MedallionItem;
 import com.superworldsun.superslegend.registries.BlockInit;
 import com.superworldsun.superslegend.warppads.WarpPadsServerData;
 import com.superworldsun.superslegend.warppads.WarpPadsStorage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -99,19 +102,30 @@ public class WarpPadBlock extends HorizontalDirectionalBlock {
         boolean isBaseWarpPad = blockState.getBlock() == BlockInit.WARP_PAD.get();
         ItemStack itemStackInHand = player.getItemInHand(hand);
         Item itemInHand = itemStackInHand.getItem();
+
         boolean usingMedallion = itemInHand instanceof MedallionItem;
         boolean usingEmptyHand = itemStackInHand.isEmpty();
+
         if (isBaseWarpPad && usingMedallion) {
             if (level.isClientSide) return InteractionResult.SUCCESS;
             transformWarpPad(blockState, level, blockPos, itemInHand);
             return InteractionResult.SUCCESS;
         } else if (!isBaseWarpPad && usingEmptyHand) {
             if (level.isClientSide) return InteractionResult.SUCCESS;
-            BlockPos centerPos = getCenterBlockPos(blockState, blockPos);
-            WarpPadsStorage.saveWarpPosition(player, this, centerPos);
-            return InteractionResult.SUCCESS;
+            if (player instanceof ServerPlayer serverPlayer) {
+                BlockPos centerPos = getCenterBlockPos(blockState, blockPos);
+                boolean isNewPosition = WarpPadsStorage.saveWarpPosition(serverPlayer, this, centerPos);
+                if (isNewPosition) {
+                    player.sendSystemMessage(Component.translatable("superslegend.message.warp_saved")
+                            .withStyle(ChatFormatting.GREEN));
+                } else {
+                    player.sendSystemMessage(Component.translatable("superslegend.message.warp_already_saved")
+                            .withStyle(ChatFormatting.GREEN));
+                }
+                return InteractionResult.SUCCESS;
+            }
         }
-        return InteractionResult.FAIL;
+        return InteractionResult.PASS;
     }
 
     protected void transformWarpPad(BlockState blockState, Level level, BlockPos blockPos, Item itemInHand) {
@@ -139,7 +153,7 @@ public class WarpPadBlock extends HorizontalDirectionalBlock {
     }
 
     private VoxelShape getShapeForState(BlockState blockState) {
-        VoxelShape blockShape = Block.box(-16, 0, -16, 32, 2, 32);
+        VoxelShape blockShape = Block.box(-16, 0, -16, 32, 3, 32);
         int blockShapeShiftX = -getBlockPartX(blockState);
         int blockShapeShiftZ = -getBlockPartZ(blockState);
         return blockShape.move(blockShapeShiftX, 0, blockShapeShiftZ);
@@ -150,10 +164,10 @@ public class WarpPadBlock extends HorizontalDirectionalBlock {
     }
 
     private static int getBlockPartX(BlockState blockState) {
-        return blockState.getValue(BLOCK_PART_X) - 1;
+        return blockState.getValue(BLOCK_PART_X).intValue() - 1;
     }
 
     private static int getBlockPartZ(BlockState blockState) {
-        return blockState.getValue(BLOCK_PART_Z) - 1;
+        return blockState.getValue(BLOCK_PART_Z).intValue() - 1;
     }
 }

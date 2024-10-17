@@ -1,5 +1,6 @@
 package com.superworldsun.superslegend.songs.songs;
 
+import com.superworldsun.superslegend.blocks.RoyalTileBlock;
 import com.superworldsun.superslegend.registries.SoundInit;
 import com.superworldsun.superslegend.songs.OcarinaSong;
 import net.minecraft.core.BlockPos;
@@ -37,10 +38,10 @@ public class ZeldasLullaby extends OcarinaSong {
         BlockState blockState = level.getBlockState(pos);
         Block block = blockState.getBlock();
 
-//        if (block instanceof RoyalTileBlock) {
-//            RoyalTileBlock royalTileBlock = (RoyalTileBlock) block;
-//            royalTileBlock.activate(level, blockState, pos);
-//        }
+        if (block instanceof RoyalTileBlock) {
+            RoyalTileBlock royalTileBlock = (RoyalTileBlock) block;
+            royalTileBlock.activate(level, blockState, pos);
+        }
     }
 
     private Iterable<BlockPos> getBlocksInAreaOfEffect(Player player) {

@@ -30,8 +30,17 @@ import java.util.function.Predicate;
 public class FireballEntity extends AbstractHurtingProjectile
 {
     // 5 seconds of max flight time
-    protected int maxAge = 100;
+    static protected int maxAge = 100;
     protected int age;
+    static final int PARTICLES_DENSITY = 40;
+    static private final int SECONDS_ON_FIRE = 3;
+    // 0 radius means no damage, only visual effects
+    static private final float EXPLOSION_RADIUS = 0F;
+    static private final float PARTICLES_SPEED = 0.4F;
+    static private final float PARTICLES_SPREAD = 0.2F;
+    static private final float EFFECT_RADIUS = 3F;
+    // 20% of blocks will be set on fire
+    static private final float FIRE_CHANCE = 0.2F;
 
     public FireballEntity(Vec3 postition, Vec3 motion, Level world, Player owner)
     {
@@ -51,56 +60,47 @@ public class FireballEntity extends AbstractHurtingProjectile
     {
         if (!level().isClientSide)
         {
-            int particlesDensity = 40;
-            int secondsOnFire = 3;
-            // 0 radius means no damage, only visual effects
-            float explosionRadius = 0F;
-            float particlesSpeed = 0.4F;
-            float particlesSpread = 0.2F;
-            float effectRadius = 3F;
-            // 20% of blocks will be set on fire
-            float fireChance = 0.2F;
-            level().explode(this, getX(), getY(), getZ(), explosionRadius, Level.ExplosionInteraction.NONE);
+            level().explode(this, getX(), getY(), getZ(), EXPLOSION_RADIUS, Level.ExplosionInteraction.NONE);
 
-            for (int i = 0; i < particlesDensity; i++)
+            for (int i = 0; i < PARTICLES_DENSITY; i++)
             {
-                double particleX = getX() + (random.nextFloat() * 2 - 1) * particlesSpread;
-                double particleY = getY() + (random.nextFloat() * 2 - 1) * particlesSpread;
-                double particleZ = getZ() + (random.nextFloat() * 2 - 1) * particlesSpread;
-                double particleMotionX = (random.nextFloat() * 2 - 1) * particlesSpeed;
-                double particleMotionY = (random.nextFloat() * 2 - 1) * particlesSpeed;
-                double particleMotionZ = (random.nextFloat() * 2 - 1) * particlesSpeed;
+                double particleX = getX() + (random.nextFloat() * 2 - 1) * PARTICLES_SPREAD;
+                double particleY = getY() + (random.nextFloat() * 2 - 1) * PARTICLES_SPREAD;
+                double particleZ = getZ() + (random.nextFloat() * 2 - 1) * PARTICLES_SPREAD;
+                double particleMotionX = (random.nextFloat() * 2 - 1) * PARTICLES_SPEED;
+                double particleMotionY = (random.nextFloat() * 2 - 1) * PARTICLES_SPEED;
+                double particleMotionZ = (random.nextFloat() * 2 - 1) * PARTICLES_SPEED;
                 ParticleOptions particle = random.nextBoolean() ? ParticleTypes.FLAME : ParticleTypes.SMOKE;
                 level().addParticle(particle, particleX, particleY, particleZ, particleMotionX, particleMotionY, particleMotionZ);
             }
 
             // we want to only attack living entities
             Predicate<Entity> canHit = e -> e instanceof LivingEntity;
-            Predicate<Entity> isInRadius = e -> distanceTo(e) <= effectRadius;
-            List<Entity> entitiesInRadius = level().getEntities(this, getBoundingBox().inflate(effectRadius), canHit.and(isInRadius));
+            Predicate<Entity> isInRadius = e -> distanceTo(e) <= EFFECT_RADIUS;
+            List<Entity> entitiesInRadius = level().getEntities(this, getBoundingBox().inflate(EFFECT_RADIUS), canHit.and(isInRadius));
             entitiesInRadius.forEach(entity ->
             {
-                entity.setSecondsOnFire(secondsOnFire);
+                entity.setSecondsOnFire(SECONDS_ON_FIRE);
             });
 
             // here we are searching for blocks in radius
-            for (int x = (int) -effectRadius; x <= effectRadius; x++)
+            for (int x = (int) -EFFECT_RADIUS; x <= EFFECT_RADIUS; x++)
             {
-                for (int y = (int) -effectRadius; y <= effectRadius; y++)
+                for (int y = (int) -EFFECT_RADIUS; y <= EFFECT_RADIUS; y++)
                 {
-                    for (int z = (int) -effectRadius; z <= effectRadius; z++)
+                    for (int z = (int) -EFFECT_RADIUS; z <= EFFECT_RADIUS; z++)
                     {
                         BlockPos pos = blockPosition().north(x).above(y).east(z);
 
                         // if the block is in radius
-                        if (blockPosition().distSqr(pos) <= effectRadius * effectRadius)
+                        if (blockPosition().distSqr(pos) <= EFFECT_RADIUS * EFFECT_RADIUS)
                         {
                             if (level().getBlockState(pos).is(TagInit.CAN_MELT))
                             {
                                 // replaces meltable blocks with air
                                 level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
                             }
-                            else if (level().getBlockState(pos).isCollisionShapeFullBlock(level(), pos) && level().getBlockState(pos.above()).is(Blocks.AIR) && random.nextFloat() < fireChance)
+                            else if (level().getBlockState(pos).isCollisionShapeFullBlock(level(), pos) && level().getBlockState(pos.above()).is(Blocks.AIR) && random.nextFloat() < FIRE_CHANCE)
                             {
                                 // sets other blocks on fire
                                 if (FireBlock.canBePlacedAt(level(), pos.above(), Direction.UP))

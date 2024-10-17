@@ -2,8 +2,8 @@ package com.superworldsun.superslegend.registries;
 
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.items.armors.*;
+import com.superworldsun.superslegend.items.bags.*;
 import com.superworldsun.superslegend.items.block.*;
-import com.superworldsun.superslegend.items.containers.LetterItem;
 import com.superworldsun.superslegend.items.curios.charms.GoldenScale;
 import com.superworldsun.superslegend.items.curios.charms.SilverScale;
 import com.superworldsun.superslegend.items.curios.hands.GoldenGauntlets;
@@ -269,17 +269,17 @@ public class ItemInit {
     //BAGS
 
     public static final RegistryObject<Item> SPOILS_BAG = ITEMS.register("spoils_bag",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new SpoilsBagItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DELIVERY_BAG = ITEMS.register("delivery_bag",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new DeliveryBagItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> BAIT_BAG = ITEMS.register("bait_bag",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new BaitBagItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> RING_BOX_L1 = ITEMS.register("ring_box_l1",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new RingBoxItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> RING_BOX_L2 = ITEMS.register("ring_box_l2",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new BigRingBoxItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> RING_BOX_L3 = ITEMS.register("ring_box_l3",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new BiggestRingBoxItem(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> LETTER = ITEMS.register("letter",
             () -> new LetterItem(new Item.Properties().stacksTo(1)));
@@ -879,7 +879,7 @@ public static final RegistryObject<Item> SWITCHABLE_FAN = ITEMS.register("switch
 //    public static final RegistryObject<Item> ROYAL_TILE = ITEMS.register("royal_tile",
 //            () -> new BlockItem(BlockInit.ROYAL_TILE.get(), new Item.Properties()));
     public static final RegistryObject<Item> WARP_PAD = ITEMS.register("warp_pad",
-            () -> new BlockItem(BlockInit.WARP_PAD.get(), new Item.Properties()));
+            () -> new WarpPadBlockItem(BlockInit.WARP_PAD.get(), new Item.Properties().stacksTo(64)));
 //    public static final RegistryObject<Item> OAK_PEG_BLOCK = ITEMS.register("oak_peg_block",
 //            () -> new BlockItem(BlockInit.OAK_PEG_BLOCK.get(), new Item.Properties()));
 //    public static final RegistryObject<Item> SPRUCE_PEG_BLOCK = ITEMS.register("spruce_peg_block",

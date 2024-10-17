@@ -19,6 +19,7 @@ public class Config {
     private static final ForgeConfigSpec.BooleanValue BOOMERANGS_ACTIVATE_PRESSURE_PLATES = BUILDER.define("Boomerangs activate pressure plates", true);
     private static final ForgeConfigSpec.BooleanValue BOOMERANGS_ACTIVATE_TRIP_WIRES = BUILDER.define("Boomerangs activate trip wires", true);
     private static final ForgeConfigSpec.BooleanValue SONG_SHEET_CONSUMED = BUILDER.define("songSheetConsumed", true);
+    private static final ForgeConfigSpec.BooleanValue explosivegriefing =  BUILDER.comment("Whether bombs & bomb arrows will cause block destruction").define("explosivegriefing", true);
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     private static boolean isLoaded = false;
@@ -84,4 +85,6 @@ public class Config {
     public static boolean isSongSheetConsumed() {
         return isLoaded ? song_sheet_consumed : SONG_SHEET_CONSUMED.get();
     }
+
+    public static boolean explosivegriefing() { return explosivegriefing.get(); }
 }

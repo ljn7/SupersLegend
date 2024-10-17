@@ -60,8 +60,7 @@ public class EntityTypeInit
                     .sized(1F, 1F).build("magic_ice_arrow"));
 
     public static final RegistryObject<EntityType<MagicLightArrowEntity>> MAGIC_LIGHT_ARROW = ENTITY_TYPES.register("magic_light_arrow",
-            () -> EntityType.Builder.<MagicLightArrowEntity>of(MagicLightArrowEntity::new, MobCategory.MISC)
-                    .sized(1F, 1F).build("magic_light_arrow"));
+            MagicLightArrowEntity::createEntityType);
 
     public static final RegistryObject<EntityType<MasterSwordBeamEntity>> MASTERSWORD_SWORD_BEAM = ENTITY_TYPES.register("master_sword_beam",
             () -> EntityType.Builder.<MasterSwordBeamEntity>of(MasterSwordBeamEntity::new, MobCategory.MISC)
@@ -89,12 +88,10 @@ public class EntityTypeInit
                     .sized(1F, 1F).build("large_magic_jar"));
 
     public static final RegistryObject<EntityType<BombEntity>> BOMB = ENTITY_TYPES.register("bomb",
-            () -> EntityType.Builder.<BombEntity>of(BombEntity::new, MobCategory.MISC)
-                    .sized(1F, 1F).build("bomb"));
+            BombEntity::createEntityType);
 
     public static final RegistryObject<EntityType<WaterBombEntity>> WATER_BOMB = ENTITY_TYPES.register("water_bomb",
-            () -> EntityType.Builder.<WaterBombEntity>of(WaterBombEntity::new, MobCategory.MISC)
-                    .sized(1F, 1F).build("water_bomb"));
+            WaterBombEntity::createEntityType);
 
     public static final RegistryObject<EntityType<BoomerangEntity>> BOOMERANG = ENTITY_TYPES.register("boomerang",
             BoomerangEntity::createEntityType);

@@ -39,14 +39,6 @@ public class MagicProvider implements ICapabilitySerializable<CompoundTag> {
 	}
 
 	@SubscribeEvent
-	public static void persistThroughDeath(PlayerEvent.Clone event) {
-		if (event.getEntity().level().isClientSide) return;
-		event.getOriginal().reviveCaps();
-		get(event.getEntity()).copyFrom(get(event.getOriginal()));
-		event.getOriginal().invalidateCaps();
-	}
-
-	@SubscribeEvent
 	public static void sync(EntityJoinLevelEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		sync(player);

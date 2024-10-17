@@ -10,6 +10,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,249 +27,140 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
-public class IceballEntity extends AbstractHurtingProjectile
-{
-    // 5 seconds of max flight time
-    protected int maxAge = 100;
+public class IceballEntity extends AbstractHurtingProjectile {
+    protected static final int MAX_AGE = 100;
+    protected static final int SLOW_DURATION = 200;
+    protected static final float EXPLOSION_RADIUS = 0F;
+    protected static final float PARTICLE_SPEED = 0.4F;
+    protected static final float PARTICLE_SPREAD = 0.2F;
+    protected static final float EFFECT_RADIUS = 3F;
+    protected static final float SNOW_CHANCE = 0.2F;
+    protected static final float DAMAGE = 5F;
+
     protected int age;
 
-    public IceballEntity(Vec3 postition, Vec3 motion, Level world, Player owner)
-    {
+    public IceballEntity(Vec3 position, Vec3 motion, Level world, Player owner) {
         super(EntityTypeInit.ICEBALL.get(), world);
-        setPos(postition.x, postition.y, postition.z);
+        setPos(position.x, position.y, position.z);
         setDeltaMovement(motion);
         setOwner(owner);
     }
 
-    public IceballEntity(EntityType<IceballEntity> iceballEntityEntityType, Level level) {
-        super(iceballEntityEntityType, level);
+    public IceballEntity(EntityType<IceballEntity> iceballEntityType, Level level) {
+        super(iceballEntityType, level);
     }
 
     @Override
-    protected void onHit(HitResult result)
-    {
-        if (!level().isClientSide)
-        {
-            int particlesDensity = 40;
-            // in ticks
-            int slowDuration = 200;
-            // 0 radius means no damage, only visual effects
-            float explosionRadius = 0F;
-            float particlesSpeed = 0.4F;
-            float particlesSpread = 0.2F;
-            float effectRadius = 3F;
-            // 20% of blocks will be covered in snow
-            float snowChance = 0.2F;
-            float damage = 5F;
-            level().explode(this, getX(), getY(), getZ(), explosionRadius, Level.ExplosionInteraction.NONE);
+    protected void onHit(HitResult result) {
+        if (!level().isClientSide) {
+            triggerEffects();
+        }
+        this.discard();
+    }
 
-            for (int i = 0; i < particlesDensity; i++)
-            {
-                double particleX = getX() + (random.nextFloat() * 2 - 1) * particlesSpread;
-                double particleY = getY() + (random.nextFloat() * 2 - 1) * particlesSpread;
-                double particleZ = getZ() + (random.nextFloat() * 2 - 1) * particlesSpread;
-                double particleMotionX = (random.nextFloat() * 2 - 1) * particlesSpeed;
-                double particleMotionY = (random.nextFloat() * 2 - 1) * particlesSpeed;
-                double particleMotionZ = (random.nextFloat() * 2 - 1) * particlesSpeed;
-                ParticleOptions particle = ParticleTypes.SPIT;
-                level().addParticle(particle, particleX, particleY, particleZ, particleMotionX, particleMotionY, particleMotionZ);
-            }
+    protected void triggerEffects() {
+        level().explode(this, getX(), getY(), getZ(), EXPLOSION_RADIUS, Level.ExplosionInteraction.NONE);
+        createParticles();
 
-            // we want to only attack living entities
-            Predicate<Entity> canHit = e -> e instanceof LivingEntity;
-            Predicate<Entity> isInRadius = e -> distanceTo(e) <= effectRadius;
-            List<Entity> entitiesInRadius = level().getEntities(this, getBoundingBox().inflate(effectRadius), canHit.and(isInRadius));
-            entitiesInRadius.forEach(entity ->
-            {
-                //TODO, fix this / port it
-                //entity.hurt(DamageSource.playerAttack(getOwner()), damage);
-                //((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, slowDuration));
-            });
+        Predicate<Entity> canHit = e -> e instanceof LivingEntity;
+        Predicate<Entity> isInRadius = e -> distanceTo(e) <= EFFECT_RADIUS;
+        List<Entity> entitiesInRadius = level().getEntities(this, getBoundingBox().inflate(EFFECT_RADIUS), canHit.and(isInRadius));
 
-            // here we are searching for blocks in radius
-            for (int x = (int) -effectRadius; x <= effectRadius; x++)
-            {
-                for (int y = (int) -effectRadius; y <= effectRadius; y++)
-                {
-                    for (int z = (int) -effectRadius; z <= effectRadius; z++)
-                    {
-                        BlockPos pos = blockPosition().north(x).above(y).east(z);
+        entitiesInRadius.forEach(entity -> {
+            entity.hurt(level().damageSources().playerAttack(Objects.requireNonNull(getOwner())), DAMAGE);
+            ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, SLOW_DURATION));
+        });
 
-                        // if the block is in radius
-                        //TODO, This only changes blocks after it explodes, entity should explode when in contact with these fluids.
-                        if (blockPosition().distSqr(pos) <= effectRadius * effectRadius)
-                        {
-                            BlockPos[] directions = {
-                                    pos.north(), pos.south(), pos.east(), pos.west(), pos.above(), pos.below()
-                            };
+        modifySurroundingBlocks();
+    }
 
-                            for (BlockPos adjacentPos : directions) {
-                                if (level().getBlockState(adjacentPos).isAir()) {
-                                    if (level().getFluidState(pos).is(FluidTags.WATER)) {
-                                        level().setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
-                                        break; // Stop after the first match to prevent multiple conversions
-                                    }
-                                    else if (level().getFluidState(pos).is(FluidTags.LAVA)) {
-                                        level().setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
-                                        level().playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
-                                        break; // Stop after the first match to prevent multiple conversions
-                                    }
+    protected void createParticles() {
+        int particlesDensity = 40;
+        for (int i = 0; i < particlesDensity; i++) {
+            double particleX = getX() + (random.nextFloat() * 2 - 1) * PARTICLE_SPREAD;
+            double particleY = getY() + (random.nextFloat() * 2 - 1) * PARTICLE_SPREAD;
+            double particleZ = getZ() + (random.nextFloat() * 2 - 1) * PARTICLE_SPREAD;
+            double particleMotionX = (random.nextFloat() * 2 - 1) * PARTICLE_SPEED;
+            double particleMotionY = (random.nextFloat() * 2 - 1) * PARTICLE_SPEED;
+            double particleMotionZ = (random.nextFloat() * 2 - 1) * PARTICLE_SPEED;
+            level().addParticle(ParticleTypes.SPIT, particleX, particleY, particleZ, particleMotionX, particleMotionY, particleMotionZ);
+        }
+    }
+
+    protected void modifySurroundingBlocks() {
+        for (int x = (int) -EFFECT_RADIUS; x <= EFFECT_RADIUS; x++) {
+            for (int y = (int) -EFFECT_RADIUS; y <= EFFECT_RADIUS; y++) {
+                for (int z = (int) -EFFECT_RADIUS; z <= EFFECT_RADIUS; z++) {
+                    BlockPos pos = blockPosition().offset(x, y, z);
+                    if (blockPosition().distSqr(pos) <= EFFECT_RADIUS * EFFECT_RADIUS) {
+                        BlockPos[] directions = { pos.north(), pos.south(), pos.east(), pos.west(), pos.above(), pos.below() };
+                        for (BlockPos adjacentPos : directions) {
+                            if (level().getBlockState(adjacentPos).isAir()) {
+                                if (level().getFluidState(pos).is(FluidTags.WATER)) {
+                                    level().setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
+                                    break;
+                                } else if (level().getFluidState(pos).is(FluidTags.LAVA)) {
+                                    level().setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+                                    level().playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
+                                    break;
                                 }
                             }
-                            if (Blocks.SNOW.defaultBlockState().canSurvive(level(), pos.above()) && level().getBlockState(pos.above()).is(Blocks.AIR) && random.nextFloat() < snowChance)
-                            {
-                                BlockState snowBlockState = Blocks.SNOW.defaultBlockState();
-                                level().setBlock(pos.above(), snowBlockState, 3);
-                            }
+                        }
+                        if (Blocks.SNOW.defaultBlockState().canSurvive(level(), pos.above()) && level().getBlockState(pos.above()).is(Blocks.AIR) && random.nextFloat() < SNOW_CHANCE) {
+                            level().setBlock(pos.above(), Blocks.SNOW.defaultBlockState(), 3);
                         }
                     }
                 }
             }
         }
-        // removes fireball from the world to prevent multiple explosions
-        this.discard();
     }
 
     @Override
-    protected float getInertia()
-    {
-        return 1F;
-    }
-
-    @Override
-    public void tick()
-    {
-        if (age > maxAge || isInWater())
-        {
-            if (isInFluidType()) {
-                if (!level().isClientSide)
-                {
-                    int particlesDensity = 40;
-                    // in ticks
-                    int slowDuration = 200;
-                    // 0 radius means no damage, only visual effects
-                    float explosionRadius = 0F;
-                    float particlesSpeed = 0.4F;
-                    float particlesSpread = 0.2F;
-                    float effectRadius = 3F;
-                    // 20% of blocks will be covered in snow
-                    float snowChance = 0.2F;
-                    float damage = 5F;
-                    level().explode(this, getX(), getY(), getZ(), explosionRadius, Level.ExplosionInteraction.NONE);
-
-                    for (int i = 0; i < particlesDensity; i++)
-                    {
-                        double particleX = getX() + (random.nextFloat() * 2 - 1) * particlesSpread;
-                        double particleY = getY() + (random.nextFloat() * 2 - 1) * particlesSpread;
-                        double particleZ = getZ() + (random.nextFloat() * 2 - 1) * particlesSpread;
-                        double particleMotionX = (random.nextFloat() * 2 - 1) * particlesSpeed;
-                        double particleMotionY = (random.nextFloat() * 2 - 1) * particlesSpeed;
-                        double particleMotionZ = (random.nextFloat() * 2 - 1) * particlesSpeed;
-                        ParticleOptions particle = ParticleTypes.SPIT;
-                        level().addParticle(particle, particleX, particleY, particleZ, particleMotionX, particleMotionY, particleMotionZ);
-                    }
-
-                    // we want to only attack living entities
-                    Predicate<Entity> canHit = e -> e instanceof LivingEntity;
-                    Predicate<Entity> isInRadius = e -> distanceTo(e) <= effectRadius;
-                    List<Entity> entitiesInRadius = level().getEntities(this, getBoundingBox().inflate(effectRadius), canHit.and(isInRadius));
-                    entitiesInRadius.forEach(entity ->
-                    {
-                        //TODO, fix this / port it
-                        //entity.hurt(DamageSource.playerAttack(getOwner()), damage);
-                        //((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, slowDuration));
-                    });
-
-                    // here we are searching for blocks in radius
-                    for (int x = (int) -effectRadius; x <= effectRadius; x++)
-                    {
-                        for (int y = (int) -effectRadius; y <= effectRadius; y++)
-                        {
-                            for (int z = (int) -effectRadius; z <= effectRadius; z++)
-                            {
-                                BlockPos pos = blockPosition().north(x).above(y).east(z);
-
-                                // if the block is in radius
-                                //TODO, This only changes blocks after it explodes, entity should explode when in contact with these fluids.
-                                if (blockPosition().distSqr(pos) <= effectRadius * effectRadius)
-                                {
-                                    BlockPos[] directions = {
-                                            pos.north(), pos.south(), pos.east(), pos.west(), pos.above(), pos.below()
-                                    };
-
-                                    for (BlockPos adjacentPos : directions) {
-                                        if (level().getBlockState(adjacentPos).isAir()) {
-                                            if (level().getFluidState(pos).is(FluidTags.WATER)) {
-                                                level().setBlock(pos, Blocks.ICE.defaultBlockState(), 3);
-                                                break; // Stop after the first match to prevent multiple conversions
-                                            }
-                                            else if (level().getFluidState(pos).is(FluidTags.LAVA)) {
-                                                level().setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
-                                                level().playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
-                                                break; // Stop after the first match to prevent multiple conversions
-                                            }
-                                        }
-                                    }
-                                    if (Blocks.SNOW.defaultBlockState().canSurvive(level(), pos.above()) && level().getBlockState(pos.above()).is(Blocks.AIR) && random.nextFloat() < snowChance)
-                                    {
-                                        BlockState snowBlockState = Blocks.SNOW.defaultBlockState();
-                                        level().setBlock(pos.above(), snowBlockState, 3);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+    public void tick() {
+        if (age > MAX_AGE || isInWater() || isInFluidType()) {
+            if (!level().isClientSide) {
+                triggerEffects();
             }
             this.discard();
             return;
         }
 
         age++;
-
-        int particlesDensity = 3;
-        float particlesSpeed = 0.1F;
-        float particlesSpread = 0.2F;
-
-        for (int i = 0; i < particlesDensity; i++)
-        {
-            double particleX = getX() + (random.nextFloat() * 2 - 1) * particlesSpread;
-            double particleY = getY() + (random.nextFloat() * 2 - 1) * particlesSpread;
-            double particleZ = getZ() + (random.nextFloat() * 2 - 1) * particlesSpread;
-            double particleMotionX = (random.nextFloat() * 2 - 1) * particlesSpeed;
-            double particleMotionY = (random.nextFloat() * 2 - 1) * particlesSpeed;
-            double particleMotionZ = (random.nextFloat() * 2 - 1) * particlesSpeed;
-            ParticleOptions particle = ParticleTypes.SPIT;
-            level().addParticle(particle, particleX, particleY, particleZ, particleMotionX, particleMotionY, particleMotionZ);
-        }
-
+        createParticlesTrail();
         super.tick();
     }
 
+    protected void createParticlesTrail() {
+        int particlesDensity = 3;
+        for (int i = 0; i < particlesDensity; i++) {
+            double particleX = getX() + (random.nextFloat() * 2 - 1) * PARTICLE_SPREAD;
+            double particleY = getY() + (random.nextFloat() * 2 - 1) * PARTICLE_SPREAD;
+            double particleZ = getZ() + (random.nextFloat() * 2 - 1) * PARTICLE_SPREAD;
+            level().addParticle(ParticleTypes.SPIT, particleX, particleY, particleZ, 0.0D, 0.0D, 0.0D);
+        }
+    }
+
     @Override
-    protected ParticleOptions getTrailParticle()
-    {
+    protected ParticleOptions getTrailParticle() {
         return ParticleTypes.SPIT;
     }
 
     @Override
-    public boolean hurt(DamageSource damageSource, float damage)
-    {
+    public boolean hurt(DamageSource damageSource, float damage) {
         return false;
     }
 
     @Nullable
     @Override
-    public Player getOwner()
-    {
+    public Player getOwner() {
         return (Player) super.getOwner();
     }
 
     @Override
-    protected boolean shouldBurn()
-    {
+    protected boolean shouldBurn() {
         return false;
     }
 

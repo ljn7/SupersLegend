@@ -11,6 +11,7 @@ import com.superworldsun.superslegend.client.render.blocks.*;
 import com.superworldsun.superslegend.client.render.hookshot.HookshotRender;
 import com.superworldsun.superslegend.client.screen.PostboxScreen;
 import com.superworldsun.superslegend.registries.BlockEntityInit;
+import com.superworldsun.superslegend.registries.ContainerInit;
 import com.superworldsun.superslegend.registries.MenuTypeInit;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;

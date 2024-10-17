@@ -59,7 +59,7 @@ public class ShockArrowEntity extends AbstractArrow
         super.tick();
 
         if (!this.inGround) {
-            this.level().addParticle(ParticleTypes.BUBBLE_POP, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D,
+            this.level().addParticle(ParticleTypes.ELECTRIC_SPARK, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D,
                     0.0D);
         }
     }

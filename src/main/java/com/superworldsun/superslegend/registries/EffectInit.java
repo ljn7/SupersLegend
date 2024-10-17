@@ -2,6 +2,7 @@ package com.superworldsun.superslegend.registries;
 
 import com.superworldsun.superslegend.SupersLegendMain;
 import com.superworldsun.superslegend.effect.CloakedEffect;
+import com.superworldsun.superslegend.effect.FreezeEffect;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,5 +19,6 @@ public class EffectInit
     }
 
     public static final RegistryObject<MobEffect> CLOAKED = MOB_EFFECT.register("cloaked", CloakedEffect::new);
+    public static final RegistryObject<MobEffect> FREEZE = MOB_EFFECT.register("freeze", FreezeEffect::new);
 
 }

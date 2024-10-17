@@ -25,8 +25,8 @@ public class BlockEntityInit
 	public static final RegistryObject<BlockEntityType<GossipStoneBlockEntity>> GOSSIP_STONE = BLOCK_ENTITIES.register("gossip_stone", GossipStoneBlockEntity::createType);
 	public static final RegistryObject<BlockEntityType<FanBlockEntity>> FAN = BLOCK_ENTITIES.register("fan", FanBlockEntity::createType);
 	public static final RegistryObject<BlockEntityType<SwitchableFanBlockEntity>> SWITCHABLE_FAN = BLOCK_ENTITIES.register("switchable_fan", SwitchableFanBlockEntity::createSwitchableFanType);
-
-	public static void register(IEventBus eventBus) {
+	public static final RegistryObject<BlockEntityType<RoyalTileBlockEntity>> ROYAL_TILE_BLOCK_ENTITY = BLOCK_ENTITIES.register("royal_tile",
+			() -> BlockEntityType.Builder.of(RoyalTileBlockEntity::new, BlockInit.ROYAL_TILE.get()).build(null));	public static void register(IEventBus eventBus) {
 		BLOCK_ENTITIES.register(eventBus);
 	}
 }

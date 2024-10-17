@@ -2,14 +2,23 @@ package com.superworldsun.superslegend.items.weapons.other;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import com.superworldsun.superslegend.items.customclass.NonEnchantItem;
+import com.superworldsun.superslegend.registries.BlockInit;
 import com.superworldsun.superslegend.registries.ItemInit;
+import com.superworldsun.superslegend.registries.SoundInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -22,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -32,64 +42,111 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class DekuStickLit extends Item {
+public class DekuStickLit extends NonEnchantItem {
 	public DekuStickLit() {
 		super(new Properties().stacksTo(1).durability(400));
 	}
 
-	@Override
-	public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean selected) {
-		if (!(entity instanceof Player player)) return;
-		if (player.tickCount % 20 != 0) return;
-		stack.hurtAndBreak(20, player, p -> p.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-	}
+	// TODO: Implement custom break sound
+	private static final SoundEvent BREAK_SOUND = SoundEvents.ITEM_BREAK; // Placeholder
 
 	@Override
-	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-		if (slot != EquipmentSlot.MAINHAND) return ImmutableMultimap.of();
-		return ImmutableMultimap.of(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "DekuStick", 7, AttributeModifier.Operation.ADDITION));
-	}
-
-	@Override
-	public @NotNull InteractionResult useOn(UseOnContext context) {
-		if (context.getPlayer() == null) return InteractionResult.FAIL;
-		BlockPos clickedPos = context.getClickedPos();
-		FluidState clickedFluid = context.getLevel().getFluidState(clickedPos.offset(context.getClickedFace().getNormal()));
-		if (clickedFluid.is(FluidTags.WATER)) {
-			return useOnWater(context.getPlayer(), context.getItemInHand());
-		}
-		BlockState clickedBlock = context.getLevel().getBlockState(clickedPos);
-		if (clickedBlock.is(Blocks.COBWEB)) {
-			return useOnCobweb(context.getPlayer(), clickedPos);
-		}
-		return InteractionResult.FAIL;
-	}
-
-	private InteractionResult useOnCobweb(Player player, BlockPos pos) {
-		player.level().playSound(null, player, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1f, 1f);
-		player.level().setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
-		return InteractionResult.SUCCESS;
-	}
-
-	private InteractionResult useOnWater(Player player, ItemStack item) {
-		player.level().playSound(null, player, SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 1f, 1f);
-		player.getInventory().removeItem(item);
-		player.addItem(new ItemStack(ItemInit.DEKU_STICK.get()));
-		return InteractionResult.SUCCESS;
-	}
-
 	@OnlyIn(Dist.CLIENT)
-	@Override
-	public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-		if(!Screen.hasShiftDown()) {
-			tooltip.add(Component.literal("A stick with fire on the end").withStyle(ChatFormatting.YELLOW));
-			tooltip.add(Component.literal("[Hold Shift for Info]").withStyle(ChatFormatting.DARK_GRAY));
-		}
-		else if(Screen.hasShiftDown()) {
-			tooltip.add(Component.literal("Can be used as a weapon, will break on 1 use").withStyle(ChatFormatting.YELLOW).withStyle(ChatFormatting.ITALIC));
-			tooltip.add(Component.literal("Will slowly burn away and break").withStyle(ChatFormatting.GREEN).withStyle(ChatFormatting.ITALIC));
-			tooltip.add(Component.literal("Right+Click webs to burn them away or ignite torch towers").withStyle(ChatFormatting.RED));
-		}
+	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, level, tooltip, flag);
+		tooltip.add(Component.literal("A stick with fire on the end").withStyle(ChatFormatting.RED));
+	}
+
+	@Override
+	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
+		if (!player.level().isClientSide()) {
+			entity.setSecondsOnFire(6);
+			entity.hurt(player.level().damageSources().generic(), 8.0F);
+			if (!player.getAbilities().instabuild) {
+				stack.shrink(1);
+				playBreakEffects(player);
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+		if (!level.isClientSide() && stack.getDamageValue() < stack.getMaxDamage()) {
+			stack.setDamageValue(stack.getDamageValue() + 1);
+			if (stack.getDamageValue() == stack.getMaxDamage()) {
+				if (entity instanceof Player) {
+					playBreakEffects((Player) entity);
+				}
+				stack.shrink(1);
+			}
+		}
+		// TODO: Implement breaking when on ground, in chest, or not in hand
+	}
+
+	@Override
+	public InteractionResult useOn(UseOnContext context) {
+		Level level = context.getLevel();
+		BlockPos pos = context.getClickedPos();
+		Player player = context.getPlayer();
+
+		if (level.isClientSide() || player == null) return InteractionResult.SUCCESS;
+
+		Block targetBlock = level.getBlockState(pos).getBlock();
+		if (targetBlock == Blocks.COBWEB) {
+			burnCobweb(level, pos, player);
+			return InteractionResult.SUCCESS;
+		} else if (targetBlock == BlockInit.TORCH_TOWER_TOP_UNLIT.get()) {
+			lightTorchTower(level, pos, player);
+			return InteractionResult.SUCCESS;
+		}
+
+		return InteractionResult.PASS;
+	}
+
+	private void burnCobweb(Level level, BlockPos pos, Player player) {
+		level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+		playIgniteSound(level, player.blockPosition());
+		spawnFlameParticles((ServerLevel) level, pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5);
+		// TODO: Implement fire spread to nearby cobwebs
+	}
+
+	private void lightTorchTower(Level level, BlockPos pos, Player player) {
+		level.setBlockAndUpdate(pos, BlockInit.TORCH_TOWER_TOP_LIT.get().defaultBlockState());
+		playIgniteSound(level, player.blockPosition());
+		spawnFlameParticles((ServerLevel) level, pos.getX() + 0.6, pos.getY() + 0.3, pos.getZ() + 0.6);
+	}
+
+	private void playBreakEffects(Player player) {
+		player.playSound(BREAK_SOUND, 1F, 1F);
+		spawnBreakParticles(player);
+	}
+
+	private void playIgniteSound(Level level, BlockPos pos) {
+		level.playSound(null, pos, SoundInit.FIRE_IGNITE.get(), SoundSource.PLAYERS, 1f, 1f);
+	}
+
+	private void spawnBreakParticles(Player player) {
+		RandomSource rand = player.level().getRandom();
+		for (int i = 0; i < 10; i++) {
+			player.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(ItemInit.DEKU_STICK.get())),
+					player.getX() + (rand.nextBoolean() ? -1 : 1) * Math.pow(rand.nextFloat(), 1) * 0.2f,
+					player.getY() + rand.nextFloat() * 1 - -1,
+					player.getZ() + (rand.nextBoolean() ? -1 : 1) * Math.pow(rand.nextFloat(), 1) * 0.2f,
+					0, 0.105D, 0);
+		}
+	}
+
+	private void spawnFlameParticles(ServerLevel level, double x, double y, double z) {
+		RandomSource rand = level.getRandom();
+		for (int i = 0; i < 18; i++) {
+			double xOffset = Mth.nextDouble(rand, -0.2, 0.2);
+			double zOffset = Mth.nextDouble(rand, -0.2, 0.2);
+			level.sendParticles(ParticleTypes.FLAME, x + xOffset, y, z + zOffset, 1,
+					Mth.nextDouble(rand, -0.1, 0.1),
+					Mth.nextDouble(rand, 0, 0.15),
+					Mth.nextDouble(rand, -0.1, 0.1), 0.1);
+		}
 	}
 }
+
