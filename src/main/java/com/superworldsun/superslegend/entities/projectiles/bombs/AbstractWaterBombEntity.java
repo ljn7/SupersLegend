@@ -19,15 +19,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
 import java.time.Instant;
+import java.util.List;
 
 public class AbstractWaterBombEntity extends ThrowableItemProjectile {
     //Bomb rendering, entity and logic code credited to Spelunkcraft contributor ntfwc
@@ -56,6 +54,9 @@ public class AbstractWaterBombEntity extends ThrowableItemProjectile {
      * How much to dampen the bounce. Lower values mean less bounce.
      */
     private final double bounceDampeningFactor;
+    private static final double CHAIN_REACTION_RADIUS = 8.0;
+    public boolean explodedByChainReaction = false;
+
 
     public AbstractWaterBombEntity(EntityType<? extends AbstractWaterBombEntity> type, Level level, float secondsToExplode, float secondsToFlashRapidly, int explosionPower, double bounceDampeningFactor) {
         super(type, level);
@@ -96,22 +97,33 @@ public class AbstractWaterBombEntity extends ThrowableItemProjectile {
 
     protected void onHitBlock(@NotNull BlockHitResult result) {
         super.onHitBlock(result);
-        Vec3 vector3d = result.getLocation().subtract(this.getX(), this.getY(), this.getZ());
-        this.setDeltaMovement(vector3d);
-        Vec3 vector3d1 = vector3d.normalize().scale(0.05F);
-        this.setPosRaw(this.getX() - vector3d1.x, this.getY() - vector3d1.y, this.getZ() - vector3d1.z);
-        this.inGround = true;
+        Vec3 normal = new Vec3(result.getDirection().getNormal().getX(),
+                result.getDirection().getNormal().getY(),
+                result.getDirection().getNormal().getZ());
+
+        Vec3 velocity = this.getDeltaMovement();
+
+        double dot = velocity.dot(normal);
+        Vec3 reflection = velocity.subtract(normal.multiply(2.0D * dot, 2.0D * dot, 2.0D * dot));
+
+        double factor = 1.0 - bounceDampeningFactor;
+        reflection = reflection.multiply(factor, factor, factor);
+
+        this.setDeltaMovement(reflection);
+
+        Vec3 pos = result.getLocation();
+        this.setPos(pos.x, pos.y, pos.z);
     }
 
     @Override
     public void tick() {
-        if(this.tickCount % 11 == 0)
+        if(this.tickCount % 11 == 0  && !explodedByChainReaction)
         {
             BlockPos currentPos = this.blockPosition();
             this.level().playSound(null, currentPos.getX(), currentPos.getY(), currentPos.getZ(), SoundInit.BOMB_FUSE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
         }
 
-        if (this.isOnFire())
+        if (this.isOnFire() || (this.ticksToExplode <= this.tickCount && !explodedByChainReaction))
         {
             explode();
         }
@@ -157,8 +169,8 @@ public class AbstractWaterBombEntity extends ThrowableItemProjectile {
     }
 
     private void onBlockImpact(BlockHitResult result, Vec3 previousPosition, Vec3 attemptedNewPosition) {
-        setDeltaMovement(getDeltaMovement().multiply(0,0,0));
-        setPos(this.getX(), this.getY(), this.getZ());
+//        setDeltaMovement(getDeltaMovement().multiply(0,0,0));
+//        setPos(this.getX(), this.getY(), this.getZ());
     }
 
     @Override
@@ -167,35 +179,74 @@ public class AbstractWaterBombEntity extends ThrowableItemProjectile {
     }
 
 
-    private void explode() {
-        BlockPos explosionPos = this.blockPosition();
-        int radius = (int) Math.ceil(explosionPower);
-        if (Config.explosivegriefing()) {
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.TNT);
-            for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
-                BlockState blockState = this.level().getBlockState(pos);
-                Block block = blockState.getBlock();
-                if (!blockState.isAir() && block.getExplosionResistance() < Float.MAX_VALUE && !blockState.is(Blocks.BEDROCK)) {
-                    double distance = new Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)
-                            .distance(new Vector3d(explosionPos.getX() + 0.5, explosionPos.getY() + 0.5, explosionPos.getZ() + 0.5));
-                    // closer to center - higher the chance
-                    double destructionChance = radius / 2F / distance;
-                    if (distance <= radius && random.nextFloat() < destructionChance) {
+    public void explode() {
+        if (!this.level().isClientSide()) {
+            BlockPos explosionPos = this.blockPosition();
+            triggerNearbyBombs();
+
+            int radius = (int) Math.ceil(explosionPower);
+            if (Config.explosivegriefing()) {
+                this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.TNT);
+                for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
+                    BlockState blockState = this.level().getBlockState(pos);
+                    Block block = blockState.getBlock();
+                    if (!blockState.isAir() && block.getExplosionResistance() < Float.MAX_VALUE && !blockState.is(Blocks.BEDROCK)) {
+                        double distance = new Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)
+                                .distance(new Vector3d(explosionPos.getX() + 0.5, explosionPos.getY() + 0.5, explosionPos.getZ() + 0.5));
+                        // closer to center - higher the chance
+                        double destructionChance = radius / 2F / distance;
+                        if (distance <= radius && random.nextFloat() < destructionChance) {
+                            this.level().destroyBlock(pos, true);
+                        }
+                    }
+                }
+            } else {
+                this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.TNT);
+                for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
+                    BlockState blockState = this.level().getBlockState(pos);
+                    Block block = blockState.getBlock();
+                    if (block == BlockInit.CRACKED_BOMB_WALL.get()) {
                         this.level().destroyBlock(pos, true);
                     }
                 }
             }
-        } else {
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.explosionPower, Level.ExplosionInteraction.TNT);
-            for (BlockPos pos : BlockPos.betweenClosed(explosionPos.offset(-radius, -radius, -radius), explosionPos.offset(radius, radius, radius))) {
-                BlockState blockState = this.level().getBlockState(pos);
-                Block block = blockState.getBlock();
-                if (block == BlockInit.CRACKED_BOMB_WALL.get()) {
-                    this.level().destroyBlock(pos, true);
-                }
-            }
         }
         this.discard();
+    }
+
+    private void triggerNearbyBombs() {
+        AABB explosionBox = new AABB(
+                this.getX() - CHAIN_REACTION_RADIUS,
+                this.getY() - CHAIN_REACTION_RADIUS,
+                this.getZ() - CHAIN_REACTION_RADIUS,
+                this.getX() + CHAIN_REACTION_RADIUS,
+                this.getY() + CHAIN_REACTION_RADIUS,
+                this.getZ() + CHAIN_REACTION_RADIUS
+        );
+
+        // Get and trigger regular bombs
+        List<AbstractWaterBombEntity> nearbyBombs = this.level().getEntitiesOfClass(
+                AbstractWaterBombEntity.class,
+                explosionBox
+        );
+        for (AbstractWaterBombEntity waterBomb : nearbyBombs) {
+            if (waterBomb != this && !waterBomb.explodedByChainReaction) {
+                waterBomb.explodedByChainReaction = true;
+                waterBomb.explode();
+            }
+        }
+
+        // Get and trigger water bombs
+        List<AbstractBombEntity> nearbyWaterBombs = this.level().getEntitiesOfClass(
+                AbstractBombEntity.class,
+                explosionBox
+        );
+        for (AbstractBombEntity bomb : nearbyWaterBombs) {
+            if (!bomb.explodedByChainReaction) {
+                bomb.explodedByChainReaction = true;
+                bomb.explode();
+            }
+        }
     }
 
     public Instant getCreationTime() {
