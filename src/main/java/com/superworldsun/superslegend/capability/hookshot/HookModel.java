@@ -3,8 +3,10 @@ package com.superworldsun.superslegend.capability.hookshot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.common.util.INBTSerializable;
 
+@AutoRegisterCapability
 public class HookModel implements INBTSerializable<CompoundTag> {
     private boolean hasHook;
     private boolean keyUpIsDown = false;
@@ -26,13 +28,13 @@ public class HookModel implements INBTSerializable<CompoundTag> {
     }
 
     public static HookModel get(Player player) {
-        return player.getCapability(HookCapability.INSTANCE).orElseThrow(() ->
+        return player.getCapability(HookProvider.HOOK_CAPABILITY).orElseThrow(() ->
                 new IllegalArgumentException("Player " + player.getName().getString() + " does not have a Model!")
         );
     }
 
     public static HookModel get() {
-        return Minecraft.getInstance().player.getCapability(HookCapability.INSTANCE).orElseThrow(() ->
+        return Minecraft.getInstance().player.getCapability(HookProvider.HOOK_CAPABILITY).orElseThrow(() ->
                 new IllegalArgumentException("Player does not have a Model!")
         );
     }
