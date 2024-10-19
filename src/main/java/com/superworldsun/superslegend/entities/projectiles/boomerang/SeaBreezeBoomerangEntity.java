@@ -21,9 +21,9 @@ public class SeaBreezeBoomerangEntity extends AbstractBoomerangEntity {
 
     public SeaBreezeBoomerangEntity(EntityType<SeaBreezeBoomerangEntity> type, Level level) {
         super(type, level);
-        turnBackTimer = 60;
-        getDefaultSpeed = 1f;
-        turningBack = true; // Start with turning back enabled
+        turnBackTimer = 30;
+        turningBack = false;
+        bounceFactor = 0.84999999999999998D;
     }
 
     public SeaBreezeBoomerangEntity(Player owner, ItemStack stack) {
@@ -53,7 +53,8 @@ public class SeaBreezeBoomerangEntity extends AbstractBoomerangEntity {
         }
 
         updateCollision();
-        updateGaleMotion();
+        if (!turningBack)
+            updateGaleMotion();
         determineRotation();
         prevRotation = getRotation();
         setRotation(Mth.wrapDegrees(getRotation() + 36F));
@@ -91,7 +92,6 @@ public class SeaBreezeBoomerangEntity extends AbstractBoomerangEntity {
         } else if (entity instanceof LivingEntity && entity != owner) {
             entity.hurt(getDamageSource(owner), getDamage());
         }
-        // Note: We don't change the turnBackTimer here as the Gale boomerang always follows the player
     }
 
     public static EntityType<SeaBreezeBoomerangEntity> createEntityType() {
