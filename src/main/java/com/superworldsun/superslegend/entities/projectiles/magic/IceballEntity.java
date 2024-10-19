@@ -120,12 +120,15 @@ public class IceballEntity extends AbstractHurtingProjectile {
 
     @Override
     public void tick() {
-        if (age > MAX_AGE || isInWater() || isInFluidType()) {
+        if (age > MAX_AGE) {
+            this.discard();
+            return;
+        }
+        if (isInWater() || isInLava() || isInFluidType()) {
             if (!level().isClientSide) {
                 triggerEffects();
             }
             this.discard();
-            return;
         }
 
         age++;
@@ -135,11 +138,15 @@ public class IceballEntity extends AbstractHurtingProjectile {
 
     protected void createParticlesTrail() {
         int particlesDensity = 3;
+        float particlesSpeed = 0.1F;
         for (int i = 0; i < particlesDensity; i++) {
             double particleX = getX() + (random.nextFloat() * 2 - 1) * PARTICLE_SPREAD;
             double particleY = getY() + (random.nextFloat() * 2 - 1) * PARTICLE_SPREAD;
             double particleZ = getZ() + (random.nextFloat() * 2 - 1) * PARTICLE_SPREAD;
-            level().addParticle(ParticleTypes.SPIT, particleX, particleY, particleZ, 0.0D, 0.0D, 0.0D);
+            double particleMotionX = (random.nextFloat() * 2 - 1) * particlesSpeed;
+            double particleMotionY = (random.nextFloat() * 2 - 1) * particlesSpeed;
+            double particleMotionZ = (random.nextFloat() * 2 - 1) * particlesSpeed;
+            level().addParticle(ParticleTypes.SPIT, particleX, particleY, particleZ, particleMotionX, particleMotionY, particleMotionZ);
         }
     }
 
@@ -167,5 +174,10 @@ public class IceballEntity extends AbstractHurtingProjectile {
     @Override
     public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    protected float getInertia() {
+        return 1F;
     }
 }

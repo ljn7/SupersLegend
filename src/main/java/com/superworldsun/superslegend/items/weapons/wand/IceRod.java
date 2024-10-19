@@ -58,7 +58,7 @@ public class IceRod extends NonEnchantItem {
             if (!level.isClientSide) {
                 if (MagicProvider.hasMagic(player, ICEBALL_MANACOST)) {
                     MagicProvider.spendMagic(player, ICEBALL_MANACOST);
-                    castFireball(level, player);
+                    castIceball(level, player);
                 }
             }
         } else {
@@ -67,13 +67,14 @@ public class IceRod extends NonEnchantItem {
         return InteractionResultHolder.consume(player.getItemInHand(hand));
     }
 
-    private void castFireball(@NotNull Level level, Player player) {
+    private void castIceball(@NotNull Level level, Player player) {
         Vec3 playerLook = player.getLookAngle();
         Vec3 position = player.getEyePosition(1F).add(playerLook);
         Vec3 motion = playerLook.multiply(ICEBALL_SPEED, ICEBALL_SPEED, ICEBALL_SPEED);
-        IceballEntity fireball = new IceballEntity(position, motion, level, player);
-        level.addFreshEntity(fireball);
-        player.getCooldowns().addCooldown(this, ICEBALL_COOLDOWN);
+        IceballEntity iceball = new IceballEntity(position, motion, level, player);
+        level.addFreshEntity(iceball);
+        if (!player.isCreative())
+            player.getCooldowns().addCooldown(this, ICEBALL_COOLDOWN);
         level.playSound(null, player, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1f, 1f);
     }
 

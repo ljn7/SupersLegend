@@ -46,11 +46,11 @@ public class BlockInit {
     public static final RegistryObject<Block> GOSSIP_STONE_TOP = BLOCKS.register("gossip_stone_top",
             () -> new GossipStoneTopBlock(BlockBehaviour.Properties.of().noLootTable().requiresCorrectToolForDrops().destroyTime(11).explosionResistance(11).sound(SoundType.STONE)));
     public static final RegistryObject<Block> DUNGEON_DOOR = registerBlock("dungeon_door",
-            () -> new RedStoneDisabledDoorBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
+            () -> new DoorBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
     public static final RegistryObject<Block> LOCKED_DUNGEON_DOOR = registerBlock("locked_dungeon_door",
             () -> new LockedDungeonDoor(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
     public static final RegistryObject<Block> BOSS_DOOR = registerBlock("boss_door",
-            () -> new RedStoneDisabledDoorBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
+            () -> new DoorBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
     public static final RegistryObject<Block> LOCKED_BOSS_DOOR = registerBlock("locked_boss_door",
             () -> new LockedBossDoor(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASS).strength(5).explosionResistance(99).noOcclusion().pushReaction(PushReaction.IGNORE).sound(SoundType.METAL), BLOCK_SET_TYPE));
     public static final RegistryObject<Block> LOCKED_WOODEN_DOOR = registerBlock("locked_wooden_door",
