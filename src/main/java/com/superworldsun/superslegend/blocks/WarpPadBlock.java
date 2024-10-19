@@ -29,8 +29,13 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WarpPadBlock extends HorizontalDirectionalBlock {
     public static final IntegerProperty BLOCK_PART_X = IntegerProperty.create("model_part_x", 0, 2);
@@ -46,6 +51,7 @@ public class WarpPadBlock extends HorizontalDirectionalBlock {
 
     @Override
     public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+        VoxelShape baseShape = Block.box(0, 0, 0, 16, 3, 16);
         return getShapeForState(blockState);
     }
 
@@ -71,7 +77,7 @@ public class WarpPadBlock extends HorizontalDirectionalBlock {
             int blockPartZ = pos.getZ() - blockPos.getZ();
             BlockState blockPartState = getStateForPartCoords(blockPartX, blockPartZ);
             if (blockPartX != 0 || blockPartZ != 0) {
-                level.setBlock(pos, blockPartState, 3);
+                level.setBlockAndUpdate(pos, blockPartState);
             }
         });
     }
@@ -125,7 +131,7 @@ public class WarpPadBlock extends HorizontalDirectionalBlock {
                 return InteractionResult.SUCCESS;
             }
         }
-        return InteractionResult.PASS;
+        return InteractionResult.FAIL;
     }
 
     protected void transformWarpPad(BlockState blockState, Level level, BlockPos blockPos, Item itemInHand) {
@@ -135,7 +141,7 @@ public class WarpPadBlock extends HorizontalDirectionalBlock {
         occupiedPositions.forEach(pos -> {
             BlockState blockPartState = level.getBlockState(pos);
             BlockState transformedBlockState = medallion.transformWarpPadState(blockPartState);
-            level.setBlock(pos, transformedBlockState, 3);
+            level.setBlockAndUpdate(pos, transformedBlockState);
         });
         WarpPadBlock transformedWarpPad = (WarpPadBlock) medallion.transformWarpPadState(blockState).getBlock();
         BlockPos centerPos = getCenterBlockPos(blockState, blockPos);
@@ -153,10 +159,8 @@ public class WarpPadBlock extends HorizontalDirectionalBlock {
     }
 
     private VoxelShape getShapeForState(BlockState blockState) {
-        VoxelShape blockShape = Block.box(-16, 0, -16, 32, 3, 32);
-        int blockShapeShiftX = -getBlockPartX(blockState);
-        int blockShapeShiftZ = -getBlockPartZ(blockState);
-        return blockShape.move(blockShapeShiftX, 0, blockShapeShiftZ);
+        VoxelShape baseShape = Block.box(0, 0, 0, 16, 3, 16);
+        return baseShape;
     }
 
     protected boolean isCenterBlock(BlockState blockState) {
@@ -170,4 +174,5 @@ public class WarpPadBlock extends HorizontalDirectionalBlock {
     private static int getBlockPartZ(BlockState blockState) {
         return blockState.getValue(BLOCK_PART_Z).intValue() - 1;
     }
+
 }

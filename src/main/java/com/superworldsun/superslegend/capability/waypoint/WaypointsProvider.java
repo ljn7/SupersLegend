@@ -49,7 +49,7 @@ public class WaypointsProvider extends SavedData implements ICapabilitySerializa
     public static void onEntityJoinWorld(EntityJoinLevelEvent event)
     {
         // We add waypoints only to players, means we only sync it for players
-        if (!(event.getEntity() instanceof Player))
+        if (!(event.getEntity() instanceof Player player))
         {
             return;
         }
@@ -60,7 +60,6 @@ public class WaypointsProvider extends SavedData implements ICapabilitySerializa
             return;
         }
 
-        Player player = (Player) event.getEntity();
         WaypointsProvider.sync((ServerPlayer) player);
     }
 
