@@ -39,7 +39,6 @@ public class IceRod extends NonEnchantItem {
     public static final int PARTICLES_DENSITY = 2;
     public static final float EFFECT_RANGE = 6F;
     public static final float DAMAGE = 1F;
-    public static final int IGNITE_DURATION = 3;
     public static final float ICEBALL_MANACOST = 2F;
     public static final float ICEBALL_SPEED = 0.5F;
     public static final int ICEBALL_COOLDOWN = 16;
@@ -157,7 +156,6 @@ public class IceRod extends NonEnchantItem {
     private static void onEntityHit(Player player, EntityHitResult entityHit) {
         DamageSource damageSource = player.damageSources().playerAttack(player);
         entityHit.getEntity().hurt(damageSource, DAMAGE);
-        entityHit.getEntity().setSecondsOnFire(IGNITE_DURATION);
     }
 
     @NotNull
