@@ -1,5 +1,6 @@
 package com.superworldsun.superslegend.items.item;
 
+import com.superworldsun.superslegend.capability.magic.MagicProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
@@ -38,54 +39,35 @@ public class BluePotion extends Item {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand)
-    {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-
-        //TODO, Undo when Magic is re added
-        /*if (ManaHelper.isFullMana(player) && !player.isHurt())
-        {
+        if (MagicProvider.isFullMagic(player) && !player.isHurt()) {
             return InteractionResultHolder.fail(stack);
-        }*/
-
+        }
         return ItemUtils.startUsingInstantly(level, player, hand);
     }
 
-    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity)
-    {
+    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
         Player player = entity instanceof Player ? (Player) entity : null;
-
-        if (player instanceof Player)
-        {
+        if (player instanceof Player) {
             CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer) player, stack);
         }
-
-        if (player != null)
-        {
-            //TODO, Undo when Magic is re added
-            //ManaHelper.restoreManaToFull(player);
+        if (player != null) {
+            MagicProvider.restoreMagic(player, 20F);
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 4, false, false));
             player.awardStat(Stats.ITEM_USED.get(this));
-
-            if (!player.getAbilities().instabuild)
-            {
+            if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
         }
-
-        if (player == null || !player.getAbilities().instabuild)
-        {
-            if (stack.isEmpty())
-            {
+        if (player == null || !player.getAbilities().instabuild) {
+            if (stack.isEmpty()) {
                 return new ItemStack(Items.GLASS_BOTTLE);
             }
-
-            if (player != null)
-            {
+            if (player != null) {
                 player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE));
             }
         }
-
         return stack;
     }
 

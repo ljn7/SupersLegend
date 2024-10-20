@@ -28,6 +28,7 @@ public class DeliveryBagItem extends BagItem
                 item == Items.ENCHANTED_BOOK || item == Items.KNOWLEDGE_BOOK ||
                 item == Items.WRITABLE_BOOK || item == Items.WRITTEN_BOOK ||
                 item == Items.MAP || item == ItemInit.BOOK_OF_MUDORA.get() ||
+                item == ItemInit.LETTER.get() || item == ItemInit.RED_LETTER.get() ||
                 item == ItemInit.ZELDAS_LULLABY_SHEET.get() || item == ItemInit.EPONAS_SONG_SHEET.get() ||
                 item == ItemInit.SARIAS_SONG_SHEET.get() || item == ItemInit.SONG_OF_TIME_SHEET.get() ||
                 item == ItemInit.SUNS_SONG_SHEET.get() || item == ItemInit.SONG_OF_STORMS_SHEET.get() ||

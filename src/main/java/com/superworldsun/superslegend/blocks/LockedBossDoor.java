@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
-public class LockedBossDoor extends DoorBlock {
+public class LockedBossDoor extends RedStoneDisabledDoorBlock {
     public LockedBossDoor(Properties pProperties, BlockSetType pType) {
         super(pProperties, pType);
     }
@@ -52,7 +52,7 @@ public class LockedBossDoor extends DoorBlock {
                 } else {
                     worldIn.setBlockAndUpdate(pos.below(), unlockedDoorState.setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER));
                 }
-                if (!player.isCreative() && heldItem.getItem() == ItemInit.SMALL_KEY.get()) {
+                if (!player.isCreative() && heldItem.getItem() == ItemInit.BOSS_KEY.get()) {
                     heldItem.shrink(1);
                 }
                 return InteractionResult.SUCCESS;
