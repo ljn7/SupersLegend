@@ -19,8 +19,8 @@ public class WaterBombEntity extends AbstractWaterBombEntity implements GeoEntit
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
     private static final float SECONDS_TO_EXPLODE = 4.0f;
     private static final float SECONDS_TO_FLASH_RAPIDLY = 2.0f;
-    private static final int EXPLOSION_POWER = 4;
-    private static final double BOUNCE_DAMPENING_FACTOR = 0.45;
+    private static final int EXPLOSION_POWER = 2;
+    private static final double BOUNCE_DAMPENING_FACTOR = 0.70;
 
     public WaterBombEntity(EntityType<WaterBombEntity> type, Level world) {
         super(type, world, SECONDS_TO_EXPLODE, SECONDS_TO_FLASH_RAPIDLY, EXPLOSION_POWER, BOUNCE_DAMPENING_FACTOR);
