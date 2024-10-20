@@ -53,7 +53,7 @@ public class AbstractBombEntity extends ThrowableItemProjectile {
     private final int explosionPower;
 
     /**
-     * How much to dampen the bounce. Lower values mean less bounce.
+     * How much to dampen the bounce. Higher values mean less bounce.
      */
     private final double bounceDampeningFactor;
 
