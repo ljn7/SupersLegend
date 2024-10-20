@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
-public class LockedWoodenDoor extends RedStoneDisabledDoorBlock {
+public class LockedWoodenDoor extends DoorBlock {
     public LockedWoodenDoor(Properties pProperties, BlockSetType pType) {
         super(pProperties, pType);
     }

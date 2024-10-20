@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -37,31 +38,34 @@ public class FaroresWindItem extends Item {
 		super(new Properties().stacksTo(1));
 	}
 
-	@Override
-	public InteractionResult useOn(UseOnContext context)
-	{
-		Level world = context.getLevel();
-		BlockPos pos = context.getClickedPos();
-		Player player = context.getPlayer();
-		Direction direction = context.getClickedFace();
-		ItemStack stackWind = context.getPlayer().getMainHandItem();
+	public InteractionResult useOn(UseOnContext pContext) {
 
-		if(getPosition(stackWind) == null && player.isShiftKeyDown())
-		{
-			setPosition(stackWind, world, pos.relative(direction), player);
-			player.displayClientMessage(Component.translatable("Location set!").withStyle(ChatFormatting.GREEN), true);
-			BlockPos currentPos = player.blockPosition();
-			world.playSound(null, currentPos.getX(), currentPos.getY(), currentPos.getZ(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.PLAYERS, 1f, 1f);
-			player.getCooldowns().addCooldown(this, 60);
-			return InteractionResult.SUCCESS;
-		}
+		Level level = pContext.getLevel();
+		Player player = pContext.getPlayer();
 
-		if(getPosition(stackWind) != null)
-		{
-			player.displayClientMessage(Component.translatable("Location already set.").withStyle(ChatFormatting.GREEN), true);
-			BlockPos currentPos = player.blockPosition();
-			world.playSound(null, currentPos.getX(), currentPos.getY(), currentPos.getZ(), SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 1f, 1f);
-			return InteractionResult.SUCCESS;
+		if (player == null) return InteractionResult.PASS;
+
+		ItemStack stack = pContext.getItemInHand();
+		BlockPos belowPlayer = player.blockPosition().below();
+
+		if (player.isShiftKeyDown() && level.getBlockState(belowPlayer).getBlock() != Blocks.AIR) {
+			BlockPos pos = player.blockPosition();
+
+			if (getPosition(stack) == null) {
+				setPosition(stack, level, pos, player);
+				player.displayClientMessage(Component.translatable("Location set!").withStyle(ChatFormatting.GREEN), true);
+				level.playSound(null, pos, SoundEvents.EVOKER_CAST_SPELL, SoundSource.PLAYERS, 1f, 1f);
+				if (!player.isCreative()) {
+					player.getCooldowns().addCooldown(this, 60);
+				}
+				return InteractionResult.SUCCESS;
+			}
+
+			if (getPosition(stack) != null) {
+				player.displayClientMessage(Component.translatable("Location already set.").withStyle(ChatFormatting.GREEN), true);
+				level.playSound(null, pos, SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 1f, 1f);
+				return InteractionResult.SUCCESS;
+			}
 		}
 
 		return InteractionResult.PASS;
@@ -69,55 +73,36 @@ public class FaroresWindItem extends Item {
 
 	@Override
 	public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
-		boolean hasMana = MagicProvider.hasMagic(player, MANA_COST);
 		ItemStack stack = player.getItemInHand(hand);
+		boolean hasMana = MagicProvider.hasMagic(player, MANA_COST);
 
-		if(getPosition(stack) != null && !player.isShiftKeyDown() && hasMana)
-		{
-			RandomSource rand = player.level().random;
-			for (int i = 0; i < 45; i++)
-			{
-				player.level().addParticle(ParticleTypes.CLOUD,
-						player.xo + (rand.nextBoolean() ? 2 : 1) * Math.pow(rand.nextFloat(), 1) * 2,
-						player.yo + rand.nextFloat() * 3 - 2,
-						player.zo + (rand.nextBoolean() ? 2 : 1) * Math.pow(rand.nextFloat(), 1) * 2,
+		if (getPosition(stack) != null && !player.isShiftKeyDown() && hasMana) {
+			RandomSource rand = level.random;
+			for (int i = 0; i < 45; i++) {
+				level.addParticle(ParticleTypes.CLOUD,
+						player.getX() + (rand.nextBoolean() ? -1 : 1) * rand.nextDouble() * 2,
+						player.getY() + rand.nextDouble() * 3 - 2,
+						player.getZ() + (rand.nextBoolean() ? -1 : 1) * rand.nextDouble() * 2,
 						0.3, 0.105D, 0.3);
 			}
 
 			MagicProvider.spendMagic(player, MANA_COST);
 			teleport(player, level, stack);
-			level.playSound(null, player.xo, player.yo, player.zo, SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 1.0F, 1.0F);
-			player.getCooldowns().addCooldown(this, 120);
+			level.playSound(null, player.getX(), player.getY(), player.getZ(),
+					SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 1.0F, 1.0F);
+			if (!player.isCreative()) {
+				player.getCooldowns().addCooldown(this, 120);
+			}
+			return InteractionResultHolder.success(stack);
 		}
 
-		if(getPosition(stack) != null && player.isShiftKeyDown())
-		{
+		if (getPosition(stack) != null && player.isShiftKeyDown()) {
 			setPosition(stack, level, null, player);
 			player.displayClientMessage(Component.translatable("Location cleared!").withStyle(ChatFormatting.GREEN), true);
+			return InteractionResultHolder.success(stack);
 		}
 
-		return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
-	}
-
-	public static @Nullable BlockPos getReturnPosition(ItemStack stack) {
-		CompoundTag tag = stack.getTag();
-		if (tag != null && tag.contains("SavedPos")) {
-			return NbtUtils.readBlockPos(tag.getCompound("SavedPos"));
-		}
-		return null;
-	}
-
-	public static @Nullable ResourceLocation getReturnPositionDimension(ItemStack stack) {
-		CompoundTag tag = stack.getTag();
-		if (tag != null && tag.contains("SavedPosDimension")) {
-			return new ResourceLocation(tag.getString("SavedPosDimension"));
-		}
-		return null;
-	}
-
-	public static void setReturnPosition(ItemStack stack, BlockPos pos, ResourceLocation dimensionId) {
-		stack.getOrCreateTag().put("SavedPos", NbtUtils.writeBlockPos(pos));
-		stack.getOrCreateTag().putString("SavedPosDimension", dimensionId.toString());
+		return InteractionResultHolder.pass(stack);
 	}
 
 	public static BlockPos getPosition(ItemStack stack)

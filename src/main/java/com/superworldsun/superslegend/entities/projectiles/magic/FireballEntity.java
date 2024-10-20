@@ -42,10 +42,10 @@ public class FireballEntity extends AbstractHurtingProjectile
     // 20% of blocks will be set on fire
     static private final float FIRE_CHANCE = 0.2F;
 
-    public FireballEntity(Vec3 postition, Vec3 motion, Level world, Player owner)
+    public FireballEntity(Vec3 position, Vec3 motion, Level world, Player owner)
     {
         super(EntityTypeInit.FIREBALL.get(), world);
-        setPos(postition.x, postition.y, postition.z);
+        setPos(position.x, position.y, position.z);
         setDeltaMovement(motion);
         setOwner(owner);
     }

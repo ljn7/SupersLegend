@@ -29,7 +29,7 @@ public final class RenderUtil {
             return;
         poseStack.pushPose();
 
-        poseStack.scale(1.0F, 1.0F, 1.0F);
+        poseStack.scale(0.59F, 0.59F, 0.59F);
         poseStack.mulPose(renderManager.cameraOrientation());
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
 

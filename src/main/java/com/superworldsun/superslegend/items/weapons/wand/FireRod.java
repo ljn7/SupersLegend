@@ -88,7 +88,8 @@ public class FireRod extends NonEnchantItem {
         Vec3 motion = playerLook.multiply(FIREBALL_SPEED, FIREBALL_SPEED, FIREBALL_SPEED);
         FireballEntity fireball = new FireballEntity(position, motion, level, player);
         level.addFreshEntity(fireball);
-        player.getCooldowns().addCooldown(this, FIREBALL_COOLDOWN);
+        if (!player.isCreative())
+            player.getCooldowns().addCooldown(this, FIREBALL_COOLDOWN);
         level.playSound(null, player, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1f, 1f);
     }
 
